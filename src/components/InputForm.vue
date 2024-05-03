@@ -1,34 +1,28 @@
 <script setup lang="ts">
-import {ref} from 'vue';
+import { ref } from 'vue';
 
-// Reaktive Referenzen für die Formulardaten
 const title = ref('');
 const amount = ref(null);
 const today = new Date().toISOString().slice(0, 10);
 const date = ref(today);
 
-// Event emittieren definieren
 const emit = defineEmits(['new-expense']);
 
-// Methode zum Hinzufügen eines neuen Eintrags
 function addExpense() {
   if (title.value && amount.value && date.value) {
-    // Erstelle ein neues Expense-Objekt
     const newExpense = {
       title: title.value,
-      amount: parseFloat(amount.value), // Umwandlung in eine Zahl
+      amount: parseFloat(amount.value),
       date: date.value
     };
 
-    // Emitte das Ereignis mit dem neuen Ausgabenobjekt
     emit('new-expense', newExpense);
 
-    // Formularfelder zurücksetzen
     title.value = '';
     amount.value = null;
     date.value = today;
   } else {
-    alert("Bitte füllen Sie alle Felder aus.");
+    alert("Please fill all fields.");
   }
 }
 </script>

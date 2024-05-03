@@ -1,15 +1,11 @@
 <script setup lang="ts">
 import { inject, computed } from 'vue';
 
-// Die Ausgabenliste injizieren, die von der übergeordneten Komponente bereitgestellt wird
 const expenses = inject('expensesList');
 
-// Berechnete Eigenschaft zur Summierung der Ausgaben
+// Computed property to sum the expenses
 const totalExpenses = computed(() => {
-  if (!expenses || !expenses.value) {
-    return 0;
-  }
-  return expenses.value.reduce((sum, expense) => sum + expense.amount, 0);
+  return expenses?.value.reduce((sum, expense) => sum + expense.amount, 0) || 0;
 });
 </script>
 
@@ -21,10 +17,10 @@ const totalExpenses = computed(() => {
           <h3>Total Expenses</h3>
         </div>
         <div class="col text-end">
-          <!-- Dynamisches Binden der Gesamtsumme -->
           <h3>€ {{ totalExpenses }}</h3>
         </div>
       </div>
     </div>
   </div>
 </template>
+

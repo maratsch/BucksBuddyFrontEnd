@@ -2,7 +2,6 @@
 import { inject } from "vue";
 
 const expensesList = inject("expensesList");
-
 </script>
 
 <template>
@@ -27,3 +26,4 @@ const expensesList = inject("expensesList");
     </div>
   </div>
 </template>
+
