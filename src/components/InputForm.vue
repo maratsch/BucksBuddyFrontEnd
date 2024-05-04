@@ -33,7 +33,6 @@ function addExpense() {
 </script>
 
 <template>
-  sudo snap refresh intellij-idea-ultimate
   <div class="card">
     <div class="card-body">
       <h4 class="card-title">New Expense</h4>
