@@ -7,6 +7,15 @@ const currency = ref('EUR');
 const today = new Date().toISOString().slice(0, 10);
 const date = ref(today);
 const emit = defineEmits(['new-expense']);
+
+/*
+Interface for Expense
+var:
+title as string
+amount as number
+date as string
+currency as string
+ */
 export interface Expense {
   title: string;
   amount: number;
@@ -14,6 +23,12 @@ export interface Expense {
   currency: string; // Falls die Währung ebenfalls Teil der Ausgabe ist
 }
 
+/*
+addExpense function
+If title, amount and date are given, a new Expense of the type Expense will be created
+It is emitted and then all the Blanks are resetted
+if not all of the above are given, an error will be displayed
+ */
 function addExpense() {
   if (title.value && amount.value && date.value) {
     const newExpense : Expense = {

@@ -9,12 +9,13 @@ const expensesList = ref<Expense[]>([]);
 // Providing the list for descendant components
 provide('expensesList', expensesList);
 
-// Method to add a new expense object
 
-
+/*
+Method to add a new expense object of the Interface Expense to expensesList
+ */
 const addExpense = (newExpense : Expense) => {
   expensesList.value.push(newExpense);
-} //TODO: Fehler Argument of type any is not assignable to parameter of type never beseitigen -> vermutl. in InputForm
+}
 </script>
 
 

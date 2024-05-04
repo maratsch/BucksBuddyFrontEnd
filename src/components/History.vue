@@ -5,6 +5,9 @@ import type {Expense} from "./InputForm.vue";
 
 const expensesList = inject<Expense[]>('expensesList');
 
+/*
+Method to format the amount to 2 digits and the selected currency
+ */
 function formatCurrency(amount: number, currency: string): string {
   return amount.toFixed(2) + ' ' + currency;
 }
