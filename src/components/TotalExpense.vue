@@ -22,5 +22,4 @@ const totalExpenses = computed(() => {
       </div>
     </div>
   </div>
-</template>
-
+</template>>

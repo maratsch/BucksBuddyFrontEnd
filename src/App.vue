@@ -17,20 +17,11 @@ const addExpense = (newExpense) => {
 }
 </script>
 
+
 <template>
-  <nav-bar />
-  <div class="container">
-    <div class="row">
-      <div class="col col-md-6">
-        <total-expense />
-        <input-form @new-expense="addExpense" />
-      </div>
-      <div class="col col-md-6">
-        <history />
-      </div>
-    </div>
+  <div>
+    <NavBar />
+    <router-view />
   </div>
 </template>
-
-
 

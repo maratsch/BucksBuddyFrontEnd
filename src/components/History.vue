@@ -1,7 +1,12 @@
 <script setup lang="ts">
-import { inject } from "vue";
+import {inject} from "vue";
 
 const expensesList = inject("expensesList");
+
+function formatCurrency(amount: number, currency: string): string {
+  return amount.toFixed(2) + ' ' + currency;
+}
+
 </script>
 
 <template>
@@ -16,7 +21,7 @@ const expensesList = inject("expensesList");
             <p class="card-title fw-bold">{{ item.title }}</p>
           </div>
           <div class="col-4">
-            <p class="card-text text-center">{{ item.amount.toFixed(2) }}€</p>
+            <p class="card-text text-center">{{ formatCurrency(item.amount, item.currency) }}</p>
           </div>
           <div class="col-4">
             <p class="card-text text-end">{{ item.date }}</p>
