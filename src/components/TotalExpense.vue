@@ -1,14 +1,15 @@
 <script setup lang="ts">
-import { inject, computed } from 'vue';
-import type {Expense} from "./InputForm.vue";
+import { inject, computed, type Ref } from 'vue';
+import type { Expense } from "./InputForm.vue";
 
-const expenses = inject<Expense[]>('expensesList');
+// Typisieren als Ref<Expense[]> für die reaktive Referenz
+const expenses = inject<Ref<Expense[]>>('expensesList');
 
 // Computed property to sum the expenses
 const totalExpenses = computed(() => {
-  return expenses?.value.reduce((sum, expense) => sum + expense.amount, 0) || 0; //TODO Wenn ich value lösche gehen alle fehler weg, aber website ist dann quasi leer??
-  //TODO: Add connection to database to fetch the total expenses of the current user
-});
+  // Explizite Typangaben im Callback
+  return expenses?.value.reduce((sum: number, expense: Expense) => sum + expense.amount, 0) || 0;
+});   //TODO: Add connection to database to fetch the total expenses of the current user
 </script>
 
 <template>
@@ -24,4 +25,4 @@ const totalExpenses = computed(() => {
       </div>
     </div>
   </div>
-</template>>
+</template>
