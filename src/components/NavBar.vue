@@ -2,6 +2,8 @@
 import profile from "../views/Profile.vue"
 </script>
 
+<!-- TODO: Decide if we want to keep About and Contact-->
+
 <template>
   <nav class="navbar navbar-expand-lg bg-body-tertiary">
     <div class="container">

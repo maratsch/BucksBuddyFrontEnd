@@ -15,7 +15,7 @@ provide('expensesList', expensesList);
 
 const addExpense = (newExpense) => {
   expensesList.value.push(newExpense);
-}
+} //TODO: Fehler Argument of type any is not assignable to parameter of type never beseitigen -> vermutl. in InputForm
 </script>
 
 

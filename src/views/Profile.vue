@@ -4,6 +4,7 @@ import TotalExpense from "@/components/TotalExpense.vue";
 import History from "@/components/History.vue";
 import ChooseCurrency from "@/components/ChooseCurrency.vue";
 </script>
+<!-- TODO: ADD Name and other vars-->
 
 <template>
 

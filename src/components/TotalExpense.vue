@@ -6,6 +6,7 @@ const expenses = inject('expensesList');
 // Computed property to sum the expenses
 const totalExpenses = computed(() => {
   return expenses?.value.reduce((sum, expense) => sum + expense.amount, 0) || 0;
+  //TODO: Add connection to database to fetch the total expenses of the current user
 });
 </script>
 

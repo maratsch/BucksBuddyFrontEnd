@@ -10,7 +10,7 @@
     <option value="EUR">EUR</option>
     <option value="USD">USD</option>
     <option value="JPY">JPY</option>
-  </select>
+  </select> <!-- TODO: Dont understand why the select is empty by default and the select in InputForm isn't-->
   </div>
   </div>
 </template>

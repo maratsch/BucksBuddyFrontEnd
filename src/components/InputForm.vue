@@ -16,6 +16,8 @@ function addExpense() {
       amount: parseFloat(amount.value),
       date: date.value,
       currency: currency.value,
+      //TODO: ADD Currency-API and database connection to fetch the currency rate and home currency of the user to calc. the expense
+      //TODO: ADD distinction between paid currency and home currency
     };
 
     emit('new-expense', newExpense);
@@ -31,6 +33,7 @@ function addExpense() {
 </script>
 
 <template>
+  sudo snap refresh intellij-idea-ultimate
   <div class="card">
     <div class="card-body">
       <h4 class="card-title">New Expense</h4>
