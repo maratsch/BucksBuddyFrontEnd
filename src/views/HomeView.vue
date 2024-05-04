@@ -3,17 +3,16 @@ import { ref, provide } from 'vue';
 import TotalExpense from "@/components/TotalExpense.vue";
 import History from "@/components/History.vue";
 import NavBar from "@/components/NavBar.vue";
-import InputForm from "@/components/InputForm.vue";
+import InputForm, {type Expense} from "@/components/InputForm.vue";
 // Creating a reactive reference for the expenses list
-const expensesList = ref([]);
-
+const expensesList = ref<Expense[]>([]);
 // Providing the list for descendant components
 provide('expensesList', expensesList);
 
 // Method to add a new expense object
 
 
-const addExpense = (newExpense) => {
+const addExpense = (newExpense : Expense) => {
   expensesList.value.push(newExpense);
 } //TODO: Fehler Argument of type any is not assignable to parameter of type never beseitigen -> vermutl. in InputForm
 </script>

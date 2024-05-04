@@ -6,12 +6,17 @@ const amount = ref(null);
 const currency = ref('EUR');
 const today = new Date().toISOString().slice(0, 10);
 const date = ref(today);
-
 const emit = defineEmits(['new-expense']);
+export interface Expense {
+  title: string;
+  amount: number;
+  date: string;
+  currency: string; // Falls die Währung ebenfalls Teil der Ausgabe ist
+}
 
 function addExpense() {
   if (title.value && amount.value && date.value) {
-    const newExpense = {
+    const newExpense : Expense = {
       title: title.value,
       amount: parseFloat(amount.value),
       date: date.value,

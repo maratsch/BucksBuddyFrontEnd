@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import {inject} from "vue";
+import type {Expense} from "./InputForm.vue";
 
-const expensesList = inject("expensesList");
+
+const expensesList = inject<Expense[]>('expensesList');
 
 function formatCurrency(amount: number, currency: string): string {
   return amount.toFixed(2) + ' ' + currency;
