@@ -21,19 +21,26 @@ function formatCurrency(amount: number, currency: string): string {
       <div class="card mb-2"
            v-for="item in expensesList"
            :key="item.title">
-        <div class="card-body d-flex">
-          <div class="col-4">
-            <p class="card-title fw-bold">{{ item.title }}</p>
+        <div class="card-body d-flex align-items-center">
+          <div class="col-3 fw-bold">
+            {{ item.title }}
           </div>
-          <div class="col-4">
-            <p class="card-text text-center">{{ formatCurrency(item.amount, item.currency) }}</p>
+          <div class="col-3 text-center">
+            {{ formatCurrency(item.amount, item.currency) }}
           </div>
-          <div class="col-4">
-            <p class="card-text text-end">{{ item.date }}</p>
+          <div class="col-3 text-center">
+            {{ item.date }}
+          </div>
+          <div class="col-3 d-flex justify-content-end">
+            <button class="btn bi bi-pencil-square text-dark fs-5">
+            </button>
+            <button class="btn bi bi-trash text-dark fs-5">
+            </button>
           </div>
         </div>
       </div>
     </div>
   </div>
 </template>
+
 

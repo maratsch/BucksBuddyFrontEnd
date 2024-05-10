@@ -20,6 +20,7 @@ const totalExpenses = computed(() => {
           <h3>Thailand</h3>
         </div>
       </div>
+      <hr>
       <div class="row">
         <div class="col text-start">
           <h3>Total Expenses</h3>
