@@ -83,9 +83,10 @@ function addExpense() {
         </div>
       </div>
 
-      <div class="row">
+      <div class="row mb-2">
         <div class="col">
-          <button type="button" class="btn btn-primary" @click="addExpense">Add New Expense</button>
+          <button type="button" class="btn btn-primary"
+                  @click="addExpense">Add New Expense</button>
         </div>
       </div>
     </div>

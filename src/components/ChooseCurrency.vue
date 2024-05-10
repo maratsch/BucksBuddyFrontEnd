@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <div class="card">
+  <div class="card shadow mb-3">
     <div class="card-body">
       <label for="dateInput" class="form-label">In which currency do you want to convert your expenses?</label>
       <select class="form-select" id="currencySelect" aria-label="Default select example"><!--v-model="currency"-->
@@ -15,7 +15,3 @@
     </div>
   </div>
 </template>
-
-<style scoped>
-
-</style> 
