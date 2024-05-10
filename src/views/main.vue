@@ -2,7 +2,6 @@
 import { ref, provide } from 'vue';
 import TotalExpense from "@/components/TotalExpense.vue";
 import History from "@/components/History.vue";
-import NavBar from "@/components/NavBar.vue";
 import InputForm, {type Expense} from "@/components/InputForm.vue";
 // Creating a reactive reference for the expenses list
 const expensesList = ref<Expense[]>([]);
