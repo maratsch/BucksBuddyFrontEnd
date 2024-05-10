@@ -43,6 +43,8 @@ const calculateDuration = () => {
               <label for="budget" class="form-label">Budget (optional)</label>
               <input type="number" class="form-control" id="budget" v-model="budget">
             </div>
+            <hr>
+
             <div class="mb-3">
               <label for="startDate" class="form-label">Start Date</label>
               <input type="date" class="form-control" id="startDate" v-model="startDate" @change="calculateDuration"

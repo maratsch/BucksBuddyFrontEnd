@@ -70,14 +70,6 @@ function addExpense() {
           <input type="number" class="form-control" id="amountInput" v-model.number="amount">
         </div>
         <div class="col">
-          <label for="dateInput" class="form-label">Choose the currency</label>
-          <select class="form-select" id="currencySelect" v-model="currency">
-            <option value="EUR">EUR</option>
-            <option value="USD">USD</option>
-            <option value="JPY">JPY</option>
-          </select>
-        </div>
-        <div class="col">
           <label for="dateInput" class="form-label">Date</label>
           <input type="date" class="form-control" id="dateInput" v-model="date">
         </div>

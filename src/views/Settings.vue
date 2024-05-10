@@ -1,4 +1,6 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import SettingsCard from "@/components/SettingsCard.vue";
+</script>
 
 <template>
   <div class="container">
