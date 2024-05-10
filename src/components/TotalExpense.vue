@@ -17,7 +17,10 @@ const totalExpenses = computed(() => {
     <div class="card-body">
       <div class="row">
         <div class="col text-start">
-          <h3>Thailand</h3>
+          <h3>Current Journey</h3>
+        </div>
+        <div class="col text-end">
+          <h4>Thailand</h4>
         </div>
       </div>
       <hr>
@@ -26,7 +29,7 @@ const totalExpenses = computed(() => {
           <h3>Total Expenses</h3>
         </div>
         <div class="col text-end">
-          <h3>€ {{ totalExpenses }}</h3>
+          <h4>€ {{ totalExpenses }}</h4>
         </div>
       </div>
     </div>

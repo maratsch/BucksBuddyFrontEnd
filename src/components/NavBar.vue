@@ -11,15 +11,15 @@
       </div>
       <ul class="navbar-nav ms-auto align-self-center">
         <li class="nav-item">
-          <RouterLink to="/user" class="bi bi-person-circle m-2 text-dark fs-3">
+          <RouterLink to="/user" class="bi bi-person-circle m-2 text-dark fs-3" title="User">
           </RouterLink>
         </li>
         <li class="nav-item">
-          <RouterLink to="/main" class="bi bi-card-list m-2 text-dark fs-3">
+          <RouterLink to="/main" class="bi bi-card-list m-2 text-dark fs-3" title="Main">
           </RouterLink>
         </li>
         <li class="nav-item">
-          <RouterLink to="/settings" class="bi bi-gear m-2 text-dark fs-3">
+          <RouterLink to="/settings" class="bi bi-gear m-2 text-dark fs-3" title="Settings">
           </RouterLink>
         </li>
       </ul>

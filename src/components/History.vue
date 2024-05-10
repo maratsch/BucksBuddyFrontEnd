@@ -32,9 +32,9 @@ function formatCurrency(amount: number, currency: string): string {
             {{ item.date }}
           </div>
           <div class="col-3 d-flex justify-content-end">
-            <button class="btn bi bi-pencil-square text-dark fs-5">
+            <button class="btn bi bi-pencil-square text-dark fs-5" title="edit">
             </button>
-            <button class="btn bi bi-trash text-dark fs-5">
+            <button class="btn bi bi-trash text-dark fs-5" title="delete">
             </button>
           </div>
         </div>
