@@ -21,7 +21,7 @@ const calculateDuration = () => {
 </script>
 
 <template>
-  <div class="card">
+  <div class="card shadow m-3">
     <div class="card-body">
       <div class="row justify-content-center">
         <div class="col-md-9">
@@ -57,7 +57,9 @@ const calculateDuration = () => {
               <label class="form-label">Travel Duration</label>
               <input type="text" class="form-control" :value="travelDuration" disabled>
             </div>
+            <div class="mb-3">
             <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
           </form>
         </div>
       </div>

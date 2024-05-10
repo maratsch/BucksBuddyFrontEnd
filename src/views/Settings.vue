@@ -1,13 +1,10 @@
-<script setup lang="ts">
-import ChooseCurrency from "@/components/ChooseCurrency.vue";
-</script>
-
+<script setup lang="ts"></script>
 
 <template>
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-6">
-        <choose-currency/>
+        <SettingsCard/>
       </div>
     </div>
   </div>

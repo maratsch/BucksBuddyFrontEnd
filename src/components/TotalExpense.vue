@@ -20,16 +20,53 @@ const totalExpenses = computed(() => {
           <h3>Current Journey</h3>
         </div>
         <div class="col text-end">
-          <h4>Thailand</h4>
+          <h3>Thailand</h3>
         </div>
       </div>
+      <hr>
+      <div class="row">
+        <div class="col text-start">
+          <h4>Home Currency</h4>
+        </div>
+        <div class="col text-end">
+          <h4>EUR</h4>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col text-start">
+          <h4>Vacation Currency</h4>
+        </div>
+        <div class="col text-end">
+          <h4>USD</h4>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col text-start">
+          <h4>Budget</h4>
+        </div>
+        <div class="col text-end">
+          <h4>€ 29</h4>
+        </div>
+      </div>
+
       <hr>
       <div class="row">
         <div class="col text-start">
           <h3>Total Expenses</h3>
         </div>
         <div class="col text-end">
-          <h4>€ {{ totalExpenses }}</h4>
+          <h3>€ {{ totalExpenses }}</h3>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col text-start">
+          <h3>Budget Left</h3>
+        </div>
+        <div class="col text-end">
+          <h3>€ {{ totalExpenses }}</h3>
         </div>
       </div>
     </div>
