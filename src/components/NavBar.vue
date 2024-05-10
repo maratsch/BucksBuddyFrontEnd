@@ -1,28 +1,28 @@
 <script setup lang="ts">
-import profile from "../views/Profile.vue"
 </script>
 
 <!-- TODO: Decide if we want to keep About and Contact-->
 
 <template>
-  <nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <nav class="navbar shadow mb-3 navbar-expand-lg bg-body-tertiary">
     <div class="container">
       <div class="col d-flex align-items-center">
         <RouterLink to="/"><img src="@/assets/logo2.png" alt="Bootstrap" style="width: auto; height: 70px;"></RouterLink>
-        <h1 class="ms-3 fw-bold">Bucks Buddy</h1>
       </div>
       <ul class="navbar-nav ms-auto align-self-center">
         <li class="nav-item">
-          <a class="nav-link" href="#">About</a>
+          <RouterLink to="/" class="bi bi-person-circle m-2 text-dark fs-3">
+          </RouterLink>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Contact</a>
+          <RouterLink to="/" class="bi bi-card-list m-2 text-dark fs-3">
+          </RouterLink>
         </li>
         <li class="nav-item">
-          <RouterLink to="/profile"><img src="@/assets/images.png" alt="Bootstrap" style="width: auto; height: 40px;"></RouterLink>
+          <RouterLink to="/profile" class="bi bi-gear m-2 text-dark fs-3">
+          </RouterLink>
         </li>
       </ul>
     </div>
   </nav>
 </template>
-

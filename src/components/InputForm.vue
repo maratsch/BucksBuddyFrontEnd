@@ -31,7 +31,7 @@ if not all of the above are given, an error will be displayed
  */
 function addExpense() {
   if (title.value && amount.value && date.value) {
-    const newExpense : Expense = {
+    const newExpense: Expense = {
       title: title.value,
       amount: parseFloat(amount.value),
       date: date.value,
@@ -53,19 +53,23 @@ function addExpense() {
 </script>
 
 <template>
-  <div class="card">
+  <div class="card shadow mb-3">
     <div class="card-body">
-      <h4 class="card-title">New Expense</h4>
-      <div class="mb-2">
-        <label for="titleInput" class="form-label">Title</label>
-        <input type="text" class="form-control" id="titleInput" v-model="title">
+      <h3 class="card-title">New Expense</h3>
+
+      <div class="row mb-2">
+        <div class="col">
+          <label for="titleInput" class="form-label">Title</label>
+          <input type="text" class="form-control" id="titleInput" v-model="title">
+        </div>
       </div>
-      <div class="row">
-        <div class="col mb-2">
+
+      <div class="row mb-2">
+        <div class="col">
           <label for="amountInput" class="form-label">Amount</label>
           <input type="number" class="form-control" id="amountInput" v-model.number="amount">
         </div>
-        <div class="col mb-2">
+        <div class="col">
           <label for="dateInput" class="form-label">Choose the currency</label>
           <select class="form-select" id="currencySelect" v-model="currency">
             <option value="EUR">EUR</option>
@@ -73,12 +77,17 @@ function addExpense() {
             <option value="JPY">JPY</option>
           </select>
         </div>
-        <div class="col mb-2">
+        <div class="col">
           <label for="dateInput" class="form-label">Date</label>
           <input type="date" class="form-control" id="dateInput" v-model="date">
         </div>
       </div>
-      <button type="button" class="btn btn-primary mb-2" @click="addExpense">Add New Expense</button>
+
+      <div class="row">
+        <div class="col">
+          <button type="button" class="btn btn-primary" @click="addExpense">Add New Expense</button>
+        </div>
+      </div>
     </div>
   </div>
 </template>

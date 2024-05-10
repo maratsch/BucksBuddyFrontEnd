@@ -13,8 +13,13 @@ const totalExpenses = computed(() => {
 </script>
 
 <template>
-  <div class="card">
+  <div class="card shadow mb-3">
     <div class="card-body">
+      <div class="row">
+        <div class="col text-start">
+          <h3>Thailand</h3>
+        </div>
+      </div>
       <div class="row">
         <div class="col text-start">
           <h3>Total Expenses</h3>
