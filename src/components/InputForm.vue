@@ -60,27 +60,27 @@ function addExpense() {
       <div class="row mb-2">
         <div class="col">
           <label for="titleInput" class="form-label">Title</label>
-          <input type="text" class="form-control" id="titleInput" v-model="title">
+          <input type="text" class="form-control" id="titleInput" v-model="title" @keyup.enter="addExpense">
         </div>
       </div>
 
       <div class="row mb-2">
         <div class="col">
           <label for="amountInput" class="form-label">Amount</label>
-          <input type="number" class="form-control" id="amountInput" v-model.number="amount">
+          <input type="number" class="form-control" id="amountInput" v-model.number="amount" @keyup.enter="addExpense">
         </div>
         <div class="col">
           <label for="dateInput" class="form-label">Date</label>
-          <input type="date" class="form-control" id="dateInput" v-model="date">
+          <input type="date" class="form-control" id="dateInput" v-model="date" @keyup.enter="addExpense">
         </div>
       </div>
 
       <div class="row mb-2">
         <div class="col">
-          <button type="button" class="btn btn-primary"
-                  @click="addExpense">Add New Expense</button>
+          <button type="button" class="btn btn-primary" @click="addExpense">Add New Expense</button>
         </div>
       </div>
     </div>
   </div>
 </template>
+

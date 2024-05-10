@@ -5,13 +5,7 @@
 <template>
   <div class="card shadow mb-3">
     <div class="card-body">
-      <label for="dateInput" class="form-label">In which currency do you want to convert your expenses?</label>
-      <select class="form-select" id="currencySelect" aria-label="Default select example"><!--v-model="currency"-->
-        <!-- TODO: ADD connection to database -->
-        <option selected>none</option>
-        <option value="USD">USD</option>
-        <option value="JPY">JPY</option>
-      </select> <!-- TODO: Dont understand why the select is empty by default and the select in InputForm isn't-->
+      <h2>Insert Settings here.</h2>
     </div>
   </div>
 </template>

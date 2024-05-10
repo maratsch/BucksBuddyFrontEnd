@@ -20,7 +20,13 @@ const totalExpenses = computed(() => {
           <h3>Journey</h3>
         </div>
         <div class="col text-end">
-          <h3>Thailand</h3>
+          <select class="form-select">
+            <option disabled value="">Please select one</option>
+            <option value="thailand">Thailand</option>
+            <option value="japan">Japan</option>
+            <option value="france">France</option>
+            <option value="brazil">Brazil</option>
+          </select>
         </div>
       </div>
       <hr>
