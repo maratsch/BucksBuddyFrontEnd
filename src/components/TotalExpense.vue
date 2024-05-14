@@ -53,7 +53,7 @@ const totalExpenses = computed(() => {
           <h4>Budget</h4>
         </div>
         <div class="col text-end">
-          <h4>€ 29</h4>
+          <h4>€ 600</h4>
         </div>
       </div>
 
