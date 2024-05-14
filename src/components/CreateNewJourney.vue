@@ -8,14 +8,25 @@ const budget = ref('');
 const startDate = ref('');
 const endDate = ref('');
 const travelDuration = ref('');
+const dateError = ref('');
+
 
 const calculateDuration = () => {
   if (startDate.value && endDate.value) {
-    const start = new Date(startDate.value);
-    const end = new Date(endDate.value);
-    const difference = end.getTime() - start.getTime();
-    const days = Math.ceil(difference / (1000 * 3600 * 24));
-    travelDuration.value = `${days} day(s)`;
+    if (startDate.value < endDate.value) {
+      const start = new Date(startDate.value);
+      const end = new Date(endDate.value);
+      const difference = end.getTime() - start.getTime();
+      const days = Math.ceil(difference / (1000 * 3600 * 24));
+      travelDuration.value = `${days} day(s)`;
+      dateError.value = '';
+    } else {
+      travelDuration.value = '';
+      dateError.value = 'Startdatum muss vor dem Enddatum liegen.';
+    }
+  } else {
+    travelDuration.value = '';
+    dateError.value = '';
   }
 };
 </script>
@@ -33,11 +44,26 @@ const calculateDuration = () => {
             </div>
             <div class="mb-3">
               <label for="homeCurrency" class="form-label">Home Currency</label>
-              <input type="text" class="form-control" id="homeCurrency" v-model="homeCurrency" required>
+              <div class="col text-end">
+                <select class="form-select">
+                  <option disabled value="">Please select one</option>
+                  <option value="euro">EUR</option>
+                  <option value="yen">YEN</option>
+                  <option value="us dollar">USD</option>
+                </select>
+              </div>
             </div>
             <div class="mb-3">
               <label for="vacationCurrency" class="form-label">Vacation Currency</label>
-              <input type="text" class="form-control" id="vacationCurrency" v-model="vacationCurrency" required>
+              <div class="col text-end">
+                <select class="form-select">
+                  <option disabled value="">Please select one</option>
+                  <option value="euro">EUR</option>
+                  <option value="yen">YEN</option>
+                  <option value="us dollar">USD</option>
+                  <option value="baht">BHT</option>
+                </select>
+              </div>
             </div>
             <div class="mb-3">
               <label for="budget" class="form-label">Budget (optional)</label>
@@ -54,13 +80,14 @@ const calculateDuration = () => {
               <label for="endDate" class="form-label">End Date</label>
               <input type="date" class="form-control" id="endDate" v-model="endDate" @change="calculateDuration"
                      required>
+              <div v-if="dateError" class="text-danger">{{ dateError }}</div>
             </div>
             <div class="mb-3">
               <label class="form-label">Travel Duration</label>
               <input type="text" class="form-control" :value="travelDuration" disabled>
             </div>
             <div class="mb-3">
-            <button type="submit" class="btn btn-primary">Submit</button>
+              <button type="submit" class="btn btn-primary">Submit</button>
             </div>
           </form>
         </div>

@@ -13,7 +13,8 @@ function formatCurrency(amount: number, currency: string): string {
 }
 
 </script>
-
+<!--TODO: Add amount of selected currency and amount of your home currency -->
+<!--TODO: Add dropdown menu to select different vacations -->
 <template>
   <div class="card shadow mb-3">
     <div class="card-body">

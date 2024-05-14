@@ -11,7 +11,7 @@
       </div>
       <ul class="navbar-nav ms-auto align-self-center">
         <li class="nav-item">
-          <RouterLink to="/newjourney" class="bi bi-plus-lg m-2 text-dark fs-3" title="Create A New Journey">
+          <RouterLink to="/newjourney" class="bi bi-plus-lg m-2 text-dark fs-3" title="Create a new Journey">
           </RouterLink>
         </li>
         <li class="nav-item">
