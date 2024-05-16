@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {ref} from 'vue';
+import axios from 'axios';
 
 const title = ref('');
 const amount = ref(null);
@@ -29,7 +30,7 @@ If title, amount and date are given, a new Expense of the type Expense will be c
 It is emitted and then all the Blanks are resetted
 if not all of the above are given, an error will be displayed
  */
-function addExpense() {
+async function addExpense() {
   if (title.value && amount.value && date.value) {
     const newExpense: Expense = {
       title: title.value,
@@ -40,12 +41,28 @@ function addExpense() {
       //TODO: ADD distinction between paid currency and home currency
     };
 
-    emit('new-expense', newExpense);
+    try {
+      const response = await axios.post('http://localhost:8080/expenditure', {
+        name: newExpense.title,
+        amount: newExpense.amount,
+        person: 'TestUser',
+        currency: newExpense.currency,
+      });   //TODO: !!! NICHT GETESTET!!!!
+            //TODO: Add the correct URL for the API + Bin mir nicht so sicher ob das so funktioniert
 
-    title.value = '';
-    amount.value = null;
-    date.value = today;
-    currency.value = 'EUR'; //TODO: Hier später die Währung aus dem Profil abholen
+      emit('new-expense', newExpense);
+
+      title.value = '';
+      amount.value = null;
+      date.value = today;
+      currency.value = 'EUR'; //TODO: Hier später die Währung aus dem Profil abholen
+
+      console.log('Expense added successfully!', response);
+      alert('Expense added successfully!');
+    } catch (error) {
+      console.error('There was an error creating the expenditure!', error);
+      alert('Failed to add expense.');
+    }
   } else {
     alert("Please fill all fields.");
   }
