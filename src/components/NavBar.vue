@@ -1,8 +1,6 @@
 <script setup lang="ts">
 </script>
 
-<!-- TODO: Decide if we want to keep About and Contact-->
-
 <template>
   <nav class="navbar shadow mb-3 navbar-expand-lg bg-body-tertiary">
     <div class="container">
