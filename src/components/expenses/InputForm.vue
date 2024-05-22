@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, defineEmits } from 'vue';
 import api from '@/services/api';
 import { type Expenditure } from '@/Expenditure';
 
 const title = ref('');
 const amount = ref<number | null>(null);
 const date = ref<string>('');
+
+const emit = defineEmits(['refreshExpenditures']);
 
 const addExpenditure = async () => {
   if (title.value && amount.value !== null && date.value) {
@@ -19,7 +21,7 @@ const addExpenditure = async () => {
       title.value = '';
       amount.value = null;
       date.value = '';
-      // Optionally, emit an event to refresh the expenditures list in History component
+      emit('refreshExpenditures'); // Emit event to refresh the expenditures list
     } catch (error) {
       console.error(error);
     }

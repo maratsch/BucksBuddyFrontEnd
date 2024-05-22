@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, defineExpose } from 'vue';
 import api from '@/services/api';
 import { type Expenditure } from '@/Expenditure';
 
@@ -17,7 +17,7 @@ const fetchExpenditures = async () => {
 const deleteExpenditure = async (id: number) => {
   try {
     await api.deleteExpenditure(id);
-    fetchExpenditures(); // refresh list
+    fetchExpenditures(); // Refresh the list after deletion
   } catch (error) {
     console.error(error);
   }
@@ -26,15 +26,17 @@ const deleteExpenditure = async (id: number) => {
 onMounted(() => {
   fetchExpenditures();
 });
+
+defineExpose({
+  fetchExpenditures
+});
 </script>
 
 <template>
   <div class="card shadow mb-3">
     <div class="card-body">
       <h3 class="card-title">History</h3>
-      <div class="card mb-2"
-           v-for="item in expendituresList"
-           :key="item.id">
+      <div class="card mb-2" v-for="item in expendituresList" :key="item.id">
         <div class="card-body d-flex align-items-center">
           <div class="col-3 fw-bold">
             {{ item.name }}
