@@ -1,40 +1,28 @@
 <script setup lang="ts">
-import { ref, defineEmits } from 'vue';
-import apiClient from '@/services/api';
-import type { Expenditure } from '@/Expenditure';
+import { ref } from 'vue';
+import api from '@/services/api';
+import { type Expenditure } from '@/Expenditure';
 
 const title = ref('');
 const amount = ref<number | null>(null);
-const currency = ref('EUR');
-const person = ref('');
-const today = new Date().toISOString().slice(0, 10);
-const date = ref(today);
-
-const emits = defineEmits(['expense-added']);
+const date = ref<string>('');
 
 const addExpenditure = async () => {
-  if (title.value && amount.value !== null && currency.value && person.value) {
-    const newExpenditure: Expenditure = {
-      id: 0,
+  if (title.value && amount.value !== null && date.value) {
+    const newExpenditure: Omit<Expenditure, 'id'> = {
       name: title.value,
       amount: amount.value,
-      person: person.value,
-      currency: currency.value
+      date: new Date(date.value)
     };
-
     try {
-      const response = await apiClient.post('/expenditure', newExpenditure);
-      emits('expense-added', response.data);
-      // Optionally, clear the form fields after successful submission
+      await api.createExpenditure(newExpenditure);
       title.value = '';
       amount.value = null;
-      currency.value = 'EUR';
-      person.value = '';
+      date.value = '';
+      // Optionally, emit an event to refresh the expenditures list in History component
     } catch (error) {
-      console.error('Error creating expenditure:', error);
+      console.error(error);
     }
-  } else {
-    console.error('Please fill in all fields');
   }
 };
 </script>
@@ -57,12 +45,8 @@ const addExpenditure = async () => {
           <input type="number" class="form-control" id="amountInput" v-model.number="amount" @keyup.enter="addExpenditure">
         </div>
         <div class="col">
-          <label for="personInput" class="form-label">Person</label>
-          <input type="text" class="form-control" id="personInput" v-model="person" @keyup.enter="addExpenditure">
-        </div>
-        <div class="col">
-          <label for="currencyInput" class="form-label">Currency</label>
-          <input type="text" class="form-control" id="currencyInput" v-model="currency" @keyup.enter="addExpenditure">
+          <label for="dateInput" class="form-label">Date</label>
+          <input type="date" class="form-control" id="dateInput" v-model="date" @keyup.enter="addExpenditure">
         </div>
       </div>
 
