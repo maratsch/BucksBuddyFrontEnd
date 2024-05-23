@@ -2,12 +2,30 @@
 import axios from 'axios';
 
 const apiClient = axios.create({
-    baseURL: '3.125.183.140/api',
+    baseURL: 'https://bucksbuddybackend.onrender.com/api',
     withCredentials: true,
     headers: {
         'Content-Type': 'application/json'
     }
 });
+
+apiClient.get(`/expenses`)
+    .then(response => {
+        // Erfolgreiche Antwort vom Backend erhalten
+        console.log(response.data);
+    })
+    .catch(error => {
+        if (error.response) {
+            // Antwort vom Backend erhalten, aber mit einem Fehlerstatuscode
+            console.error('Backend responded with an error:', error.response.data);
+        } else if (error.request) {
+            // Keine Antwort vom Backend erhalten
+            console.error('Unable to connect to the backend:', error.request);
+        } else {
+            // Ein anderer Fehler ist aufgetreten
+            console.error('An error occurred:', error.message);
+        }
+    });
 
 export default {
     getExpenditures() {

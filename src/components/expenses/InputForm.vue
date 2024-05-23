@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, defineEmits } from 'vue';
+import {ref, defineEmits, onMounted} from 'vue';
 import api from '@/services/api';
 import { type Expenditure } from '@/Expenditure';
 
@@ -22,11 +22,24 @@ const addExpenditure = async () => {
       amount.value = null;
       date.value = '';
       emit('refreshExpenditures'); // Emit event to refresh the expenditures list
+
+      // die Methode aus der api.ts aufrufen
+      await api.getExpenditures();
     } catch (error) {
       console.error(error);
     }
   }
 };
+
+onMounted(async () => {
+  try {
+    const response = await api.getExpenditures();
+    console.log('GET request response:', response.data);
+  } catch (error) {
+    console.error('Error during GET request:', error);
+  }
+});
+
 </script>
 
 <template>
