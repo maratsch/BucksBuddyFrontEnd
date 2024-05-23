@@ -1,33 +1,29 @@
 <script setup lang="ts">
-import { ref, provide } from 'vue';
-import TotalExpense from "@/components/TotalExpense.vue";
-import History from "@/components/History.vue";
-import InputForm, {type Expense} from "@/components/InputForm.vue";
-// Creating a reactive reference for the expenses list
-const expensesList = ref<Expense[]>([]);
-// Providing the list for descendant components
-provide('expensesList', expensesList);
+import { ref } from 'vue';
+import TotalExpenditures from "@/components/expenses/TotalExpenditures.vue";
+import History from "@/components/expenses/History.vue";
+import InputForm from "@/components/expenses/InputForm.vue";
 
+const historyComponent = ref();
 
-/*
-Method to add a new expense object of the Interface Expense to expensesList
- */
-const addExpense = (newExpense : Expense) => {
-  expensesList.value.push(newExpense);
-}
+const handleRefreshExpenditures = () => {
+  if (historyComponent.value) {
+    historyComponent.value.fetchExpenditures();
+  }
+};
 </script>
-
 
 <template>
   <div class="container">
     <div class="row">
       <div class="col col-md-6">
-        <total-expense />
-        <input-form @new-expense="addExpense" />
+        <total-expenditures />
+        <input-form @refreshExpenditures="handleRefreshExpenditures" />
       </div>
       <div class="col col-md-6">
-        <history />
+        <history ref="historyComponent" />
       </div>
     </div>
   </div>
 </template>
+

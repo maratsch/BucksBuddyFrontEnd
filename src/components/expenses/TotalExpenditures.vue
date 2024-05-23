@@ -1,15 +1,26 @@
 <script setup lang="ts">
-import { inject, computed, type Ref } from 'vue';
-import type { Expense } from "./InputForm.vue";
+import { ref, computed, onMounted } from 'vue';
+import api from '@/services/api';
+import { type Expenditure } from '@/Expenditure';
 
-// Typisieren als Ref<Expense[]> für die reaktive Referenz
-const expenses = inject<Ref<Expense[]>>('expensesList');
+const expendituresList = ref<Expenditure[]>([]);
 
-// Computed property to sum the expenses
-const totalExpenses = computed(() => {
-  // Explizite Typangaben im Callback
-  return expenses?.value.reduce((sum: number, expense: Expense) => sum + expense.amount, 0) || 0;
-});   //TODO: Add connection to database to fetch the total expenses of the current user
+const fetchExpenditures = async () => {
+  try {
+    const response = await api.getExpenditures();
+    expendituresList.value = response.data;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const totalExpenditures = computed(() => {
+  return expendituresList.value.reduce((sum, expenditure) => sum + expenditure.amount, 0);
+});
+
+onMounted(() => {
+  fetchExpenditures();
+});
 </script>
 
 <template>
@@ -63,7 +74,7 @@ const totalExpenses = computed(() => {
           <h3>Total Expenses</h3>
         </div>
         <div class="col text-end">
-          <h3>€ {{ totalExpenses }}</h3>
+          <h3>€ {{ totalExpenditures }}</h3>
         </div>
       </div>
 
@@ -72,7 +83,7 @@ const totalExpenses = computed(() => {
           <h4>Budget Left</h4>
         </div>
         <div class="col text-end">
-          <h4>€ {{ totalExpenses }}</h4>
+          <h4>€ {{ 600 - totalExpenditures }}</h4>
         </div>
       </div>
     </div>
