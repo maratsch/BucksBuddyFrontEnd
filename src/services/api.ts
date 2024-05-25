@@ -2,7 +2,10 @@
 import axios from 'axios';
 
 const apiClient = axios.create({
-    baseURL: 'https://bucksbuddybackend.onrender.com/api',
+    // For local development
+    baseURL: 'http://localhost:8080/api',
+    // For Render
+    // baseURL: 'https://bucksbuddybackend.onrender.com/api',
     withCredentials: true,
     headers: {
         'Content-Type': 'application/json'
