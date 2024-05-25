@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref, defineEmits, onMounted} from 'vue';
+import { ref, defineEmits, onMounted } from 'vue';
 import api from '@/services/api';
 import { type Expenditure } from '@/Expenditure';
 
@@ -8,6 +8,14 @@ const amount = ref<number | null>(null);
 const date = ref<string>('');
 
 const emit = defineEmits(['refreshExpenditures']);
+
+const setDateToToday = () => {
+  const now = new Date();
+  const day = String(now.getDate()).padStart(2, '0');
+  const month = String(now.getMonth() + 1).padStart(2, '0'); // Monate sind nullbasiert
+  const year = now.getFullYear();
+  date.value = `${year}-${month}-${day}`;
+};
 
 const addExpenditure = async () => {
   if (title.value && amount.value !== null && date.value) {
@@ -20,7 +28,7 @@ const addExpenditure = async () => {
       await api.createExpenditure(newExpenditure);
       title.value = '';
       amount.value = null;
-      date.value = '';
+      setDateToToday(); // Setze das Datum wieder auf das heutige Datum
       emit('refreshExpenditures'); // Emit event to refresh the expenditures list
 
       // die Methode aus der api.ts aufrufen
@@ -38,8 +46,9 @@ onMounted(async () => {
   } catch (error) {
     console.error('Error during GET request:', error);
   }
-});
 
+  setDateToToday(); // Setze das Datum beim Laden der Seite auf das heutige Datum
+});
 </script>
 
 <template>
