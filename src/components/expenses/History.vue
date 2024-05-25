@@ -30,6 +30,14 @@ onMounted(() => {
 defineExpose({
   fetchExpenditures
 });
+
+const formatDate = (dateString: string): string => {
+  const date = new Date(dateString);
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // Monate sind nullbasiert
+  const year = date.getFullYear();
+  return `${day}.${month}.${year}`;
+};
 </script>
 
 <template>
@@ -45,7 +53,7 @@ defineExpose({
             {{ item.amount }}
           </div>
           <div class="col-3 text-center">
-            {{ new Date(item.date).toLocaleDateString() }}
+            {{ formatDate(item.date) }}
           </div>
           <div class="col-3 d-flex justify-content-end">
             <button class="btn bi bi-pencil-square text-dark fs-5" title="edit">
