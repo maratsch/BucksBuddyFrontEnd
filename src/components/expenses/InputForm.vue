@@ -7,16 +7,19 @@ const title = ref('');
 const amount = ref<number | null>(null);
 const date = ref<string>('');
 
+
 const emit = defineEmits(['refreshExpenditures']);
 
+// Function to set the date to today's date
 const setDateToToday = () => {
   const now = new Date();
   const day = String(now.getDate()).padStart(2, '0');
-  const month = String(now.getMonth() + 1).padStart(2, '0'); // Monate sind nullbasiert
+  const month = String(now.getMonth() + 1).padStart(2, '0');
   const year = now.getFullYear();
   date.value = `${year}-${month}-${day}`;
 };
 
+// Function to add an expenditure
 const addExpenditure = async () => {
   if (title.value && amount.value !== null && date.value) {
     const newExpenditure: Omit<Expenditure, 'id'> = {
@@ -28,10 +31,10 @@ const addExpenditure = async () => {
       await api.createExpenditure(newExpenditure);
       title.value = '';
       amount.value = null;
-      setDateToToday(); // Setze das Datum wieder auf das heutige Datum
-      emit('refreshExpenditures'); // Emit event to refresh the expenditures list
+      setDateToToday();
+      emit('refreshExpenditures');
 
-      // die Methode aus der api.ts aufrufen
+
       await api.getExpenditures();
     } catch (error) {
       console.error(error);
@@ -39,6 +42,8 @@ const addExpenditure = async () => {
   }
 };
 
+
+// Lifecycle hook that runs when the component is mounted
 onMounted(async () => {
   try {
     const response = await api.getExpenditures();
@@ -47,7 +52,7 @@ onMounted(async () => {
     console.error('Error during GET request:', error);
   }
 
-  setDateToToday(); // Setze das Datum beim Laden der Seite auf das heutige Datum
+  setDateToToday();
 });
 </script>
 

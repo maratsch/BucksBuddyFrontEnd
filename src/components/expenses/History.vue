@@ -3,8 +3,10 @@ import { ref, onMounted, defineExpose } from 'vue';
 import api from '@/services/api';
 import { type Expenditure } from '@/Expenditure';
 
+// Defines a reactive reference to hold the list of expenditures
 const expendituresList = ref<Expenditure[]>([]);
 
+// Asynchronously fetches expenditures from the API and updates the expenditures list
 const fetchExpenditures = async () => {
   try {
     const response = await api.getExpenditures();
@@ -14,27 +16,31 @@ const fetchExpenditures = async () => {
   }
 };
 
+// Asynchronously deletes an expenditure by its ID and refreshes the expenditures list
 const deleteExpenditure = async (id: number) => {
   try {
     await api.deleteExpenditure(id);
-    fetchExpenditures(); // Refresh the list after deletion
+    fetchExpenditures();
   } catch (error) {
     console.error(error);
   }
 };
 
+// Lifecycle hook that fetches expenditures when the component is mounted
 onMounted(() => {
   fetchExpenditures();
 });
 
+// Exposes the fetchExpenditures method to the component's instance
 defineExpose({
   fetchExpenditures
 });
 
+// Formats a date string into the format 'DD.MM.YYYY'
 const formatDate = (dateString: string): string => {
   const date = new Date(dateString);
   const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0'); // Monate sind nullbasiert
+  const month = String(date.getMonth() + 1).padStart(2, '0');
   const year = date.getFullYear();
   return `${day}.${month}.${year}`;
 };
