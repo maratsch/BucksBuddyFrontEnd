@@ -1,38 +1,10 @@
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue';
-
-const theme = ref('light'); // Standardmäßig auf 'light' setzen
-
-const applyTheme = (theme: string) => {
-  if (theme === 'dark') {
-    document.documentElement.setAttribute('data-bs-theme', 'dark');
-  } else {
-    document.documentElement.setAttribute('data-bs-theme', 'light');
-  }
-};
-
-const loadTheme = () => {
-  const savedTheme = localStorage.getItem('theme') || 'light'; // Standardmäßig auf 'light' setzen
-  theme.value = savedTheme;
-  applyTheme(savedTheme);
-};
+import { useThemeStore } from '@/stores/themeStore';
+const themeStore = useThemeStore();
 
 const toggleTheme = () => {
-  theme.value = theme.value === 'light' ? 'dark' : 'light';
+  themeStore.applyTheme(themeStore.theme === 'light' ? 'dark' : 'light');
 };
-
-const saveTheme = (newTheme: string) => {
-  localStorage.setItem('theme', newTheme);
-  applyTheme(newTheme);
-};
-
-onMounted(() => {
-  loadTheme();
-});
-
-watch(theme, (newTheme) => {
-  saveTheme(newTheme);
-});
 </script>
 
 <template>
@@ -45,18 +17,17 @@ watch(theme, (newTheme) => {
       </div>
       <ul class="navbar-nav ms-auto align-self-center">
         <li class="nav-item">
-          <RouterLink to="/newjourney" :class="theme === 'light' ? 'text-dark' : 'text-light'" class="bi bi-plus-lg m-2 fs-3" title="Create a new Journey"></RouterLink>
+          <RouterLink to="/newjourney" :class="themeStore.theme === 'light' ? 'text-dark' : 'text-light'" class="bi bi-plus-lg m-2 fs-3" title="Create a new Journey"></RouterLink>
         </li>
         <li class="nav-item">
-          <RouterLink to="/main" :class="theme === 'light' ? 'text-dark' : 'text-light'" class="bi bi-card-list m-2 fs-3" title="Main"></RouterLink>
+          <RouterLink to="/main" :class="themeStore.theme === 'light' ? 'text-dark' : 'text-light'" class="bi bi-card-list m-2 fs-3" title="Main"></RouterLink>
         </li>
         <li class="nav-item">
-          <RouterLink to="/settings" :class="theme === 'light' ? 'text-dark' : 'text-light'" class="bi bi-gear m-2 fs-3" title="Settings"></RouterLink>
+          <RouterLink to="/settings" :class="themeStore.theme === 'light' ? 'text-dark' : 'text-light'" class="bi bi-gear m-2 fs-3" title="Settings"></RouterLink>
         </li>
-        <li class="nav-item d-flex align-items-center ms-3">
-          <i class="bi bi-sun fs-3" v-if="theme === 'light'"></i>
-          <i class="bi bi-moon-stars fs-3" v-if="theme === 'dark'"></i>
-          <i class="bi fs-3 mx-2" :class="theme === 'light' ? 'bi-toggle-off' : 'bi-toggle-on' " @click="toggleTheme"></i>
+        <li class="nav-item ms-5 d-flex align-items-center">
+          <i :class="themeStore.theme === 'light' ? 'bi bi-sun fs-3 text-dark' : 'bi bi-moon-stars fs-3 text-light'"></i>
+          <i :class="themeStore.theme === 'light' ? 'bi bi-toggle-off fs-3 mx-2 text-dark' : 'bi bi-toggle-on fs-3 mx-2 text-light'" @click="toggleTheme"></i>
         </li>
       </ul>
     </div>

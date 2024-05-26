@@ -1,7 +1,10 @@
 <script setup lang="ts">
-import { ref, onMounted, defineExpose } from 'vue';
+import {ref, onMounted, defineExpose} from 'vue';
 import api from '@/services/api';
-import { type Expenditure } from '@/Expenditure';
+import {type Expenditure} from '@/Expenditure';
+import {useThemeStore} from '@/stores/themeStore';
+
+const themeStore = useThemeStore();
 
 // Definiert eine reaktive Referenz für die Ausgabenliste
 const expendituresList = ref<Expenditure[]>([]);
@@ -72,6 +75,12 @@ const formatDate = (dateString: string): string => {
   const year = date.getFullYear();
   return `${day}.${month}.${year}`;
 };
+
+// Formatiert einen Betrag als Dezimalzahl mit zwei Nachkommastellen
+const formatAmount = (amount: number): string => {
+  return amount.toFixed(2);
+};
+
 </script>
 
 <template>
@@ -84,26 +93,39 @@ const formatDate = (dateString: string): string => {
             {{ item.name }}
           </div>
           <div class="col-3" v-else>
-            <input v-model="item.name" class="form-control" />
+            <input v-model="item.name" class="form-control"/>
           </div>
           <div class="col-3 text-center" v-if="!item.isEditing">
-            {{ item.amount }}
+            {{ formatAmount(item.amount) }} EUR
           </div>
           <div class="col-3" v-else>
-            <input v-model="item.amount" type="number" class="form-control" />
+            <input v-model="item.amount" type="number" class="form-control"/>
           </div>
           <div class="col-3 text-center" v-if="!item.isEditing">
             {{ formatDate(item.date) }}
           </div>
           <div class="col-3" v-else>
-            <input v-model="item.date" type="date" class="form-control" />
+            <input v-model="item.date" type="date" class="form-control"/>
           </div>
           <div class="col-3 d-flex justify-content-end">
-            <button class="btn bi bi-pencil-square text-dark fs-5" title="edit" v-if="!item.isEditing" @click="editExpenditure(item.id)">
+            <button
+                :class="`btn bi bi-pencil-square fs-5 ${themeStore.theme === 'light' ? 'text-dark' : 'text-light'}`"
+                title="edit"
+                v-if="!item.isEditing"
+                @click="editExpenditure(item.id)">
             </button>
-            <button class="btn bi bi-save text-dark fs-5" title="save" v-else @click="saveExpenditure(item.id, item)">
+
+            <button
+                :class="`btn bi bi-save fs-5 ${themeStore.theme === 'light' ? 'text-dark' : 'text-light'}`"
+                title="save"
+                v-else
+                @click="saveExpenditure(item.id, item)">
             </button>
-            <button class="btn bi bi-trash text-dark fs-5" title="delete" @click="deleteExpenditure(item.id)">
+
+            <button
+                :class="`btn bi bi-trash fs-5 ${themeStore.theme === 'light' ? 'text-dark' : 'text-light'}`"
+                title="delete"
+                @click="deleteExpenditure(item.id)">
             </button>
           </div>
         </div>
