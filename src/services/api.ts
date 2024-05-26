@@ -34,6 +34,9 @@ export default {
     getExpenditures() {
         return apiClient.get('/expenditures');
     },
+    getExpenditureById(id: number) {
+        return apiClient.get(`/expenditure?id=${id}`);
+    },
     createExpenditure(expenditure: any) {
         return apiClient.post('/expenditure', expenditure);
     },

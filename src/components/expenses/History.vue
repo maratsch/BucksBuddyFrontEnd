@@ -3,20 +3,23 @@ import { ref, onMounted, defineExpose } from 'vue';
 import api from '@/services/api';
 import { type Expenditure } from '@/Expenditure';
 
-// Defines a reactive reference to hold the list of expenditures
+// Definiert eine reaktive Referenz für die Ausgabenliste
 const expendituresList = ref<Expenditure[]>([]);
 
-// Asynchronously fetches expenditures from the API and updates the expenditures list
+// Ruft die Ausgaben asynchron von der API ab und aktualisiert die Ausgabenliste
 const fetchExpenditures = async () => {
   try {
     const response = await api.getExpenditures();
-    expendituresList.value = response.data;
+    expendituresList.value = response.data.map((expenditure: Expenditure) => ({
+      ...expenditure,
+      isEditing: false,
+    }));
   } catch (error) {
     console.error(error);
   }
 };
 
-// Asynchronously deletes an expenditure by its ID and refreshes the expenditures list
+// Löscht eine Ausgabe asynchron nach ihrer ID und aktualisiert die Ausgabenliste
 const deleteExpenditure = async (id: number) => {
   try {
     await api.deleteExpenditure(id);
@@ -26,17 +29,42 @@ const deleteExpenditure = async (id: number) => {
   }
 };
 
-// Lifecycle hook that fetches expenditures when the component is mounted
+// Aktiviert den Bearbeitungsmodus für eine Ausgabe und lädt die vollständige Ausgabe aus der API
+const editExpenditure = async (id: number) => {
+  try {
+    const response = await api.getExpenditureById(id);
+    const expenditure = response.data;
+    expenditure.isEditing = true;
+    const index = expendituresList.value.findIndex(item => item.id === id);
+    if (index !== -1) {
+      expendituresList.value[index] = expenditure;
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+// Speichert die Änderungen und aktualisiert die Ausgabenliste
+const saveExpenditure = async (id: number, updatedExpenditure: Expenditure) => {
+  try {
+    await api.updateExpenditure(updatedExpenditure);
+    fetchExpenditures();
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+// Hook, der die Ausgaben abruft, wenn die Komponente gemountet wird
 onMounted(() => {
   fetchExpenditures();
 });
 
-// Exposes the fetchExpenditures method to the component's instance
+// Methode, die der Instanz der Komponente ausgesetzt wird
 defineExpose({
   fetchExpenditures
 });
 
-// Formats a date string into the format 'DD.MM.YYYY'
+// Formatiert ein Datumsobjekt im Format 'DD.MM.YYYY'
 const formatDate = (dateString: string): string => {
   const date = new Date(dateString);
   const day = String(date.getDate()).padStart(2, '0');
@@ -50,19 +78,30 @@ const formatDate = (dateString: string): string => {
   <div class="card shadow mb-3">
     <div class="card-body">
       <h3 class="card-title">History</h3>
-      <div class="card mb-2" v-for="item in expendituresList" :key="item.id">
+      <div class="card shadow-sm mb-2" v-for="item in expendituresList" :key="item.id">
         <div class="card-body d-flex align-items-center">
-          <div class="col-3 fw-bold">
+          <div class="col-3 fw-bold" v-if="!item.isEditing">
             {{ item.name }}
           </div>
-          <div class="col-3 text-center">
+          <div class="col-3" v-else>
+            <input v-model="item.name" class="form-control" />
+          </div>
+          <div class="col-3 text-center" v-if="!item.isEditing">
             {{ item.amount }}
           </div>
-          <div class="col-3 text-center">
+          <div class="col-3" v-else>
+            <input v-model="item.amount" type="number" class="form-control" />
+          </div>
+          <div class="col-3 text-center" v-if="!item.isEditing">
             {{ formatDate(item.date) }}
           </div>
+          <div class="col-3" v-else>
+            <input v-model="item.date" type="date" class="form-control" />
+          </div>
           <div class="col-3 d-flex justify-content-end">
-            <button class="btn bi bi-pencil-square text-dark fs-5" title="edit">
+            <button class="btn bi bi-pencil-square text-dark fs-5" title="edit" v-if="!item.isEditing" @click="editExpenditure(item.id)">
+            </button>
+            <button class="btn bi bi-save text-dark fs-5" title="save" v-else @click="saveExpenditure(item.id, item)">
             </button>
             <button class="btn bi bi-trash text-dark fs-5" title="delete" @click="deleteExpenditure(item.id)">
             </button>

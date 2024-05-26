@@ -4,5 +4,6 @@ export interface Expenditure {
     name: string;
     amount: number;
     date: Date;
+    isEditing?: boolean;
 }
 
