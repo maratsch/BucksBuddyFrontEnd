@@ -84,8 +84,8 @@ const formatAmount = (amount: number): string => {
   <div class="card shadow mb-3">
     <div class="card-body">
       <h3 class="card-title">History</h3>
-      <div class="card shadow-sm mb-2" v-for="item in expendituresList" :key="item.id">
-        <div class="card-body d-flex align-items-center p-1 ms-2">
+      <div class="historycard shadow-sm mb-2" v-for="item in expendituresList" :key="item.id">
+        <div class="historycard-body d-flex align-items-center p-1 ms-2">
 
           <div class="col-3 fw-bold" v-if="!item.isEditing">
             {{ item.name }}
