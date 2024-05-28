@@ -3,7 +3,7 @@ import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
 export const useThemeStore = defineStore('theme', () => {
-    const theme = ref('light'); // Standardmäßig auf 'light' setzen
+    const theme = ref('dark'); // Default is dark
 
     const applyTheme = (newTheme: string) => {
         theme.value = newTheme;

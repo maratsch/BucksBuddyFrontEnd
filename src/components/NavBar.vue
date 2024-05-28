@@ -8,7 +8,7 @@ const toggleTheme = () => {
 </script>
 
 <template>
-  <nav class="navbar shadow mb-3 navbar-expand bg-body-tertiary">
+  <nav class="navbar shadow rounded-3 m-3 navbar-expand bg-body-tertiary">
     <div class="container row-cols-2">
       <div class="col-2 d-flex align-items-center">
         <RouterLink to="/main">
