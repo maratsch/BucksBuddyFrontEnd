@@ -137,6 +137,7 @@ const formatAmount = (amount: number): string => {
 
 <style scoped>
 .historycard {
+  background-color: var(--bs-body-bg);
   border: 1px solid; /* Fügt einen festen Rahmen hinzu */
   border-color: var(--bs-border-color); /* Setzt die Rahmenfarbe */
   border-radius: 5px;
