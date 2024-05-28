@@ -1,13 +1,26 @@
+:root {
+    --bg-light: linear-gradient(to bottom, teal, white);
+    --bg-dark: linear-gradient(to bottom, teal, black);
+}
+
 html, body {
     height: 100%;
     margin: 0;
     padding: 0;
 }
 
+[data-bs-theme="light"] body {
+    background-image: var(--bg-light);
+}
+
+[data-bs-theme="dark"] body {
+    background-image: var(--bg-dark);
+}
+
 body {
-    background-image: linear-gradient(to bottom, teal, black);
     background-size: cover; /* Stellt sicher, dass das Hintergrundbild den gesamten Bereich abdeckt */
 }
+
 
 .card {
     background-color: var(--bs-tertiary-bg);
