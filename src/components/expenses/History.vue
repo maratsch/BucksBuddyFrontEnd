@@ -2,9 +2,6 @@
 import {ref, onMounted, defineExpose} from 'vue';
 import api from '@/services/api';
 import {type Expenditure} from '@/Expenditure';
-import {useThemeStore} from '@/stores/themeStore';
-
-const themeStore = useThemeStore();
 
 // Definiert eine reaktive Referenz für die Ausgabenliste
 const expendituresList = ref<Expenditure[]>([]);
@@ -88,42 +85,46 @@ const formatAmount = (amount: number): string => {
     <div class="card-body">
       <h3 class="card-title">History</h3>
       <div class="card shadow-sm mb-2" v-for="item in expendituresList" :key="item.id">
-        <div class="card-body d-flex align-items-center">
+        <div class="card-body d-flex align-items-center p-1 ms-2">
+
           <div class="col-3 fw-bold" v-if="!item.isEditing">
             {{ item.name }}
           </div>
           <div class="col-3" v-else>
             <input v-model="item.name" class="form-control"/>
           </div>
+
           <div class="col-3 text-center" v-if="!item.isEditing">
             {{ formatAmount(item.amount) }} EUR
           </div>
           <div class="col-3" v-else>
-            <input v-model="item.amount" type="number" class="form-control"/>
+            <input v-model="item.amount" type="number" class="form-control ms-2"/>
           </div>
+
           <div class="col-3 text-center" v-if="!item.isEditing">
             {{ formatDate(item.date) }}
           </div>
           <div class="col-3" v-else>
-            <input v-model="item.date" type="date" class="form-control"/>
+            <input v-model="item.date" type="date" class="form-control ms-3"/>
           </div>
+
           <div class="col-3 d-flex justify-content-end">
             <button
-                :class="`btn bi bi-pencil-square fs-5 ${themeStore.theme === 'light' ? 'text-dark' : 'text-light'}`"
+                class="btn bi bi-pencil-square fs-5"
                 title="edit"
                 v-if="!item.isEditing"
                 @click="editExpenditure(item.id)">
             </button>
 
             <button
-                :class="`btn bi bi-save fs-5 ${themeStore.theme === 'light' ? 'text-dark' : 'text-light'}`"
+                class="btn bi bi-save fs-5"
                 title="save"
                 v-else
                 @click="saveExpenditure(item.id, item)">
             </button>
 
             <button
-                :class="`btn bi bi-trash fs-5 ${themeStore.theme === 'light' ? 'text-dark' : 'text-light'}`"
+                class="btn bi bi-trash fs-5"
                 title="delete"
                 @click="deleteExpenditure(item.id)">
             </button>

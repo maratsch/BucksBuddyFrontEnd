@@ -17,17 +17,26 @@ const toggleTheme = () => {
       </div>
       <ul class="navbar-nav ms-auto align-self-center">
         <li class="nav-item">
-          <RouterLink to="/newjourney" :class="themeStore.theme === 'light' ? 'text-dark' : 'text-light'" class="bi bi-plus-lg m-2 fs-3" title="Create a new Journey"></RouterLink>
+          <RouterLink to="/newjourney"
+                      class="bi bi-plus-lg m-2 fs-3 icon-link-hover"
+                      title="Create a new Journey">
+          </RouterLink>
         </li>
         <li class="nav-item">
-          <RouterLink to="/main" :class="themeStore.theme === 'light' ? 'text-dark' : 'text-light'" class="bi bi-card-list m-2 fs-3" title="Main"></RouterLink>
+          <RouterLink to="/main"
+                      class="bi bi-card-list m-2 fs-3 icon-link-hover"
+                      title="Main">
+          </RouterLink>
         </li>
         <li class="nav-item">
-          <RouterLink to="/settings" :class="themeStore.theme === 'light' ? 'text-dark' : 'text-light'" class="bi bi-gear m-2 fs-3" title="Settings"></RouterLink>
+          <RouterLink to="/settings"
+                      class="bi bi-gear m-2 fs-3 icon-link-hover"
+                      title="Settings">
+          </RouterLink>
         </li>
         <li class="nav-item ms-5 d-flex align-items-center">
-          <i :class="themeStore.theme === 'light' ? 'bi bi-sun fs-3 text-dark' : 'bi bi-moon-stars fs-3 text-light'"></i>
-          <i :class="themeStore.theme === 'light' ? 'bi bi-toggle-off fs-3 mx-2 text-dark' : 'bi bi-toggle-on fs-3 mx-2 text-light'" @click="toggleTheme"></i>
+          <i :class="themeStore.theme === 'light' ? 'bi bi-sun fs-3' : 'bi bi-moon-stars fs-3'"></i>
+          <i :class="themeStore.theme === 'light' ? 'bi bi-toggle-off fs-3 mx-2' : 'bi bi-toggle-on fs-3 mx-2'" @click="toggleTheme"></i>
         </li>
       </ul>
     </div>
