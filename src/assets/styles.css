@@ -5,7 +5,7 @@ html, body {
 }
 
 body {
-    background-image: linear-gradient(to bottom, darkslategrey, black);
+    background-image: linear-gradient(to bottom, teal, black);
     background-size: cover; /* Stellt sicher, dass das Hintergrundbild den gesamten Bereich abdeckt */
 }
 
