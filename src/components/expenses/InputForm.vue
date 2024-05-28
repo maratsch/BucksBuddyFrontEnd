@@ -6,9 +6,12 @@ import { type Expenditure } from '@/Expenditure';
 const title = ref('');
 const amount = ref<number | null>(null);
 const date = ref<string>('');
-
+import Freecurrencyapi from '@everapi/freecurrencyapi-js';
 
 const emit = defineEmits(['refreshExpenditures']);
+
+const currencyapi = new Freecurrencyapi('fca_live_SXUfhiLcLAt87AE3F3ZZZ9i4yHzyQ4kfmKITa6Vy');
+
 
 // Function to set the date to today's date
 const setDateToToday = () => {
@@ -18,6 +21,30 @@ const setDateToToday = () => {
   const year = now.getFullYear();
   date.value = `${year}-${month}-${day}`;
 };
+
+// Aufruf der CurrencyAPI-Methode
+currencyapi.latest({
+  base_currency: "EUR",
+  currencies: "USD"
+}).then((response: any) => {
+  // Überprüfe, ob response vorhanden und response.data vorhanden sind
+  if (response && response.data && response.data.USD) {
+    const exchangeRate = response.data.USD;
+
+    // Anzeige des Wechselkurses auf der Benutzeroberfläche
+    const exchangeRateDisplay = document.getElementById('exchangeRateDisplay');
+    if (exchangeRateDisplay) {
+      exchangeRateDisplay.innerText = exchangeRate.toString();
+    } else {
+      console.error('Element with ID "exchangeRateDisplay" not found');
+    }
+  } else {
+    console.error('Ungültige API-Antwort:', response);
+  }
+}).catch((error: any) => {
+  console.error('Fehler beim Abrufen der Wechselkurse:', error);
+});
+
 
 // Function to add an expenditure
 const addExpenditure = async () => {
@@ -72,6 +99,10 @@ onMounted(async () => {
         <div class="col">
           <label for="amountInput" class="form-label">Amount</label>
           <input type="number" class="form-control" id="amountInput" v-model.number="amount" @keyup.enter="addExpenditure">
+        </div>
+        <div class="col">
+          <label for="exchangeRateDisplay" class="form-label">Exchange Rate:</label>
+          <span id="exchangeRateDisplay"></span>
         </div>
         <div class="col">
           <label for="dateInput" class="form-label">Date</label>
