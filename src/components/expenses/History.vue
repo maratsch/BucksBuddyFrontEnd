@@ -134,3 +134,11 @@ const formatAmount = (amount: number): string => {
     </div>
   </div>
 </template>
+
+<style scoped>
+.historycard {
+  border: 1px solid; /* Fügt einen festen Rahmen hinzu */
+  border-color: var(--bs-border-color); /* Setzt die Rahmenfarbe */
+  border-radius: 5px;
+}
+</style>

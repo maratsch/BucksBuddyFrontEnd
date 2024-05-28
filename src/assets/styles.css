@@ -1,16 +1,17 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
 body {
-    background-image: linear-gradient(to right, darkslategrey, black) ;
+    background-image: linear-gradient(to bottom, darkslategrey, black);
+    background-size: cover; /* Stellt sicher, dass das Hintergrundbild den gesamten Bereich abdeckt */
 }
 
 .card {
     background-color: var(--bs-tertiary-bg);
     border: none; /* Entfernt den Rahmen */
-}
-
-.historycard {
-    border: 1px solid; /* Fügt einen festen Rahmen hinzu */
-    border-color: var(--bs-border-color); /* Setzt die Rahmenfarbe */
-    border-radius: 5px;
 }
 
 h2 {
