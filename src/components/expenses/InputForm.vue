@@ -3,6 +3,14 @@ import { ref, defineEmits, onMounted } from 'vue';
 import api from '@/services/api';
 import { type Expenditure } from '@/Expenditure';
 
+import { defineExpose } from 'vue';
+
+// Definiere deine Variable innerhalb des <script setup>-Blocks
+const exchangeRate = 0; // Beispielwert, ersetze ihn durch deinen echten Wert
+
+// Expose die exchangeRate-Variable für die Verwendung in anderen Komponenten
+defineExpose({ exchangeRate });
+
 const title = ref('');
 const amount = ref<number | null>(null);
 const date = ref<string>('');
@@ -10,8 +18,7 @@ import Freecurrencyapi from '@everapi/freecurrencyapi-js';
 
 const emit = defineEmits(['refreshExpenditures']);
 
-const currencyapi = new Freecurrencyapi('fca_live_SXUfhiLcLAt87AE3F3ZZZ9i4yHzyQ4kfmKITa6Vy');
-
+// TODO ExchangeRate aus der Datenbank holen
 
 // Function to set the date to today's date
 const setDateToToday = () => {
@@ -21,30 +28,6 @@ const setDateToToday = () => {
   const year = now.getFullYear();
   date.value = `${year}-${month}-${day}`;
 };
-
-// Aufruf der CurrencyAPI-Methode
-currencyapi.latest({
-  base_currency: "EUR",
-  currencies: "USD"
-}).then((response: any) => {
-  // Überprüfe, ob response vorhanden und response.data vorhanden sind
-  if (response && response.data && response.data.USD) {
-    const exchangeRate = response.data.USD;
-
-    // Anzeige des Wechselkurses auf der Benutzeroberfläche
-    const exchangeRateDisplay = document.getElementById('exchangeRateDisplay');
-    if (exchangeRateDisplay) {
-      exchangeRateDisplay.innerText = exchangeRate.toString();
-    } else {
-      console.error('Element with ID "exchangeRateDisplay" not found');
-    }
-  } else {
-    console.error('Ungültige API-Antwort:', response);
-  }
-}).catch((error: any) => {
-  console.error('Fehler beim Abrufen der Wechselkurse:', error);
-});
-
 
 // Function to add an expenditure
 const addExpenditure = async () => {
@@ -69,6 +52,9 @@ const addExpenditure = async () => {
   }
 };
 
+const CalcHomeAmount = (amount: number) => {
+  return amount * exchangeRate;
+};
 
 // Lifecycle hook that runs when the component is mounted
 onMounted(async () => {
@@ -101,8 +87,12 @@ onMounted(async () => {
           <input type="number" class="form-control" id="amountInput" v-model.number="amount" @keyup.enter="addExpenditure">
         </div>
         <div class="col">
-          <label for="exchangeRateDisplay" class="form-label">Exchange Rate:</label>
-          <span id="exchangeRateDisplay"></span>
+          <label for="exchangeRateDisplay" class="form-label">In Home Currency</label>
+          <br>
+          <!-- Verwende die ref-Datenvariable 'amount' und multipliziere sie mit 'exchangeRate' -->
+          <span style="line-height: 2em;"> {{ amount !== null ? amount * exchangeRate : 'N/A' }} </span>
+          <!-- Füge einen Seitenumbruch ein -->
+
         </div>
         <div class="col">
           <label for="dateInput" class="form-label">Date</label>

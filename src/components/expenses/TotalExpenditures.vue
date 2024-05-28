@@ -2,6 +2,11 @@
 import { ref, computed, onMounted } from 'vue';
 import api from '@/services/api';
 import { type Expenditure } from '@/Expenditure';
+import Freecurrencyapi from '@everapi/freecurrencyapi-js';
+
+
+const currencyapi = new Freecurrencyapi('fca_live_SXUfhiLcLAt87AE3F3ZZZ9i4yHzyQ4kfmKITa6Vy');
+const emit = defineEmits(['ExchangeRate']);
 
 const expendituresList = ref<Expenditure[]>([]);
 
@@ -13,6 +18,38 @@ const fetchExpenditures = async () => {
     console.error(error);
   }
 };
+
+
+
+let exchangeRate = 0;
+import { defineExpose } from 'vue';
+defineExpose({ exchangeRate });
+const baseCurrency = 'EUR'; //TODO Hier die Verbindung mit dem Profil bzw. der Standardwährung einfügen
+const targetCurrency = 'USD'; //TODO Hier noch die Verbindung mit der Journey einfügen
+
+// Aufruf der CurrencyAPI-Methode
+currencyapi.latest({
+  base_currency: baseCurrency,
+  currencies: targetCurrency
+}).then((response: any) => {
+  // Überprüfe, ob response vorhanden und response.data vorhanden sind
+  if (response && response.data && response.data.USD) {
+    exchangeRate = response.data.USD;
+    // Anzeige des Wechselkurses auf der Benutzeroberfläche
+    const exchangeRateDisplay = document.getElementById('exchangeRateDisplay');
+    if (exchangeRateDisplay) {
+      exchangeRateDisplay.innerText = `${exchangeRate}`;
+    } else {
+      console.error('Element with ID "exchangeRateDisplay" not found');
+    }
+  } else {
+    console.error('Ungültige API-Antwort:', response);
+  }
+}).catch((error: any) => {
+  console.error('Fehler beim Abrufen der Wechselkurse:', error);
+});
+
+
 
 const totalExpenditures = computed(() => {
   return expendituresList.value.reduce((sum, expenditure) => sum + expenditure.amount, 0);
@@ -56,6 +93,15 @@ onMounted(() => {
         </div>
         <div class="col text-end">
           <h4>USD</h4>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col text-start">
+          <h4>Current Exchange Rate</h4>
+        </div>
+        <div class="col text-end">
+          <h4> <span id="exchangeRateDisplay"></span> </h4>
         </div>
       </div>
 
