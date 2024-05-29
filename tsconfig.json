@@ -2,7 +2,8 @@
 
   "files": [],
   "compilerOptions": {
-    "typeRoots": ["./types", "./node_modules/@types"]
+    "typeRoots": ["./types", "./node_modules/@types"],
+    "allowImportingTsExtensions": true
   },
   "include": ["./types/**/*.ts", "./src/**/*.ts"],
   "references": [
