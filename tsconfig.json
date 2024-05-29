@@ -1,12 +1,25 @@
 {
-  "files": [],
   "compilerOptions": {
-    "typeRoots": ["./types", "./node_modules/@types"]
+    "typeRoots": ["./types", "./node_modules/@types"],
+    "allowImportingTsExtensions": true,
+    "declaration": true,  // Ensure declaration files are generated
+    "emitDeclarationOnly": true,  // Only emit declaration files
+    "outDir": "./dist",  // Output directory for generated files
+    "rootDir": "./src",  // Root directory of input files
+    "composite": true,  // Enable for project references
+    "tsBuildInfoFile": "./dist/tsconfig.tsbuildinfo",  // Build info file for incremental builds
+    // Add other necessary compiler options here
   },
   "include": ["./types/**/*.ts", "./src/**/*.ts"],
   "references": [
-    { "path": "./tsconfig.node.json" },
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.vitest.json" }
+    {
+      "path": "./tsconfig.node.json"
+    },
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.vitest.json"
+    }
   ]
 }
