@@ -1,6 +1,6 @@
 :root {
-    --bg-light: linear-gradient(to bottom, teal, white);
-    --bg-dark: linear-gradient(to bottom, teal, black);
+    --bg-light: linear-gradient(to bottom, #f6f1d3, #648880 85%, #293f50);
+    --bg-dark: linear-gradient(to bottom, #293f50, #648880 85%, #f6f1d3);
 }
 
 /* Light/Dark Mode begins*/
