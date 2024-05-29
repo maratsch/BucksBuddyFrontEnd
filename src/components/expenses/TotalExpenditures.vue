@@ -1,11 +1,15 @@
 <script setup lang="ts">
-import {ref, computed, onMounted} from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import api from '@/services/api';
-import {type Expenditure} from '@/Expenditure';
-import Freecurrencyapi from "@everapi/freecurrencyapi-js";
+import { type Expenditure } from '@/Expenditure';
+import { exchangeRate } from '@/services/exchangeRate';
+import { defineExpose } from 'vue';
 
+defineExpose({ exchangeRate });
+
+
+const emit = defineEmits(['ExchangeRate']);
 const expendituresList = ref<Expenditure[]>([]);
-const currencyapi = new Freecurrencyapi('fca_live_SXUfhiLcLAt87AE3F3ZZZ9i4yHzyQ4kfmKITa6Vy');
 
 const fetchExpenditures = async () => {
   try {
@@ -16,30 +20,7 @@ const fetchExpenditures = async () => {
   }
 };
 
-let exchangeRate: number | null = null; // Initialisiere exchangeRate außerhalb der Methode
-// Aufruf der CurrencyAPI-Methode
-currencyapi.latest({
-  base_currency: "EUR",
-  currencies: "USD"
-}).then((response: any) => {
-  // Überprüfe, ob response vorhanden und response.data vorhanden sind
-  if (response && response.data && response.data.USD) {
-    exchangeRate = response.data.USD;
 
-    // Anzeige des Wechselkurses auf der Benutzeroberfläche
-    const exchangeRateDisplay = document.getElementById('exchangeRateDisplay');
-    if (exchangeRateDisplay && exchangeRate!==null) {
-      exchangeRateDisplay.innerText = exchangeRate.toString();
-    } else {
-      console.error('Element with ID "exchangeRateDisplay" not found');
-    }
-  } else {
-    console.error('Ungültige API-Antwort:', response);
-  }
-}).catch((error: any) => {
-  console.error('Fehler beim Abrufen der Wechselkurse:', error);
-});
-console.log('Aktueller Wechselkurs:', exchangeRate);
 
 
 const totalExpenditures = computed(() => {
@@ -89,19 +70,19 @@ onMounted(() => {
 
       <div class="row">
         <div class="col text-start">
-          <h4>Budget</h4>
+          <h4>Current Exchange Rate</h4>
         </div>
         <div class="col text-end">
-          <h4>€ 600</h4>
+          <h4> {{exchangeRate}}</h4>
         </div>
       </div>
 
       <div class="row">
         <div class="col text-start">
-          <h4>Exchange Rate</h4>
+          <h4>Budget</h4>
         </div>
         <div class="col text-end">
-          <h4> {{exchangeRate}} </h4>
+          <h4>€ 600</h4>
         </div>
       </div>
 
