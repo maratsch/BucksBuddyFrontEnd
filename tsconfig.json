@@ -10,7 +10,7 @@
     "tsBuildInfoFile": "./dist/tsconfig.tsbuildinfo",  // Build info file for incremental builds
     // Add other necessary compiler options here
   },
-  "include": ["./types/**/*.ts", "./src/**/*.ts"],
+  "include": ["./types/**/*.ts", "./src/**/*.ts", "./src/router/**/*.ts", "./src/stores/**/*.ts"],
   "references": [
     {
       "path": "./tsconfig.node.json"
