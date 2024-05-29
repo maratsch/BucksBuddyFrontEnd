@@ -19,6 +19,7 @@ const fetchExpenditures = async () => {
   }
 };
 
+
 // Löscht eine Ausgabe asynchron nach ihrer ID und aktualisiert die Ausgabenliste
 const deleteExpenditure = async (id: number) => {
   try {
@@ -65,7 +66,7 @@ defineExpose({
 });
 
 // Formatiert ein Datumsobjekt im Format 'DD.MM.YYYY'
-const formatDate = (dateString: string): string => {
+const formatDate = (dateString: Date): string => {
   const date = new Date(dateString);
   const day = String(date.getDate()).padStart(2, '0');
   const month = String(date.getMonth() + 1).padStart(2, '0');

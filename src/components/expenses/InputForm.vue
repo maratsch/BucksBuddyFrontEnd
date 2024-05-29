@@ -3,22 +3,13 @@ import { ref, defineEmits, onMounted } from 'vue';
 import api from '@/services/api';
 import { type Expenditure } from '@/Expenditure';
 
-import { defineExpose } from 'vue';
-
-// Definiere deine Variable innerhalb des <script setup>-Blocks
-const exchangeRate = 0; // Beispielwert, ersetze ihn durch deinen echten Wert
-
-// Expose die exchangeRate-Variable für die Verwendung in anderen Komponenten
-defineExpose({ exchangeRate });
-
 const title = ref('');
 const amount = ref<number | null>(null);
 const date = ref<string>('');
-import Freecurrencyapi from '@everapi/freecurrencyapi-js';
 
 const emit = defineEmits(['refreshExpenditures']);
 
-// TODO ExchangeRate aus der Datenbank holen
+
 
 // Function to set the date to today's date
 const setDateToToday = () => {
@@ -52,9 +43,6 @@ const addExpenditure = async () => {
   }
 };
 
-const CalcHomeAmount = (amount: number) => {
-  return amount * exchangeRate;
-};
 
 // Lifecycle hook that runs when the component is mounted
 onMounted(async () => {
@@ -87,12 +75,8 @@ onMounted(async () => {
           <input type="number" class="form-control" id="amountInput" v-model.number="amount" @keyup.enter="addExpenditure">
         </div>
         <div class="col">
-          <label for="exchangeRateDisplay" class="form-label">In Home Currency</label>
-          <br>
-          <!-- Verwende die ref-Datenvariable 'amount' und multipliziere sie mit 'exchangeRate' -->
-          <span style="line-height: 2em;"> {{ amount !== null ? amount * exchangeRate : 'N/A' }} </span>
-          <!-- Füge einen Seitenumbruch ein -->
-
+          <label for="exchangeRateDisplay" class="form-label">Exchange Rate:</label>
+          <span id="exchangeRateDisplay"></span>
         </div>
         <div class="col">
           <label for="dateInput" class="form-label">Date</label>
