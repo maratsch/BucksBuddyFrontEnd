@@ -12,7 +12,7 @@ const apiClient = axios.create({
     }
 });
 
-apiClient.get(`/expenses`)
+apiClient.get(`/`)
     .then(response => {
         // Erfolgreiche Antwort vom Backend erhalten
         console.log(response.data);
