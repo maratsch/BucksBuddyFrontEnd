@@ -1,3 +1,5 @@
+// src/main.ts
+
 import './assets/styles.css'
 
 import { createApp } from 'vue'
@@ -7,6 +9,6 @@ import { createPinia } from 'pinia'
 
 createApp(App).use(createPinia()).use(router).mount("#app")
 
-import { useThemeStore } from './stores/themeStore.ts';
+import { useThemeStore } from './stores/themeStore';
 const themeStore = useThemeStore();
 themeStore.loadTheme();

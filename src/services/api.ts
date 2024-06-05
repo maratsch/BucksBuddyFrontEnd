@@ -1,9 +1,10 @@
-// src/api.ts
+// src/services/api.ts
+
 import axios from 'axios';
 
 const apiClient = axios.create({
     // For local development
-    baseURL: 'http://localhost:8080/api',
+    baseURL: 'http://localhost:8080/',
     // For Render
     // baseURL: 'https://bucksbuddybackend.onrender.com/api',
     withCredentials: true,
@@ -12,7 +13,7 @@ const apiClient = axios.create({
     }
 });
 
-apiClient.get(`/expenses`)
+apiClient.get(`/`)
     .then(response => {
         // Erfolgreiche Antwort vom Backend erhalten
         console.log(response.data);
@@ -30,20 +31,47 @@ apiClient.get(`/expenses`)
         }
     });
 
+
 export default {
+    // User API Begins
+    login(email: string, password: string) {
+        return apiClient.post('/users/login', { email, password });
+    },
+    getUUID(email: string) {
+        return apiClient.post(`/users/uuid/${email}`);
+    },
+    getUsers() {
+        return apiClient.get('/users');
+    },
+    getUserById(id: number) {
+        return apiClient.get(`/users/${id}`);
+    },
+    createUser(user: any) {
+        return apiClient.post('/users', user);
+    },
+    deleteUser(id: number) {
+        return apiClient.delete(`/users/${id}`);
+    },
+    updateUser(id: number, user: any) {
+        return apiClient.put(`/users/${id}`, user);
+    },
+    // User API Ends
+
+    // Expenditure API Begins
     getExpenditures() {
         return apiClient.get('/expenditures');
     },
     getExpenditureById(id: number) {
-        return apiClient.get(`/expenditure?id=${id}`);
+        return apiClient.get(`/expenditures/${id}`);
     },
     createExpenditure(expenditure: any) {
-        return apiClient.post('/expenditure', expenditure);
+        return apiClient.post('/expenditures', expenditure);
     },
     deleteExpenditure(id: number) {
-        return apiClient.delete(`/expenditure?id=${id}`);
+        return apiClient.delete(`/expenditures/${id}`);
     },
-    updateExpenditure(expenditure: any) {
-        return apiClient.put('/expenditure', expenditure);
+    updateExpenditure(id: number, expenditure: any) {
+        return apiClient.put(`/expenditures/${id}`, expenditure);
     }
+    // Expenditure API Ends
 }

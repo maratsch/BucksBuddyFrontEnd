@@ -1,11 +1,5 @@
 {
-
   "files": [],
-  "compilerOptions": {
-    "typeRoots": ["./types", "./node_modules/@types"],
-    "allowImportingTsExtensions": true,
-  },
-  "include": ["./types/**/*.ts", "./src/**/*.ts", "./services/**/*.ts"],
   "references": [
     {
       "path": "./tsconfig.node.json"

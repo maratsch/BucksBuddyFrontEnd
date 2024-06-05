@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import SettingsCard from "@/components/SettingsCard.vue";
+
 </script>
 
 <template>
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-6">
-        <SettingsCard/>
+        <h1>Sign Up</h1>
       </div>
     </div>
   </div>

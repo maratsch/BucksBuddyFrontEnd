@@ -1,3 +1,5 @@
+<!--src/views/Main.vue-->
+
 <script setup lang="ts">
 import { ref } from 'vue';
 import TotalExpenditures from "@/components/expenses/TotalExpenditures.vue";

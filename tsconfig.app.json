@@ -1,18 +1,12 @@
+
 {
   "extends": "@vue/tsconfig/tsconfig.dom.json",
-  "files": ["src/services/exchangeRate.ts"],
-  "include": [
-    "env.d.ts",
-    "src/**/*.ts",
-    "src/**/*.vue",
-    "Types/freecurrencyapi-js.d.ts",
-    "src/services/exchangeRate.ts"
-  ],
+  "include": ["env.d.ts", "src/**/*", "src/**/*.vue", "Types/freecurrencyapi-js.d.ts", "./types/**/*.ts", "./src/**/*.ts", "./src/router/**/*.ts", "./src/stores/**/*.ts"],
   "exclude": ["src/**/__tests__/*"],
   "compilerOptions": {
-    "allowJs": true,
     "composite": true,
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]

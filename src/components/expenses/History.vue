@@ -1,3 +1,5 @@
+<!--src/components/expenses/History.vue-->
+
 <script setup lang="ts">
 import {ref, onMounted, defineExpose} from 'vue';
 import api from '@/services/api';
@@ -18,7 +20,6 @@ const fetchExpenditures = async () => {
     console.error(error);
   }
 };
-
 
 // Löscht eine Ausgabe asynchron nach ihrer ID und aktualisiert die Ausgabenliste
 const deleteExpenditure = async (id: number) => {

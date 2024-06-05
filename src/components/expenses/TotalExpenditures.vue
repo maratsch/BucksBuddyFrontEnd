@@ -1,3 +1,5 @@
+<!--src/components/expenses/TotalExpenditures.vue-->
+
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import api from '@/services/api';
