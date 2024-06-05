@@ -1,3 +1,5 @@
+<!--src/views/NewJourney.vue-->
+
 <script setup lang="ts">
 import CreateNewJourney from "@/components/CreateNewJourney.vue";
 </script>

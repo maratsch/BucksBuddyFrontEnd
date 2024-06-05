@@ -1,3 +1,5 @@
+<!--src/components/NavBar.vue-->
+
 <script setup lang="ts">
 import { useThemeStore } from '@/stores/themeStore';
 const themeStore = useThemeStore();
@@ -18,6 +20,12 @@ const toggleTheme = () => {
       <div class="col-10 d-flex justify-content-ends">
       <ul class="navbar-nav ms-auto ">
         <li class="nav-item">
+          <RouterLink to="/settings"
+                      class="bi bi-person-circle m-2 fs-3 icon-link-hover"
+                      title="User">
+          </RouterLink>
+        </li>
+        <li class="nav-item">
           <RouterLink to="/newjourney"
                       class="bi bi-plus-lg m-2 fs-3 icon-link-hover"
                       title="Create a new Journey">
@@ -27,12 +35,6 @@ const toggleTheme = () => {
           <RouterLink to="/main"
                       class="bi bi-card-list m-2 fs-3 icon-link-hover"
                       title="Main">
-          </RouterLink>
-        </li>
-        <li class="nav-item">
-          <RouterLink to="/settings"
-                      class="bi bi-gear m-2 fs-3 icon-link-hover"
-                      title="Settings">
           </RouterLink>
         </li>
         <li class="nav-item ms-5 d-flex align-items-center">

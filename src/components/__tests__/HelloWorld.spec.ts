@@ -1,3 +1,5 @@
+// src/components/__tests__/HelloWorld.spec.ts
+
 import { describe, it, expect } from 'vitest'
 
 import { mount } from '@vue/test-utils'
