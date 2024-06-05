@@ -52,8 +52,8 @@ export default {
     getUserByUUID(uuid: string) {
         return apiClient.post(`/uuid/${uuid}`, uuid);
     },
-    validateUser(email: string, password: string) {
-        return apiClient.post('/users/validate', { email, password });
+    login(email: string, password: string) {
+        return apiClient.post('/users/login', { email, password });
     },
     // User API Ends
 

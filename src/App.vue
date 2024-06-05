@@ -1,17 +1,17 @@
 <!--src/App.vue-->
 
 <script setup lang="ts">
+import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 import NavBar from "@/components/NavBar.vue";
 
 const route = useRoute();
-const isLoginPage = route.path === '/login';
+const isAuthPage = computed(() => ['login', 'signup', 'newpassword'].includes(route.name as string));
 </script>
 
 <template>
   <div class="main-content">
-    <NavBar v-if="!isLoginPage" />
+    <NavBar v-if="!isAuthPage" />
     <router-view />
   </div>
 </template>
-

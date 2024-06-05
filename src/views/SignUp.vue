@@ -1,18 +1,15 @@
-<!--src/views/Login.vue-->
-
 <script setup lang="ts">
-import LoginCard from "@/components/login/LoginCard.vue";
+
 </script>
 
 <template>
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-6">
-        <LoginCard />
+        <h1>Sign Up</h1>
       </div>
     </div>
   </div>
 </template>
-
 
 
