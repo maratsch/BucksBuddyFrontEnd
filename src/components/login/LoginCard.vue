@@ -14,6 +14,10 @@ const login = async () => {
     const response = await api.login(loginData.email, loginData.password);
     console.log('Login successful:', response.data);
     localStorage.setItem('authToken', response.data.token); // Store the authentication token
+
+    // const uuid = await api.getUUID(email: loginData.email);
+    // localStorage.setItem('uuid', uuid.data); // Store the UUID of the user
+
     router.push('/main'); // Redirect to main page after successful login
   } catch (error) {
     console.error('Login failed:', error);
@@ -25,7 +29,9 @@ const login = async () => {
 <template>
         <div class="card shadow m-3">
           <div class="card-body">
-            <h2 class="text-center mb-4">Login</h2>
+            <div class="d-flex justify-content-center align-items-center">
+              <img src="@/assets/logo.png" alt="Bootstrap" style="width: auto; height: auto;">
+            </div>
             <form @submit.prevent="login">
               <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
@@ -35,16 +41,23 @@ const login = async () => {
                 <label for="password" class="form-label">Password</label>
                 <input type="password" class="form-control" id="password" v-model="loginData.password" required>
               </div>
-              <div class="mb-3">
-                <button type="submit" class="btn btn-primary">Log in</button>
+              <div class="text-center mb-3">
+                <button type="submit" class="btn btn-primary custom-width">Log in</button>
               </div>
             </form>
+            <hr>
             <div class="text-center">
               <a href="#/newpassword" class="text-decoration-none">Can't remember password</a>
             </div>
             <div class="text-center mt-3">
-              <a href="#/signup" class="btn btn-secondary">Sign up</a>
+              <a href="#/signup" class="btn btn-secondary custom-width">Sign up</a>
             </div>
           </div>
         </div>
 </template>
+
+<style scoped>
+.custom-width {
+  width: 33%;
+}
+</style>

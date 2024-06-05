@@ -34,6 +34,12 @@ apiClient.get(`/`)
 
 export default {
     // User API Begins
+    login(email: string, password: string) {
+        return apiClient.post('/users/login', { email, password });
+    },
+    getUUID(email: string) {
+        return apiClient.post(`/users/uuid/${email}`);
+    },
     getUsers() {
         return apiClient.get('/users');
     },
@@ -48,12 +54,6 @@ export default {
     },
     updateUser(id: number, user: any) {
         return apiClient.put(`/users/${id}`, user);
-    },
-    getUserByUUID(uuid: string) {
-        return apiClient.post(`/uuid/${uuid}`, uuid);
-    },
-    login(email: string, password: string) {
-        return apiClient.post('/users/login', { email, password });
     },
     // User API Ends
 
