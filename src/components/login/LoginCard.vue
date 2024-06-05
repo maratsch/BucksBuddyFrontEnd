@@ -20,7 +20,7 @@ const login = async () => {
     localStorage.setItem('userID', responseID.data); // Store the user ID as a string
     console.log('User ID:', responseID.data);
 
-    router.push('/user'); // Redirect to main page after successful login
+    router.push('/main'); // Redirect to main page after successful login
   } catch (error) {
     console.error('Login failed:', error);
     alert('Login failed. Please check your credentials and try again.');
