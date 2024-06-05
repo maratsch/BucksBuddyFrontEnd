@@ -15,8 +15,10 @@ const login = async () => {
     console.log('Login successful:', response.data);
     localStorage.setItem('authToken', response.data.token); // Store the authentication token
 
-    // const uuid = await api.getUUID(email: loginData.email);
-    // localStorage.setItem('uuid', uuid.data); // Store the UUID of the user
+    // Die Scheiße funktioniert nicht
+    const responseID = await api.getUserIdByEmail(loginData.email);
+    localStorage.setItem('userID', responseID.data); // Store the user ID as a string
+    console.log('User ID:', responseID.data);
 
     router.push('/main'); // Redirect to main page after successful login
   } catch (error) {

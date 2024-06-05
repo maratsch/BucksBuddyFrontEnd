@@ -1,9 +1,7 @@
-<!--src/components/expenses/History.vue-->
-
 <script setup lang="ts">
-import {ref, onMounted, defineExpose} from 'vue';
+import { ref, onMounted, defineExpose } from 'vue';
 import api from '@/services/api';
-import {type Expenditure} from '@/Expenditure';
+import { type Expenditure } from '@/Expenditure';
 
 // Definiert eine reaktive Referenz für die Ausgabenliste
 const expendituresList = ref<Expenditure[]>([]);
@@ -49,7 +47,7 @@ const editExpenditure = async (id: number) => {
 // Speichert die Änderungen und aktualisiert die Ausgabenliste
 const saveExpenditure = async (id: number, updatedExpenditure: Expenditure) => {
   try {
-    await api.updateExpenditure(updatedExpenditure);
+    await api.updateExpenditure(id, updatedExpenditure);
     fetchExpenditures();
   } catch (error) {
     console.error(error);

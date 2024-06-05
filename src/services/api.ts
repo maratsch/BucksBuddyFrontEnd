@@ -1,6 +1,7 @@
 // src/services/api.ts
 
 import axios from 'axios';
+import type {Expenditure} from "@/Expenditure";
 
 const apiClient = axios.create({
     // For local development
@@ -31,14 +32,22 @@ apiClient.get(`/`)
         }
     });
 
+const getUserId = (): number => {
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+        throw new Error('User ID not found in localStorage');
+    }
+    return parseInt(userId, 10);
+};
+
 
 export default {
     // User API Begins
     login(email: string, password: string) {
-        return apiClient.post('/users/login', { email, password });
+        return apiClient.post('/users/login', {email, password});
     },
-    getUUID(email: string) {
-        return apiClient.post(`/users/uuid/${email}`);
+    getUserIdByEmail(email: string) {
+        return apiClient.get(`/users/id/${email}`);
     },
     getUsers() {
         return apiClient.get('/users');
@@ -59,19 +68,24 @@ export default {
 
     // Expenditure API Begins
     getExpenditures() {
-        return apiClient.get('/expenditures');
+        const userId = getUserId();
+        return apiClient.get(`/users/${userId}/expenditures`);
     },
     getExpenditureById(id: number) {
-        return apiClient.get(`/expenditures/${id}`);
+        const userId = getUserId();
+        return apiClient.get(`/users/${userId}/expenditures/${id}`);
     },
-    createExpenditure(expenditure: any) {
-        return apiClient.post('/expenditures', expenditure);
+    createExpenditure(expenditure: Omit<Expenditure, 'id'>) {
+        const userId = getUserId();
+        return apiClient.post(`/users/${userId}/expenditures`, expenditure);
     },
     deleteExpenditure(id: number) {
-        return apiClient.delete(`/expenditures/${id}`);
+        const userId = getUserId();
+        return apiClient.delete(`/users/${userId}/expenditures/${id}`);
     },
-    updateExpenditure(id: number, expenditure: any) {
-        return apiClient.put(`/expenditures/${id}`, expenditure);
+    updateExpenditure(id: number, expenditure: Omit<Expenditure, 'id'>) {
+        const userId = getUserId();
+        return apiClient.put(`/users/${userId}/expenditures/${id}`, expenditure);
     }
     // Expenditure API Ends
 }

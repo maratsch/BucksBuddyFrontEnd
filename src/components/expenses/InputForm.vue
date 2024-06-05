@@ -1,20 +1,13 @@
-<!--src/components/expenses/InputForm.vue-->
-
 <script setup lang="ts">
 import { ref, defineEmits, onMounted } from 'vue';
 import api from '@/services/api';
-import { type Expenditure } from '@/Expenditure';
-import { exchangeRate } from '@/services/exchangeRate';
-import { defineExpose } from 'vue';
-defineExpose({ exchangeRate });
+import { type Expenditure, type User } from '@/Expenditure';
 
 const title = ref('');
 const amount = ref<number | null>(null);
 const date = ref<string>('');
 
 const emit = defineEmits(['refreshExpenditures']);
-
-// TODO ExchangeRate aus der Datenbank holen
 
 // Function to set the date to today's date
 const setDateToToday = () => {
@@ -28,10 +21,12 @@ const setDateToToday = () => {
 // Function to add an expenditure
 const addExpenditure = async () => {
   if (title.value && amount.value !== null && date.value) {
+    const userId = localStorage.getItem('userId');
     const newExpenditure: Omit<Expenditure, 'id'> = {
       name: title.value,
       amount: amount.value,
-      date: new Date(date.value)
+      date: new Date(date.value),
+      user: { id: parseInt(userId as string) } as User // Ensure the type matches
     };
     try {
       await api.createExpenditure(newExpenditure);
@@ -39,17 +34,10 @@ const addExpenditure = async () => {
       amount.value = null;
       setDateToToday();
       emit('refreshExpenditures');
-
-
-      await api.getExpenditures();
     } catch (error) {
       console.error(error);
     }
   }
-};
-
-const CalcHomeAmount = (amount: number) => {
-  return amount * exchangeRate;
 };
 
 // Lifecycle hook that runs when the component is mounted
@@ -83,12 +71,8 @@ onMounted(async () => {
           <input type="number" class="form-control" id="amountInput" v-model.number="amount" @keyup.enter="addExpenditure">
         </div>
         <div class="col">
-          <label for="exchangeRateDisplay" class="form-label">In Home Currency</label>
-          <br>
-          <!-- Verwende die ref-Datenvariable 'amount' und multipliziere sie mit 'exchangeRate' -->
-          <span style="line-height: 2em;"> {{ amount !== null ? (amount * exchangeRate).toFixed(2) : 'N/A' }} EUR </span>
-          <!-- Füge einen Seitenumbruch ein -->
-
+          <label for="exchangeRateDisplay" class="form-label">Exchange Rate:</label>
+          <span id="exchangeRateDisplay"></span>
         </div>
         <div class="col">
           <label for="dateInput" class="form-label">Date</label>
