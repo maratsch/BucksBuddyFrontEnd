@@ -49,8 +49,11 @@ export default {
     updateUser(id: number, user: any) {
         return apiClient.put(`/users/${id}`, user);
     },
-    validateUser(uuid: string) {
-        return apiClient.post('/users/validate', {uuid});
+    getUserByUUID(uuid: string) {
+        return apiClient.post(`/uuid/${uuid}`, uuid);
+    },
+    validateUser(email: string, password: string) {
+        return apiClient.post('/users/validate', { email, password });
     },
     // User API Ends
 

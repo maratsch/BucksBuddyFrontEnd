@@ -8,8 +8,11 @@ import LoginCard from "@/components/LoginCard.vue";
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-6">
-        <LoginCard/>
+        <LoginCard />
       </div>
     </div>
   </div>
 </template>
+
+
+

@@ -1,9 +1,9 @@
 // src/router/index.ts
 
-import {createRouter, createWebHashHistory} from 'vue-router'
-import NewJourney from '@/views/NewJourney.vue'
-import settings from '@/views/User.vue'
-import main from "@/views/Main.vue";
+import { createRouter, createWebHashHistory } from 'vue-router';
+import NewJourney from '@/views/NewJourney.vue';
+import User from '@/views/User.vue';
+import Main from "@/views/Main.vue";
 import Login from "@/views/Login.vue";
 
 const router = createRouter({
@@ -26,14 +26,15 @@ const router = createRouter({
         {
             path: '/main',
             name: 'main',
-            component: main
+            component: Main
         },
         {
             path: '/user',
             name: 'user',
-            component: settings
+            component: User
         }
     ]
-})
+});
 
-export default router
+export default router;
+

@@ -20,7 +20,7 @@ const toggleTheme = () => {
       <div class="col-10 d-flex justify-content-ends">
       <ul class="navbar-nav ms-auto ">
         <li class="nav-item">
-          <RouterLink to="/settings"
+          <RouterLink to="/user"
                       class="bi bi-person-circle m-2 fs-3 icon-link-hover"
                       title="User">
           </RouterLink>
