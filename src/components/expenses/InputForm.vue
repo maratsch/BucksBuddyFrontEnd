@@ -1,17 +1,13 @@
-<!--src/components/expenses/InputForm.vue-->
-
 <script setup lang="ts">
 import { ref, defineEmits, onMounted } from 'vue';
 import api from '@/services/api';
-import { type Expenditure } from '@/Expenditure';
+import { type Expenditure, type User } from '@/Expenditure';
 
 const title = ref('');
 const amount = ref<number | null>(null);
 const date = ref<string>('');
 
 const emit = defineEmits(['refreshExpenditures']);
-
-
 
 // Function to set the date to today's date
 const setDateToToday = () => {
@@ -25,10 +21,12 @@ const setDateToToday = () => {
 // Function to add an expenditure
 const addExpenditure = async () => {
   if (title.value && amount.value !== null && date.value) {
+    const userId = localStorage.getItem('userId');
     const newExpenditure: Omit<Expenditure, 'id'> = {
       name: title.value,
       amount: amount.value,
-      date: new Date(date.value)
+      date: new Date(date.value),
+      user: { id: parseInt(userId as string) } as User // Ensure the type matches
     };
     try {
       await api.createExpenditure(newExpenditure);
@@ -36,15 +34,11 @@ const addExpenditure = async () => {
       amount.value = null;
       setDateToToday();
       emit('refreshExpenditures');
-
-
-      await api.getExpenditures();
     } catch (error) {
       console.error(error);
     }
   }
 };
-
 
 // Lifecycle hook that runs when the component is mounted
 onMounted(async () => {
