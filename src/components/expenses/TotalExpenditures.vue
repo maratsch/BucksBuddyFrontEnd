@@ -3,7 +3,7 @@
 <script setup lang="ts">
 import {ref, computed, onMounted} from 'vue';
 import api from '@/services/api';
-import {type Expenditure} from '@/Expenditure';
+import {type Expenditure} from '@/types';
 import Freecurrencyapi from "@everapi/freecurrencyapi-js";
 
 const expendituresList = ref<Expenditure[]>([]);

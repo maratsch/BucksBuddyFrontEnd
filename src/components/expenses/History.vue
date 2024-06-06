@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, defineExpose } from 'vue';
 import api from '@/services/api';
-import { type Expenditure } from '@/Expenditure';
+import { type Expenditure } from '@/types';
 
 // Definiert eine reaktive Referenz für die Ausgabenliste
 const expendituresList = ref<Expenditure[]>([]);
@@ -9,7 +9,7 @@ const expendituresList = ref<Expenditure[]>([]);
 // Ruft die Ausgaben asynchron von der API ab und aktualisiert die Ausgabenliste
 const fetchExpenditures = async () => {
   try {
-    const response = await api.getExpenditures();
+    const response = await api.getAllExpenditures();
     expendituresList.value = response.data.map((expenditure: Expenditure) => ({
       ...expenditure,
       isEditing: false,

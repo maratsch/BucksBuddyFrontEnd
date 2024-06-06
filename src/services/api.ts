@@ -1,7 +1,7 @@
 // src/services/api.ts
 
 import axios from 'axios';
-import type {Expenditure} from "@/Expenditure";
+import type { Expenditure, Journey, User } from '@/types';
 
 const apiClient = axios.create({
     // For local development
@@ -32,60 +32,56 @@ apiClient.get(`/`)
         }
     });
 
-const getUserId = (): number => {
-    const userId = localStorage.getItem('userId');
-    if (!userId) {
-        throw new Error('User ID not found in localStorage');
+apiClient.interceptors.request.use((config) => {
+    const userUuid = localStorage.getItem('userUuid');
+    if (userUuid) {
+        config.headers['uuid'] = userUuid;
     }
-    return parseInt(userId, 10);
-};
+    return config;
+});
 
 
 export default {
-    // User API Begins
+    // User API
     login(email: string, password: string) {
-        return apiClient.post('/users/login', {email, password});
+        return apiClient.post('/users/login', { email, password });
     },
-    getUserIdByEmail(email: string) {
-        return apiClient.get(`/users/id/${email}`);
-    },
-    getUsers() {
-        return apiClient.get('/users');
-    },
-    getUserById(id: number) {
-        return apiClient.get(`/users/${id}`);
-    },
-    createUser(user: any) {
+    createUser(user: User) {
         return apiClient.post('/users', user);
     },
-    deleteUser(id: number) {
-        return apiClient.delete(`/users/${id}`);
-    },
-    updateUser(id: number, user: any) {
-        return apiClient.put(`/users/${id}`, user);
-    },
-    // User API Ends
 
-    // Expenditure API Begins
-    getExpenditures() {
-        const userId = getUserId();
-        return apiClient.get(`/users/${userId}/expenditures`);
+    // Journey API
+    getAllJourneys() {
+        return apiClient.get('/users/journeys');
     },
-    getExpenditureById(id: number) {
-        const userId = getUserId();
-        return apiClient.get(`/users/${userId}/expenditures/${id}`);
+    getJourneyById(id: number) {
+        return apiClient.get(`/users/journeys/${id}`);
     },
-    createExpenditure(expenditure: Omit<Expenditure, 'id'>) {
-        const userId = getUserId();
-        return apiClient.post(`/users/${userId}/expenditures`, expenditure);
+    createJourney(journey: Journey) {
+        return apiClient.post('/users/journeys', journey);
     },
-    deleteExpenditure(id: number) {
-        const userId = getUserId();
-        return apiClient.delete(`/users/${userId}/expenditures/${id}`);
+    deleteJourney(id: number) {
+        return apiClient.delete(`/users/journeys/${id}`);
     },
-    updateExpenditure(id: number, expenditure: Omit<Expenditure, 'id'>) {
-        const userId = getUserId();
-        return apiClient.put(`/users/${userId}/expenditures/${id}`, expenditure);
-    }
-    // Expenditure API Ends
-}
+    updateJourneyName(id: number, name: string) {
+        return apiClient.patch(`/users/journeys/${id}`, { name });
+    },
+
+    // Expenditure API
+    getAllExpenditures(journeyId: number) {
+        return apiClient.get(`/users/journeys/${journeyId}/expenditures`);
+    },
+    getExpenditureById(journeyId: number, id: number) {
+        return apiClient.get(`/users/journeys/${journeyId}/expenditures/${id}`);
+    },
+    createExpenditure(journeyId: number, expenditure: Expenditure) {
+        return apiClient.post(`/users/journeys/${journeyId}/expenditures`, expenditure);
+    },
+    deleteExpenditure(journeyId: number, id: number) {
+        return apiClient.delete(`/users/journeys/${journeyId}/expenditures/${id}`);
+    },
+    updateExpenditure(journeyId: number, id: number, expenditure: Expenditure) {
+        return apiClient.put(`/users/journeys/${journeyId}/expenditures/${id}`, expenditure);
+    },
+};
+
