@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, defineEmits, onMounted } from 'vue';
 import api from '@/services/api';
-import { type Expenditure, type User } from '@/Expenditure';
+import { type Expenditure, type User } from '@/types';
 
 const title = ref('');
 const amount = ref<number | null>(null);

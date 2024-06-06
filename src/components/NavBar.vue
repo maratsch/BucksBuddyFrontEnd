@@ -10,7 +10,7 @@ const toggleTheme = () => {
 
   const router = useRouter();
   const logout = () => {
-    ['authToken', 'userId'].forEach(item => localStorage.removeItem(item));
+    localStorage.removeItem('UUID')
     router.push('/login');
   }
 </script>

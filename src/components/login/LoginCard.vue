@@ -13,14 +13,11 @@ const login = async () => {
   try {
     const response = await api.login(loginData.email, loginData.password);
     console.log('Login successful:', response.data);
-    localStorage.setItem('authToken', response.data.token); // Store the authentication token
 
-    // Die Scheiße funktioniert nicht
-    const responseID = await api.getUserIdByEmail(loginData.email);
-    localStorage.setItem('userID', responseID.data); // Store the user ID as a string
-    console.log('User ID:', responseID.data);
+    // Speichere die UUID im Local Storage
+    localStorage.setItem('UUID', response.data.uuid);
 
-    router.push('/main'); // Redirect to main page after successful login
+    router.push('/main'); // Weiterleitung zur Hauptseite nach erfolgreichem Login
   } catch (error) {
     console.error('Login failed:', error);
     alert('Login failed. Please check your credentials and try again.');
