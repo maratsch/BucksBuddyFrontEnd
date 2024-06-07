@@ -9,7 +9,7 @@ const expendituresList = ref<Expenditure[]>([]);
 // Ruft die Ausgaben asynchron von der API ab und aktualisiert die Ausgabenliste
 const fetchExpenditures = async () => {
   try {
-    const response = await api.getAllExpenditures();
+    const response = await api.getAllExpenditures();//TODO:JourneyIdeinfügen, siehe api.ts
     expendituresList.value = response.data.map((expenditure: Expenditure) => ({
       ...expenditure,
       isEditing: false,
@@ -22,7 +22,7 @@ const fetchExpenditures = async () => {
 // Löscht eine Ausgabe asynchron nach ihrer ID und aktualisiert die Ausgabenliste
 const deleteExpenditure = async (id: number) => {
   try {
-    await api.deleteExpenditure(id);
+    await api.deleteExpenditure(id);//TODO:JourneyIdeinfügen, siehe api.ts
     fetchExpenditures();
   } catch (error) {
     console.error(error);
@@ -32,7 +32,7 @@ const deleteExpenditure = async (id: number) => {
 // Aktiviert den Bearbeitungsmodus für eine Ausgabe und lädt die vollständige Ausgabe aus der API
 const editExpenditure = async (id: number) => {
   try {
-    const response = await api.getExpenditureById(id);
+    const response = await api.getExpenditureById(id);//TODO:JourneyIdeinfügen, siehe api.ts
     const expenditure = response.data;
     expenditure.isEditing = true;
     const index = expendituresList.value.findIndex(item => item.id === id);
@@ -47,7 +47,7 @@ const editExpenditure = async (id: number) => {
 // Speichert die Änderungen und aktualisiert die Ausgabenliste
 const saveExpenditure = async (id: number, updatedExpenditure: Expenditure) => {
   try {
-    await api.updateExpenditure(id, updatedExpenditure);
+    await api.updateExpenditure(id, updatedExpenditure); //TODO:JourneyIdeinfügen, siehe api.ts
     fetchExpenditures();
   } catch (error) {
     console.error(error);

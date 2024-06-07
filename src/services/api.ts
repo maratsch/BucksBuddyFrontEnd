@@ -66,6 +66,22 @@ export default {
     updateJourneyName(id: number, name: string) {
         return apiClient.patch(`/users/journeys/${id}`, { name });
     },
+    getHomeCurrency(journeyId: number) {
+        return apiClient.get(`/users/journeys/${journeyId}/homeCurrency`);
+    },
+    getVacCurrency(journeyId: number, id: number) {
+        return apiClient.get(`/users/journeys/${journeyId}/vacCurrency`);
+    },
+    getBudget(journeyId: number) {
+        return apiClient.get(`/users/journeys/${journeyId}/budget`);
+    },
+    getStartDate(journeyId: number) {
+        return apiClient.get(`/users/journeys/${journeyId}/startDate`);
+    },
+    getEndDate(journeyId: number) {
+        return apiClient.get(`/users/journeys/${journeyId}/endDate`);
+    },
+
 
     // Expenditure API
     getAllExpenditures(journeyId: number) {
@@ -83,5 +99,7 @@ export default {
     updateExpenditure(journeyId: number, id: number, expenditure: Expenditure) {
         return apiClient.put(`/users/journeys/${journeyId}/expenditures/${id}`, expenditure);
     },
+
+
 };
 
