@@ -57,7 +57,7 @@ export default {
     getJourneyById(id: number) {
         return apiClient.get(`/users/journeys/${id}`);
     },
-    createJourney(journey: Journey) {
+    createJourney(journey: Omit<Journey, "id">) {
         return apiClient.post('/users/journeys', journey);
     },
     deleteJourney(id: number) {

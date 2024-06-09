@@ -3,7 +3,7 @@
 <script setup lang="ts">
 import {ref} from 'vue';
 import api from "@/services/api";
-import type {User} from "@/types";
+import type {Expenditure, Journey, User} from "@/types";
 
 const name = ref('');
 const homeCurrency = ref('');
@@ -14,36 +14,23 @@ const endDate = ref('');
 const travelDuration = ref('');
 const dateError = ref('');
 
-const journey = ref({
-  name: '',
-  homeCurrency: '',
-  vacationCurrency: '',
-  budget: 0,
-  startDate: '',
-  endDate: '',
-  travelDuration: '',
-});
-
-const updateJourney = () => {
-  journey.value = {
-    name: name.value,
-    homeCurrency: homeCurrency.value,
-    vacationCurrency: vacationCurrency.value,
-    budget: budget.value,
-    startDate: startDate.value,
-    endDate: endDate.value,
-    travelDuration: travelDuration.value,
-  };
-};
 
 // Erstellen Sie eine Funktion, um die Journey zu erstellen
-const createJourney = async () => {
+const addJourney = async () => {
   // Aktualisieren Sie die Journey-Daten
-  updateJourney();
-
+  const newJourney: Omit<Journey, 'id'> = {
+      name: name.value,
+      user: localStorage.getItem('userId') as unknown as User,
+      homeCurrency: homeCurrency.value,
+      vacationCurrency: vacationCurrency.value,
+      budget: budget.value,
+      startDate: new Date(startDate.value),
+      endDate: new Date(endDate.value),
+      travelDuration: travelDuration.value,
+  };
   try {
     // Rufen Sie die API-Funktion auf und übergeben Sie die Journey-Daten
-    const response = await api.createJourney(journey);
+    const response = await api.createJourney(newJourney);
     // Verarbeiten Sie die Antwort
     console.log(response.data);
   } catch (error) {
@@ -79,7 +66,7 @@ const calculateDuration = () => {
       <div class="row justify-content-center">
         <div class="col-md-9">
           <h2 class="text-center mb-4">Create New Journey</h2>
-          <form @submit.prevent="createJourney">
+          <form @submit.prevent="addJourney">
             <div class="mb-3">
               <label for="name" class="form-label">Name</label>
               <input type="text" class="form-control" id="name" v-model="name.valueOf" required>

@@ -12,9 +12,14 @@ export interface User {
 // Interface for Journey
 export interface Journey {
     id: number;
-    name: string;
     user: User;
-    expenditures: Expenditure[];
+    name: string;
+    homeCurrency: string;
+    vacationCurrency: string;
+    budget: number;
+    startDate: Date;
+    endDate: Date;
+    travelDuration: string;
     isEditing?: boolean;
 }
 
