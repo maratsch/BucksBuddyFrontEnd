@@ -33,10 +33,12 @@ apiClient.get(`/`)
     });
 
 apiClient.interceptors.request.use((config) => {
-    const userUuid = localStorage.getItem('userUuid');
+    const userUuid = localStorage.getItem('UUID');
+    console.log('UUID from local storage:', userUuid);
     if (userUuid) {
         config.headers['uuid'] = userUuid;
     }
+    console.log(config.headers);
     return config;
 });
 
@@ -57,7 +59,7 @@ export default {
     getJourneyById(id: number) {
         return apiClient.get(`/users/journeys/${id}`);
     },
-    createJourney(journey: Omit<Journey, "id">) {
+    createJourney(uuid: string ,journey: Omit<Journey, "id">) {
         return apiClient.post('/users/journeys', journey);
     },
     deleteJourney(id: number) {

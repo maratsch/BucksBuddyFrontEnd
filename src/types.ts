@@ -12,10 +12,9 @@ export interface User {
 // Interface for Journey
 export interface Journey {
     id: number;
-    user: User;
     name: string;
-    homeCurrency: string;
-    vacationCurrency: string;
+    homeCurr: string;
+    vacationCurr: string;
     budget: number;
     startDate: Date;
     endDate: Date;

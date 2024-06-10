@@ -1,36 +1,38 @@
 <!--src/components/CreateNewJourney.vue-->
 
 <script setup lang="ts">
-import {ref} from 'vue';
+import {ref, watch} from 'vue';
 import api from "@/services/api";
 import type {Expenditure, Journey, User} from "@/types";
 
 const name = ref('');
-const homeCurrency = ref('');
-const vacationCurrency = ref('');
+const homeCurr = ref('');
+const vacationCurr = ref('');
 const budget = ref(0);
 const startDate = ref('');
 const endDate = ref('');
-const travelDuration = ref('');
+const travelDuration = ref('')
 const dateError = ref('');
-
+const uuid = localStorage.getItem('UUID');
 
 // Erstellen Sie eine Funktion, um die Journey zu erstellen
 const addJourney = async () => {
   // Aktualisieren Sie die Journey-Daten
   const newJourney: Omit<Journey, 'id'> = {
       name: name.value,
-      user: localStorage.getItem('userId') as unknown as User,
-      homeCurrency: homeCurrency.value,
-      vacationCurrency: vacationCurrency.value,
+      homeCurr: homeCurr.value,
+      vacationCurr: vacationCurr.value,
       budget: budget.value,
       startDate: new Date(startDate.value),
       endDate: new Date(endDate.value),
       travelDuration: travelDuration.value,
   };
   try {
+    if (uuid === null) {
+      throw new Error('UUID is null');
+    }
     // Rufen Sie die API-Funktion auf und übergeben Sie die Journey-Daten
-    const response = await api.createJourney(newJourney);
+    const response = await api.createJourney(uuid, newJourney);
     // Verarbeiten Sie die Antwort
     console.log(response.data);
   } catch (error) {
@@ -39,11 +41,17 @@ const addJourney = async () => {
   }
 };
 
+
 const calculateDuration = () => {
+  console.log('calculateDuration called');
+  console.log('startDate:', startDate.value);
+  console.log('endDate:', endDate.value);
+
   if (startDate.value && endDate.value) {
-    if (startDate.value < endDate.value) {
-      const start = new Date(startDate.value);
-      const end = new Date(endDate.value);
+    const start = new Date(startDate.value);
+    const end = new Date(endDate.value);
+
+    if (start < end) {
       const difference = end.getTime() - start.getTime();
       const days = Math.ceil(difference / (1000 * 3600 * 24));
       travelDuration.value = `${days} day(s)`;
@@ -58,6 +66,7 @@ const calculateDuration = () => {
   }
 };
 
+watch([startDate, endDate], calculateDuration);
 
 </script>
 <template>
@@ -69,12 +78,12 @@ const calculateDuration = () => {
           <form @submit.prevent="addJourney">
             <div class="mb-3">
               <label for="name" class="form-label">Name</label>
-              <input type="text" class="form-control" id="name" v-model="name.valueOf" required>
+              <input type="text" class="form-control" id="name" v-model="name" required>
             </div>
             <div class="mb-3">
               <label for="homeCurrency" class="form-label">Home Currency</label>
               <div class="col text-end">
-                <select class="form-select" v-model="homeCurrency.valueOf">
+                <select class="form-select" v-model="homeCurr">
                   <option disabled value="">Please select one</option>
                   <option value="euro">EUR</option>
                   <option value="yen">YEN</option>
@@ -85,7 +94,7 @@ const calculateDuration = () => {
             <div class="mb-3">
               <label for="vacationCurrency" class="form-label">Vacation Currency</label>
               <div class="col text-end">
-                <select class="form-select" v-model="vacationCurrency.valueOf">
+                <select class="form-select" v-model="vacationCurr">
                   <option disabled value="">Please select one</option>
                   <option value="euro">EUR</option>
                   <option value="yen">YEN</option>
@@ -101,16 +110,16 @@ const calculateDuration = () => {
             <hr>
             <div class="mb-3">
               <label for="startDate" class="form-label">Start Date</label>
-              <input type="date" class="form-control" id="startDate" v-model="startDate.valueOf" @change="calculateDuration" required>
+              <input type="date" class="form-control" id="startDate" v-model="startDate"  required>
             </div>
             <div class="mb-3">
               <label for="endDate" class="form-label">End Date</label>
-              <input type="date" class="form-control" id="endDate" v-model="endDate.valueOf" @change="calculateDuration" required>
+              <input type="date" class="form-control" id="endDate" v-model="endDate"  required>
               <div v-if="dateError" class="text-danger">{{ dateError }}</div>
             </div>
             <div class="mb-3">
               <label class="form-label">Travel Duration</label>
-              <input type="text" class="form-control" :value="travelDuration.valueOf" disabled>
+              <input type="text" class="form-control" :value="travelDuration" disabled>
             </div>
             <div class="mb-3">
               <button type="submit" class="btn btn-primary">Submit</button>
