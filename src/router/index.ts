@@ -52,7 +52,7 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-    const isAuthenticated = !!localStorage.getItem('authToken'); // Check if user is authenticated
+    const isAuthenticated = !!localStorage.getItem('UUID'); // Check if user is authenticated
 
     if (to.meta.requiresAuth && !isAuthenticated) {
         next({ name: 'login' });
