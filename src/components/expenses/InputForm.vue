@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { ref, defineEmits, onMounted } from 'vue';
 import api from '@/services/api';
-import { type Expenditure, type User } from '@/types';
+import {type Expenditure, type Journey, type User} from '@/types';
 
 const title = ref('');
 const amount = ref<number | null>(null);
 const date = ref<string>('');
-
+const journeyId = Number(localStorage.getItem('selectedJourney'));
 const emit = defineEmits(['refreshExpenditures']);
 
 // Function to set the date to today's date
@@ -21,15 +21,15 @@ const setDateToToday = () => {
 // Function to add an expenditure
 const addExpenditure = async () => {
   if (title.value && amount.value !== null && date.value) {
-    const userId = localStorage.getItem('userId');
     const newExpenditure: Omit<Expenditure, 'id'> = {
       name: title.value,
       amount: amount.value,
       date: new Date(date.value),
-      user: { id: parseInt(userId as string) } as User // Ensure the type matches
+      journey: { id: journeyId } as Journey,  // Specify the journey id only
+      isEditing: false
     };
     try {
-      await api.createExpenditure(newExpenditure);
+      await api.createExpenditure(journeyId, newExpenditure);
       title.value = '';
       amount.value = null;
       setDateToToday();
@@ -43,7 +43,7 @@ const addExpenditure = async () => {
 // Lifecycle hook that runs when the component is mounted
 onMounted(async () => {
   try {
-    const response = await api.getExpenditures();
+    const response = await api.getAllExpenditures(journeyId);
     console.log('GET request response:', response.data);
   } catch (error) {
     console.error('Error during GET request:', error);

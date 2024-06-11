@@ -1,38 +1,36 @@
 <script setup lang="ts">
-import { ref, onMounted, defineExpose } from 'vue';
+import { ref, onMounted } from 'vue';
 import api from '@/services/api';
 import { type Expenditure } from '@/types';
+import eventBus from '@/services/eventBus'; // Import EventBus
 
-// Definiert eine reaktive Referenz für die Ausgabenliste
 const expendituresList = ref<Expenditure[]>([]);
+const journeyId = ref<number | null>(Number(localStorage.getItem('selectedJourney')));
 
-// Ruft die Ausgaben asynchron von der API ab und aktualisiert die Ausgabenliste
-const fetchExpenditures = async () => {
+const fetchExpenditures = async (id: number) => {
   try {
-    const response = await api.getAllExpenditures();//TODO:JourneyIdeinfügen, siehe api.ts
+    const response = await api.getAllExpenditures(id);
     expendituresList.value = response.data.map((expenditure: Expenditure) => ({
       ...expenditure,
       isEditing: false,
     }));
   } catch (error) {
-    console.error(error);
+    console.error('Error fetching expenditures:', error);
   }
 };
 
-// Löscht eine Ausgabe asynchron nach ihrer ID und aktualisiert die Ausgabenliste
 const deleteExpenditure = async (id: number) => {
   try {
-    await api.deleteExpenditure(id);//TODO:JourneyIdeinfügen, siehe api.ts
-    fetchExpenditures();
+    await api.deleteExpenditure(journeyId.value!, id);
+    fetchExpenditures(journeyId.value!);
   } catch (error) {
     console.error(error);
   }
 };
 
-// Aktiviert den Bearbeitungsmodus für eine Ausgabe und lädt die vollständige Ausgabe aus der API
 const editExpenditure = async (id: number) => {
   try {
-    const response = await api.getExpenditureById(id);//TODO:JourneyIdeinfügen, siehe api.ts
+    const response = await api.getExpenditureById(journeyId.value!, id);
     const expenditure = response.data;
     expenditure.isEditing = true;
     const index = expendituresList.value.findIndex(item => item.id === id);
@@ -44,27 +42,31 @@ const editExpenditure = async (id: number) => {
   }
 };
 
-// Speichert die Änderungen und aktualisiert die Ausgabenliste
 const saveExpenditure = async (id: number, updatedExpenditure: Expenditure) => {
   try {
-    await api.updateExpenditure(id, updatedExpenditure); //TODO:JourneyIdeinfügen, siehe api.ts
-    fetchExpenditures();
+    await api.updateExpenditure(journeyId.value!, id, updatedExpenditure);
+    fetchExpenditures(journeyId.value!);
   } catch (error) {
     console.error(error);
   }
 };
 
-// Hook, der die Ausgaben abruft, wenn die Komponente gemountet wird
 onMounted(() => {
-  fetchExpenditures();
+  if (journeyId.value !== null) {
+    fetchExpenditures(journeyId.value);
+  }
+
+  eventBus.on('journeyIdChanged', (newJourneyId: number) => {
+    console.log('journeyId changed:', newJourneyId);
+    journeyId.value = newJourneyId;
+    fetchExpenditures(newJourneyId);
+  });
 });
 
-// Methode, die der Instanz der Komponente ausgesetzt wird
 defineExpose({
   fetchExpenditures
 });
 
-// Formatiert ein Datumsobjekt im Format 'DD.MM.YYYY'
 const formatDate = (dateString: Date): string => {
   const date = new Date(dateString);
   const day = String(date.getDate()).padStart(2, '0');
@@ -73,11 +75,9 @@ const formatDate = (dateString: Date): string => {
   return `${day}.${month}.${year}`;
 };
 
-// Formatiert einen Betrag als Dezimalzahl mit zwei Nachkommastellen
 const formatAmount = (amount: number): string => {
   return amount.toFixed(2);
 };
-
 </script>
 
 <template>
@@ -115,14 +115,12 @@ const formatAmount = (amount: number): string => {
                 v-if="!item.isEditing"
                 @click="editExpenditure(item.id)">
             </button>
-
             <button
                 class="btn bi bi-save fs-5"
                 title="save"
                 v-else
                 @click="saveExpenditure(item.id, item)">
             </button>
-
             <button
                 class="btn bi bi-trash fs-5"
                 title="delete"

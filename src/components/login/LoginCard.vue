@@ -16,10 +16,10 @@ const login = async () => {
     console.log('Login successful:', response.data);
 
     // Speichere die UUID im Local Storage
-    localStorage.setItem('UUID', response.data); // Change 'uuid' to 'UUID'
-    console.log('UUID from local storage after login:', localStorage.getItem('UUID')); // Log the UUID
+    localStorage.setItem('UUID', response.data);
+    console.log('UUID from local storage after login:', localStorage.getItem('UUID'));
 
-    router.push('/main'); // Weiterleitung zur Hauptseite nach erfolgreichem Login
+    router.push('/main');
   } catch (error) {
     console.error('Login failed:', error);
     alert('Login failed. Please check your credentials and try again.');

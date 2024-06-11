@@ -1,55 +1,86 @@
-<!--src/components/expenses/TotalExpenditures.vue-->
-
 <script setup lang="ts">
-import {ref, computed, onMounted} from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import api from '@/services/api';
-import {type Expenditure} from '@/types';
+import type { Expenditure, Journey } from '@/types';
 import Freecurrencyapi from "@everapi/freecurrencyapi-js";
+import eventBus from '@/services/eventBus'; // Import EventBus
 
 const expendituresList = ref<Expenditure[]>([]);
 const currencyapi = new Freecurrencyapi('fca_live_SXUfhiLcLAt87AE3F3ZZZ9i4yHzyQ4kfmKITa6Vy');
+const journeys = ref<Journey[]>([]);
+const selectedJourneyId = ref<number | null>(Number(localStorage.getItem('selectedJourney')));
+const uuid = localStorage.getItem('UUID') || 'default-uuid';
+const homeCurrency = ref<string>('');
+const vacCurrency = ref<string>('');
+const budget = ref<number>(0);
+const exchangeRate = ref<number | null>(null);
 
-const fetchExpenditures = async () => {
+const fetchExpenditures = async (journeyId: number) => {
   try {
-    const response = await api.getExpenditures();
+    const response = await api.getAllExpenditures(journeyId);
     expendituresList.value = response.data;
   } catch (error) {
-    console.error(error);
+    console.error('Error fetching expenditures:', error);
   }
 };
 
-let exchangeRate: number | null = null; // Initialisiere exchangeRate außerhalb der Methode
-// Aufruf der CurrencyAPI-Methode
-currencyapi.latest({
-  base_currency: "EUR",
-  currencies: "USD"
-}).then((response: any) => {
-  // Überprüfe, ob response vorhanden und response.data vorhanden sind
-  if (response && response.data && response.data.USD) {
-    exchangeRate = response.data.USD;
-
-    // Anzeige des Wechselkurses auf der Benutzeroberfläche
-    const exchangeRateDisplay = document.getElementById('exchangeRateDisplay');
-    if (exchangeRateDisplay && exchangeRate!==null) {
-      exchangeRateDisplay.innerText = exchangeRate.toString();
-    } else {
-      console.error('Element with ID "exchangeRateDisplay" not found');
-    }
-  } else {
-    console.error('Ungültige API-Antwort:', response);
+watch(selectedJourneyId, async (newVal) => {
+  console.log('Selected Journey ID changed to:', newVal);
+  if (newVal !== null) {
+    localStorage.setItem('selectedJourney', newVal.toString());
+    await fetchJourneyDetails(newVal);
+    fetchExpenditures(newVal);
+    eventBus.emit('journeyIdChanged', newVal); // Emit event
   }
-}).catch((error: any) => {
-  console.error('Fehler beim Abrufen der Wechselkurse:', error);
 });
-console.log('Aktueller Wechselkurs:', exchangeRate);
 
+const fetchJourneyDetails = async (journeyId: number) => {
+  try {
+    const journeyResponse = await api.getJourneyById(journeyId);
+    const journey = journeyResponse.data;
+    homeCurrency.value = await api.getHomeCurrency(journeyId).then(response => response.data);
+    vacCurrency.value = await api.getVacCurrency(journeyId).then(response => response.data);
+    budget.value = await api.getBudget(journeyId).then(response => response.data);
+    exchangeRate.value = await currencyapi.latest({
+      base_currency: homeCurrency.value,
+      currencies: vacCurrency.value
+    }).then((response: any) => response.data[vacCurrency.value]);
+  } catch (error) {
+    console.error('Error fetching journey details:', error);
+  }
+};
+
+const fetchJourneys = async () => {
+  try {
+    if (!uuid) {
+      console.error('UUID is missing');
+      return;
+    }
+    console.log('Fetching journeys for UUID:', uuid);
+    const response = await api.getAllJourneys(uuid);
+    if (response.data && Array.isArray(response.data)) {
+      journeys.value = response.data;
+      console.log("Journeys set to:", journeys.value);
+    } else {
+      console.error('Unexpected API response:', response);
+    }
+  } catch (error) {
+    console.error('Error fetching journeys:', error);
+  }
+};
 
 const totalExpenditures = computed(() => {
   return expendituresList.value.reduce((sum, expenditure) => sum + expenditure.amount, 0);
 });
 
 onMounted(() => {
-  fetchExpenditures();
+  fetchJourneys();
+  const storedJourneyId = localStorage.getItem('selectedJourney');
+  if (storedJourneyId) {
+    selectedJourneyId.value = Number(storedJourneyId);
+    fetchJourneyDetails(Number(storedJourneyId));
+    fetchExpenditures(Number(storedJourneyId));
+  }
 });
 </script>
 
@@ -61,12 +92,9 @@ onMounted(() => {
           <h3>Journey</h3>
         </div>
         <div class="col text-end">
-          <select class="form-select">
+          <select class="form-select" v-model="selectedJourneyId">
             <option disabled value="">Please select one</option>
-            <option value="thailand">Thailand</option>
-            <option value="japan">Japan</option>
-            <option value="france">France</option>
-            <option value="brazil">Brazil</option>
+            <option v-for="journey in journeys" :key="journey.id" :value="journey.id">{{ journey.name }}</option>
           </select>
         </div>
       </div>
@@ -76,37 +104,33 @@ onMounted(() => {
           <h4>Home Currency</h4>
         </div>
         <div class="col text-end">
-          <h4>EUR</h4>
+          <h4>{{ homeCurrency }}</h4>
         </div>
       </div>
-
       <div class="row">
         <div class="col text-start">
           <h4>Vacation Currency</h4>
         </div>
         <div class="col text-end">
-          <h4>USD</h4>
+          <h4>{{ vacCurrency }}</h4>
         </div>
       </div>
-
       <div class="row">
         <div class="col text-start">
           <h4>Budget</h4>
         </div>
         <div class="col text-end">
-          <h4>€ 600</h4>
+          <h4>€ {{ budget }}</h4>
         </div>
       </div>
-
       <div class="row">
         <div class="col text-start">
           <h4>Exchange Rate</h4>
         </div>
         <div class="col text-end">
-          <h4> {{exchangeRate}} </h4>
+          <h4>{{ exchangeRate }}</h4>
         </div>
       </div>
-
       <hr>
       <div class="row">
         <div class="col text-start">
@@ -116,13 +140,12 @@ onMounted(() => {
           <h3>€ {{ totalExpenditures }}</h3>
         </div>
       </div>
-
       <div class="row">
         <div class="col text-start">
           <h4>Budget Left</h4>
         </div>
         <div class="col text-end">
-          <h4>€ {{ 600 - totalExpenditures }}</h4>
+          <h4>€ {{ budget - totalExpenditures }}</h4>
         </div>
       </div>
     </div>

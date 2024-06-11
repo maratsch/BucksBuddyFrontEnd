@@ -6,6 +6,7 @@ export interface User {
     email?: string;
     password?: string;
     journeys: Journey[];
+    uuid : string;
     isEditing?: boolean;
 }
 
