@@ -13,7 +13,7 @@
           {{ showChangePassword ? 'Hide' : 'Change Password' }}
         </button>
         <div v-if="showChangePassword">
-          <form @submit.prevent="changePassword">
+          <form @submit.prevent="submitNewPassword">
             <div class="mb-3">
               <label for="newPassword" class="form-label">New Password</label>
               <input type="password" class="form-control" id="newPassword" v-model="userData.newPassword" required>
@@ -36,7 +36,7 @@
         <p>Deleting your account is permanent and cannot be undone.</p>
       </div>
       <div class="text-center mb-3">
-        <button @click="deleteUser" class="btn btn-danger custom-width-btn">Delete User</button>
+        <button @click="confirmDeleteUser" class="btn btn-danger custom-width-btn">Delete User</button>
       </div>
     </div>
   </div>
@@ -44,6 +44,7 @@
 
 <script setup lang="ts">
 import { reactive, ref } from 'vue';
+import api from "@/services/api";
 
 interface UserData {
   email: string;
@@ -63,12 +64,50 @@ function toggleChangePassword() {
   showChangePassword.value = !showChangePassword.value;
 }
 
-function changePassword() {
-  // Logik zum Ändern des Passworts
+const submitNewPassword = async () => {
+  const uuid = localStorage.getItem('UUID');
+  if (uuid) {
+    if (userData.newPassword !== userData.confirmPassword) {
+      console.error('Passwords do not match');
+      return;
+    }
+
+    try {
+      const payload = { newPassword: userData.newPassword };
+      const response = await api.changePassword(uuid, payload);
+      console.log('Password changed successfully:', response.data);
+      alert('Password changed successfully, please log in again!');
+      location.href = '/login';
+    } catch (error) {
+      console.error('Error changing password:');
+    }
+  } else {
+    console.error('UUID not found in localStorage');
+  }
 }
 
-function deleteUser() {
-  // Logik zum Löschen des Benutzers
+function confirmDeleteUser() {
+  if (confirm("Are you sure you want to delete your account? " +
+      "This action cannot be undone.")) {
+    deleteUser();
+  }
+}
+
+const deleteUser = async () => {
+  const uuid = localStorage.getItem('UUID');
+  if (uuid) {
+    try {
+      const response = await api.deleteUser(uuid);
+      console.log('User deleted successfully:', response.data);
+      alert('User deleted successfully');
+      localStorage.clear();
+      location.href = '/login';
+    } catch (error) {
+      console.error('Error deleting user:', error);
+    }
+  } else {
+    console.error('UUID not found in localStorage');
+  }
 }
 </script>
 
