@@ -26,7 +26,7 @@ const clearExpenditures = () => {
 const deleteExpenditure = async (id: number) => {
   try {
     await api.deleteExpenditure(journeyId.value!, id);
-    fetchExpenditures(journeyId.value!);
+    await fetchExpenditures(journeyId.value!);
   } catch (error) {
     console.error(error);
   }
@@ -49,7 +49,7 @@ const editExpenditure = async (id: number) => {
 const saveExpenditure = async (id: number, updatedExpenditure: Expenditure) => {
   try {
     await api.updateExpenditure(journeyId.value!, id, updatedExpenditure);
-    fetchExpenditures(journeyId.value!);
+    await fetchExpenditures(journeyId.value!);
   } catch (error) {
     console.error(error);
   }

@@ -29,7 +29,7 @@ watch(selectedJourneyId, async (newVal) => {
   if (newVal !== null) {
     localStorage.setItem('selectedJourney', newVal.toString());
     await fetchJourneyDetails(newVal);
-    fetchExpenditures(newVal);
+    await fetchExpenditures(newVal);
     eventBus.emit('journeyIdChanged', newVal); // Emit event
   } else {
     localStorage.removeItem('selectedJourney');
@@ -82,7 +82,7 @@ onMounted(async () => {
   if (storedJourneyId && journeys.value.some(j => j.id === storedJourneyId)) {
     selectedJourneyId.value = storedJourneyId;
     await fetchJourneyDetails(storedJourneyId);
-    fetchExpenditures(storedJourneyId);
+    await fetchExpenditures(storedJourneyId);
   } else {
     localStorage.removeItem('selectedJourney');
     selectedJourneyId.value = null;
