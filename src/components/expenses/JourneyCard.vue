@@ -60,6 +60,19 @@ const fetchExpenditures = async (journeyId: number) => {
   }
 };
 
+const deleteJourney = async (journeyId: number) => {
+  try {
+    await api.deleteJourney(journeyId);
+    console.log('Journey deleted successfully');
+    await fetchJourneys();
+    selectedJourneyId.value = null;
+    localStorage.removeItem('selectedJourney');
+    eventBus.emit('journeyIdChanged', null); // Emit event for clearing expenditures
+  } catch (error) {
+    console.error('Error deleting journey:', error);
+  }
+};
+
 watch(selectedJourneyId, async (newVal) => {
   console.log('Selected Journey ID changed to:', newVal);
   if (newVal !== null) {
@@ -86,7 +99,7 @@ const fetchJourneyDetails = async (journeyId: number) => {
     }).then((response: any) => response.data[vacCurrency.value]);
     eventBus.emit('exchangeRateUpdated', exchangeRate.value); // Emit exchange rate
     eventBus.emit('vacCurrencyUpdated', vacCurrency.value); // Emit vacation currency
-    eventBus.emit('homeCurrencyUpdated', homeCurrency.value); // Emit budget
+    eventBus.emit('homeCurrencyUpdated', homeCurrency.value); // Emit home currency
   } catch (error) {
     console.error('Error fetching journey details:', error);
   }
@@ -121,8 +134,9 @@ const getCurrencyName = (code: string) => {
 
 const formatExchangeRate = (rate: number | null) => {
   return rate !== null ? rate.toFixed(2) : 'N/A';
+};
 
-};const totalExpensesInVacCurrency = computed(() => {
+const totalExpensesInVacCurrency = computed(() => {
   return exchangeRate.value !== null ? (totalExpenditures.value * exchangeRate.value).toFixed(2) : 'N/A';
 });
 
@@ -153,6 +167,9 @@ onMounted(async () => {
             <option disabled value="">Please select one</option>
             <option v-for="journey in journeys" :key="journey.id" :value="journey.id">{{ journey.name }}</option>
           </select>
+        </div>
+        <div class="col text-end">
+          <button class="btn btn-danger" @click="deleteJourney(selectedJourneyId)">Delete Journey</button>
         </div>
       </div>
       <hr>

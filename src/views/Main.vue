@@ -2,7 +2,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import TotalExpenditures from "@/components/expenses/TotalExpenditures.vue";
+import TotalExpenditures from "@/components/expenses/JourneyCard.vue";
 import History from "@/components/expenses/History.vue";
 import InputForm from "@/components/expenses/InputForm.vue";
 

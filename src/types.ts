@@ -35,7 +35,7 @@ export interface Expenditure {
     name: string;
     amount: number;
     date: Date;
-    journey: Journey;
+    journeyId: number;
     isEditing?: boolean;
 }
 

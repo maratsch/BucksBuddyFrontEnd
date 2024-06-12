@@ -7,7 +7,7 @@ import eventBus from '@/services/eventBus'; // Import EventBus
 const title = ref('');
 const amount = ref<number | null>(null);
 const date = ref<string>('');
-const journeyId = Number(localStorage.getItem('selectedJourney'));
+const journeyId = ref<number | null>(Number(localStorage.getItem('selectedJourney')));
 const emit = defineEmits(['refreshExpenditures']);
 const exchangeRate = ref<number | null>(null); // Define exchangeRate ref
 const vacCurrency = ref<string>('');
@@ -28,11 +28,12 @@ const addExpenditure = async () => {
       name: title.value,
       amount: amount.value,
       date: new Date(date.value),
-      journey: { id: journeyId } as Journey,  // Specify the journey id only
+      journeyId: journeyId.value!,
       isEditing: false
     };
     try {
-      await api.createExpenditure(journeyId, newExpenditure);
+      await api.createExpenditure(journeyId.value!, newExpenditure);
+      console.log('journeyId beim erstellen der Exp.', journeyId.value!);
       title.value = '';
       amount.value = null;
       setDateToToday();
@@ -46,20 +47,23 @@ const addExpenditure = async () => {
 // Lifecycle hook that runs when the component is mounted
 onMounted(async () => {
   try {
-    const response = await api.getAllExpenditures(journeyId);
-    console.log('GET request response:', response.data);
+    eventBus.on('journeyIdChanged', (newJourneyId: number | null) => {
+      console.log('journeyId changed in InputForm:', newJourneyId);
+      if (newJourneyId !== null) {
+        journeyId.value = newJourneyId;
+      }
+    });
   } catch (error) {
-    console.error('Error during GET request:', error);
+    console.error('Error fetching journey details:', error);
   }
-
-  // Listen for exchangeRate updates
+    // Listen for exchangeRate updates
   eventBus.on('exchangeRateUpdated', (rate: number | null) => {
     exchangeRate.value = rate;
   });
   eventBus.on('vacCurrencyUpdated', (vacCurrencyName: string) => {
     vacCurrency.value = vacCurrencyName;
   });
-
+  console.log('journeyId in InputForm:', journeyId.value);
   setDateToToday();
 });
 </script>
