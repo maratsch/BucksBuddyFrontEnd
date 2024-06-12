@@ -33,6 +33,7 @@
       <hr>
       <div class="text-center text-danger">
         <h5>Danger Zone</h5>
+        <p>Deleting your account is permanent and cannot be undone.</p>
       </div>
       <div class="text-center mb-3">
         <button @click="deleteUser" class="btn btn-danger custom-width-btn">Delete User</button>
