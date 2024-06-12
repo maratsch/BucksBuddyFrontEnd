@@ -21,7 +21,7 @@ export interface Journey {
     id: number;
     name: string;
     homeCurr: string;
-    vacationCurr: string;
+    vacCurr: string;
     budget: number;
     startDate: Date;
     endDate: Date;

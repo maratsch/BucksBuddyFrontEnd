@@ -1,11 +1,14 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import {ref, onMounted, computed} from 'vue';
 import api from '@/services/api';
 import { type Expenditure } from '@/types';
 import eventBus from '@/services/eventBus'; // Import EventBus
 
 const expendituresList = ref<Expenditure[]>([]);
 const journeyId = ref<number | null>(Number(localStorage.getItem('selectedJourney')));
+const vacCurrency = ref<string>('');
+const homeCurrency = ref<string>('');
+const exchangeRate = ref<number | null>(null);
 
 const fetchExpenditures = async (id: number) => {
   try {
@@ -46,6 +49,10 @@ const editExpenditure = async (id: number) => {
   }
 };
 
+const amountInVacCurrency = (amount: number): string => {
+  return exchangeRate.value !== null ? (amount * exchangeRate.value).toFixed(2) : 'N/A';
+};
+
 const saveExpenditure = async (id: number, updatedExpenditure: Expenditure) => {
   try {
     await api.updateExpenditure(journeyId.value!, id, updatedExpenditure);
@@ -64,6 +71,18 @@ onMounted(() => {
     } else {
       clearExpenditures();
     }
+  });
+
+  eventBus.on('exchangeRateUpdated', (rate: number) => {
+    exchangeRate.value = rate;
+  });
+
+  eventBus.on('vacCurrencyUpdated', (vacCurrencyName: string) => {
+    vacCurrency.value = vacCurrencyName;
+  });
+
+  eventBus.on('homeCurrencyUpdated', (homeCurrencyName: string) => {
+    homeCurrency.value = homeCurrencyName;
   });
 
   if (journeyId.value !== null) {
@@ -87,6 +106,7 @@ const formatDate = (dateString: Date): string => {
 const formatAmount = (amount: number): string => {
   return amount.toFixed(2);
 };
+
 </script>
 
 <template>
@@ -104,7 +124,14 @@ const formatAmount = (amount: number): string => {
           </div>
 
           <div class="col-3 text-center" v-if="!item.isEditing">
-            {{ formatAmount(item.amount) }} EUR
+            {{ formatAmount(item.amount)  }} {{ homeCurrency }}
+          </div>
+          <div class="col-3" v-else>
+            <input v-model="item.amount" type="number" class="form-control ms-2"/>
+          </div>
+
+          <div class="col-3 text-center" v-if="!item.isEditing">
+            {{ amountInVacCurrency(item.amount) }} {{ vacCurrency }}
           </div>
           <div class="col-3" v-else>
             <input v-model="item.amount" type="number" class="form-control ms-2"/>

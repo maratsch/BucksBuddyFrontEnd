@@ -15,6 +15,42 @@ const vacCurrency = ref<string>('');
 const budget = ref<number>(0);
 const exchangeRate = ref<number | null>(null);
 
+const currencyNames: Record<string, string> = {
+  EUR: 'Euro',
+  USD: 'US Dollar',
+  JPY: 'Japanese Yen',
+  BGN: 'Bulgarian Lev',
+  CZK: 'Czech Republic Koruna',
+  DKK: 'Danish Krone',
+  GBP: 'British Pound Sterling',
+  HUF: 'Hungarian Forint',
+  PLN: 'Polish Zloty',
+  RON: 'Romanian Leu',
+  SEK: 'Swedish Krona',
+  CHF: 'Swiss Franc',
+  ISK: 'Icelandic Króna',
+  NOK: 'Norwegian Krone',
+  HRK: 'Croatian Kuna',
+  RUB: 'Russian Ruble',
+  TRY: 'Turkish Lira',
+  AUD: 'Australian Dollar',
+  BRL: 'Brazilian Real',
+  CAD: 'Canadian Dollar',
+  CNY: 'Chinese Yuan',
+  HKD: 'Hong Kong Dollar',
+  IDR: 'Indonesian Rupiah',
+  ILS: 'Israeli New Sheqel',
+  INR: 'Indian Rupee',
+  KRW: 'South Korean Won',
+  MXN: 'Mexican Peso',
+  MYR: 'Malaysian Ringgit',
+  NZD: 'New Zealand Dollar',
+  PHP: 'Philippine Peso',
+  SGD: 'Singapore Dollar',
+  THB: 'Thai Baht',
+  ZAR: 'South African Rand',
+};
+
 const fetchExpenditures = async (journeyId: number) => {
   try {
     const response = await api.getAllExpenditures(journeyId);
@@ -48,6 +84,9 @@ const fetchJourneyDetails = async (journeyId: number) => {
       base_currency: homeCurrency.value,
       currencies: vacCurrency.value
     }).then((response: any) => response.data[vacCurrency.value]);
+    eventBus.emit('exchangeRateUpdated', exchangeRate.value); // Emit exchange rate
+    eventBus.emit('vacCurrencyUpdated', vacCurrency.value); // Emit vacation currency
+    eventBus.emit('homeCurrencyUpdated', homeCurrency.value); // Emit budget
   } catch (error) {
     console.error('Error fetching journey details:', error);
   }
@@ -74,6 +113,17 @@ const fetchJourneys = async () => {
 
 const totalExpenditures = computed(() => {
   return expendituresList.value.reduce((sum, expenditure) => sum + expenditure.amount, 0);
+});
+
+const getCurrencyName = (code: string) => {
+  return currencyNames[code] || code;
+};
+
+const formatExchangeRate = (rate: number | null) => {
+  return rate !== null ? rate.toFixed(2) : 'N/A';
+
+};const totalExpensesInVacCurrency = computed(() => {
+  return exchangeRate.value !== null ? (totalExpenditures.value * exchangeRate.value).toFixed(2) : 'N/A';
 });
 
 onMounted(async () => {
@@ -111,7 +161,7 @@ onMounted(async () => {
           <h4>Home Currency</h4>
         </div>
         <div class="col text-end">
-          <h4>{{ homeCurrency }}</h4>
+          <h4>{{ getCurrencyName(homeCurrency) }}</h4>
         </div>
       </div>
       <div class="row">
@@ -119,7 +169,7 @@ onMounted(async () => {
           <h4>Vacation Currency</h4>
         </div>
         <div class="col text-end">
-          <h4>{{ vacCurrency }}</h4>
+          <h4>{{ getCurrencyName(vacCurrency) }}</h4>
         </div>
       </div>
       <div class="row">
@@ -127,7 +177,7 @@ onMounted(async () => {
           <h4>Budget</h4>
         </div>
         <div class="col text-end">
-          <h4>€ {{ budget }}</h4>
+          <h4>{{ budget }} {{homeCurrency}}</h4>
         </div>
       </div>
       <div class="row">
@@ -141,18 +191,26 @@ onMounted(async () => {
       <hr>
       <div class="row">
         <div class="col text-start">
-          <h3>Total Expenses</h3>
+          <h3>Total Expenses in {{ getCurrencyName(homeCurrency) }}</h3>
         </div>
         <div class="col text-end">
-          <h3>€ {{ totalExpenditures }}</h3>
+          <h3>{{ totalExpenditures }} {{homeCurrency}}</h3>
         </div>
       </div>
       <div class="row">
         <div class="col text-start">
-          <h4>Budget Left</h4>
+          <h3>Total Expenses in {{ getCurrencyName(vacCurrency) }}</h3>
         </div>
         <div class="col text-end">
-          <h4>€ {{ budget - totalExpenditures }}</h4>
+          <h3>{{ totalExpensesInVacCurrency }} {{vacCurrency}}</h3>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col text-start">
+          <h4>Budget Left in {{getCurrencyName(homeCurrency)}}</h4>
+        </div>
+        <div class="col text-end">
+          <h4>{{ budget - totalExpenditures }} {{homeCurrency}}</h4>
         </div>
       </div>
     </div>

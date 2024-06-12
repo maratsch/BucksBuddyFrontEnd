@@ -4,16 +4,18 @@
 import {ref, watch} from 'vue';
 import api from "@/services/api";
 import type {Expenditure, Journey, User} from "@/types";
+import {useRouter} from "vue-router";
 
 const name = ref('');
 const homeCurr = ref('');
-const vacationCurr = ref('');
+const vacCurr = ref('');
 const budget = ref(0);
 const startDate = ref('');
 const endDate = ref('');
 const travelDuration = ref('')
 const dateError = ref('');
 const uuid = localStorage.getItem('UUID');
+const router = useRouter();
 
 // Erstellen Sie eine Funktion, um die Journey zu erstellen
 const addJourney = async () => {
@@ -21,7 +23,7 @@ const addJourney = async () => {
   const newJourney: Omit<Journey, 'id'> = {
       name: name.value,
       homeCurr: homeCurr.value,
-      vacationCurr: vacationCurr.value,
+      vacCurr: vacCurr.value,
       budget: budget.value,
       startDate: new Date(startDate.value),
       endDate: new Date(endDate.value),
@@ -35,6 +37,8 @@ const addJourney = async () => {
     const response = await api.createJourney(uuid, newJourney);
     // Verarbeiten Sie die Antwort
     console.log(response.data);
+    router.push('/main');
+    alert('New journey created successfully');
   } catch (error) {
     // Behandeln Sie Fehler
     console.error(error);
@@ -124,7 +128,7 @@ watch([startDate, endDate], calculateDuration);
             <div class="mb-3">
               <label for="vacationCurrency" class="form-label">Vacation Currency</label>
               <div class="col text-end">
-                <select class="form-select" v-model="vacationCurr">
+                <select class="form-select" v-model="vacCurr">
                   <option disabled value="">Please select one</option>
                   <option value="EUR">Euro</option>
                   <option value="USD">US Dollar</option>

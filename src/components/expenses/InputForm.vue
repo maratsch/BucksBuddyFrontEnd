@@ -1,13 +1,16 @@
 <script setup lang="ts">
 import { ref, defineEmits, onMounted } from 'vue';
 import api from '@/services/api';
-import {type Expenditure, type Journey, type User} from '@/types';
+import { type Expenditure, type Journey } from '@/types';
+import eventBus from '@/services/eventBus'; // Import EventBus
 
 const title = ref('');
 const amount = ref<number | null>(null);
 const date = ref<string>('');
 const journeyId = Number(localStorage.getItem('selectedJourney'));
 const emit = defineEmits(['refreshExpenditures']);
+const exchangeRate = ref<number | null>(null); // Define exchangeRate ref
+const vacCurrency = ref<string>('');
 
 // Function to set the date to today's date
 const setDateToToday = () => {
@@ -49,6 +52,14 @@ onMounted(async () => {
     console.error('Error during GET request:', error);
   }
 
+  // Listen for exchangeRate updates
+  eventBus.on('exchangeRateUpdated', (rate: number | null) => {
+    exchangeRate.value = rate;
+  });
+  eventBus.on('vacCurrencyUpdated', (vacCurrencyName: string) => {
+    vacCurrency.value = vacCurrencyName;
+  });
+
   setDateToToday();
 });
 </script>
@@ -67,12 +78,13 @@ onMounted(async () => {
 
       <div class="row mb-2">
         <div class="col">
-          <label for="amountInput" class="form-label">Amount</label>
+          <label for="amountInput" class="form-label">Amount in {{vacCurrency.valueOf()}}</label>
           <input type="number" class="form-control" id="amountInput" v-model.number="amount" @keyup.enter="addExpenditure">
         </div>
         <div class="col">
-          <label for="exchangeRateDisplay" class="form-label">Exchange Rate:</label>
-          <span id="exchangeRateDisplay"></span>
+          <label for="exchangeRateDisplay" class="form-label">Exchange Rate: </label>
+          <br>
+          <span id="exchangeRateDisplay">{{ exchangeRate }}</span>
         </div>
         <div class="col">
           <label for="dateInput" class="form-label">Date</label>
