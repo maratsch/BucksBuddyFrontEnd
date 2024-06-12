@@ -52,7 +52,7 @@ interface UserData {
 }
 
 const userData = reactive<UserData>({
-  email: 'user@example.com',  // Beispiel-E-Mail
+  email: localStorage.getItem('email') || '',  // Hier den Benutzer aus dem Local Storage laden
   newPassword: '',
   confirmPassword: ''
 });

@@ -17,6 +17,7 @@ const login = async () => {
 
     // Speichere die UUID im Local Storage
     localStorage.setItem('UUID', response.data);
+    localStorage.setItem('email', loginData.email);
     console.log('UUID from local storage after login:', localStorage.getItem('UUID'));
     router.push('/main');
     alert('Login successful!')

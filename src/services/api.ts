@@ -1,7 +1,7 @@
 // src/services/api.ts
 
 import axios from 'axios';
-import type { Expenditure, Journey, newUser } from '@/types';
+import type {Expenditure, Journey, newUser} from '@/types';
 
 const apiClient = axios.create({
     // For local development
@@ -50,10 +50,27 @@ apiClient.interceptors.request.use((config) => {
 export default {
     // User API
     login(email: string, password: string) {
-        return apiClient.post('/users/login', { email, password });
+        return apiClient.post('/users/login', {email, password});
     },
     createUser(newUser: newUser) {
         return apiClient.post('/users', newUser);
+    },
+    // get User Email by UUID
+    deleteUser(uuid: string) {
+        return apiClient.delete(`/users`, {
+            headers: {
+                'uuid': uuid
+            }
+        });
+    },
+    changePassword(uuid: string, newPassword: string) {
+        return apiClient.patch(`/users/password`, {
+            newPassword: newPassword
+        }, {
+            headers: {
+                'uuid': uuid
+            }
+        });
     },
 
     // Journey API
@@ -63,14 +80,14 @@ export default {
     getJourneyById(id: number) {
         return apiClient.get(`/users/journeys/${id}`);
     },
-    createJourney(uuid: string ,journey: Omit<Journey, "id">) {
+    createJourney(uuid: string, journey: Omit<Journey, "id">) {
         return apiClient.post('/users/journeys', journey);
     },
     deleteJourney(id: number) {
         return apiClient.delete(`/users/journeys/${id}`);
     },
     updateJourneyName(id: number, name: string) {
-        return apiClient.patch(`/users/journeys/${id}`, { name });
+        return apiClient.patch(`/users/journeys/${id}`, {name});
     },
     getHomeCurrency(journeyId: number) {
         return apiClient.get(`/users/journeys/${journeyId}/homeCurrency`);
