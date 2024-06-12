@@ -55,24 +55,14 @@ export default {
     createUser(newUser: newUser) {
         return apiClient.post('/users', newUser);
     },
-    // get User Email by UUID
     deleteUser(uuid: string) {
-        return apiClient.delete(`/users`, {
-            headers: {
-                'uuid': uuid
-            }
+        return apiClient.delete('/users');
+    },
+    changePassword(uuid: string, payload: { newPassword: string }) {
+        return apiClient.patch('/users/password', payload, {
+            headers: { uuid }
         });
     },
-    changePassword(uuid: string, newPassword: string) {
-        return apiClient.patch(`/users/password`, {
-            newPassword: newPassword
-        }, {
-            headers: {
-                'uuid': uuid
-            }
-        });
-    },
-
     // Journey API
     getAllJourneys(uuid: string) {
         return apiClient.get('/users/journeys');
