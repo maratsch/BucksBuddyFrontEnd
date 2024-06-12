@@ -11,6 +11,7 @@ const toggleTheme = () => {
   const router = useRouter();
   const logout = () => {
     localStorage.removeItem('UUID')
+    localStorage.removeItem('selectedJourney')
     router.push('/login');
   }
 </script>

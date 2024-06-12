@@ -31,6 +31,9 @@ watch(selectedJourneyId, async (newVal) => {
     await fetchJourneyDetails(newVal);
     fetchExpenditures(newVal);
     eventBus.emit('journeyIdChanged', newVal); // Emit event
+  } else {
+    localStorage.removeItem('selectedJourney');
+    eventBus.emit('journeyIdChanged', null); // Emit event for clearing expenditures
   }
 });
 
@@ -73,13 +76,17 @@ const totalExpenditures = computed(() => {
   return expendituresList.value.reduce((sum, expenditure) => sum + expenditure.amount, 0);
 });
 
-onMounted(() => {
-  fetchJourneys();
-  const storedJourneyId = localStorage.getItem('selectedJourney');
-  if (storedJourneyId) {
-    selectedJourneyId.value = Number(storedJourneyId);
-    fetchJourneyDetails(Number(storedJourneyId));
-    fetchExpenditures(Number(storedJourneyId));
+onMounted(async () => {
+  await fetchJourneys();
+  const storedJourneyId = Number(localStorage.getItem('selectedJourney'));
+  if (storedJourneyId && journeys.value.some(j => j.id === storedJourneyId)) {
+    selectedJourneyId.value = storedJourneyId;
+    await fetchJourneyDetails(storedJourneyId);
+    fetchExpenditures(storedJourneyId);
+  } else {
+    localStorage.removeItem('selectedJourney');
+    selectedJourneyId.value = null;
+    eventBus.emit('journeyIdChanged', null); // Emit event for clearing expenditures
   }
 });
 </script>

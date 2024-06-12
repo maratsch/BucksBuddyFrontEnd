@@ -19,6 +19,10 @@ const fetchExpenditures = async (id: number) => {
   }
 };
 
+const clearExpenditures = () => {
+  expendituresList.value = [];
+};
+
 const deleteExpenditure = async (id: number) => {
   try {
     await api.deleteExpenditure(journeyId.value!, id);
@@ -52,15 +56,20 @@ const saveExpenditure = async (id: number, updatedExpenditure: Expenditure) => {
 };
 
 onMounted(() => {
+  eventBus.on('journeyIdChanged', (newJourneyId: number | null) => {
+    console.log('journeyId changed:', newJourneyId);
+    if (newJourneyId !== null) {
+      journeyId.value = newJourneyId;
+      fetchExpenditures(newJourneyId);
+    } else {
+      clearExpenditures();
+    }
+  });
+
   if (journeyId.value !== null) {
+    console.log('journeyId in History:', journeyId.value);
     fetchExpenditures(journeyId.value);
   }
-
-  eventBus.on('journeyIdChanged', (newJourneyId: number) => {
-    console.log('journeyId changed:', newJourneyId);
-    journeyId.value = newJourneyId;
-    fetchExpenditures(newJourneyId);
-  });
 });
 
 defineExpose({
