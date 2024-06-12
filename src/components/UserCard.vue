@@ -1,5 +1,3 @@
-<!--src/components/UserCard.vue-->
-
 <template>
   <div class="card shadow m-3 p-3">
     <div class="card-body">
@@ -9,21 +7,27 @@
         <input type="email" class="form-control" id="userEmail" v-model="userData.email" disabled>
       </div>
 
-      <!-- Change Password Section -->
-
-      <form @submit.prevent="changePassword">
-        <div class="mb-3">
-          <label for="newPassword" class="form-label">New Password</label>
-          <input type="password" class="form-control" id="newPassword" v-model="userData.newPassword" required>
+      <!-- Change Password Toggle -->
+      <div>
+        <button class="btn btn-secondary mb-3 custom-width-btn" @click="toggleChangePassword">
+          {{ showChangePassword ? 'Hide' : 'Change Password' }}
+        </button>
+        <div v-if="showChangePassword">
+          <form @submit.prevent="changePassword">
+            <div class="mb-3">
+              <label for="newPassword" class="form-label">New Password</label>
+              <input type="password" class="form-control" id="newPassword" v-model="userData.newPassword" required>
+            </div>
+            <div class="mb-3">
+              <label for="confirmPassword" class="form-label">Confirm Password</label>
+              <input type="password" class="form-control" id="confirmPassword" v-model="userData.confirmPassword" required>
+            </div>
+            <div class="text-center mb-3">
+              <button type="submit" class="btn btn-primary custom-width-btn">Change Password</button>
+            </div>
+          </form>
         </div>
-        <div class="mb-3">
-          <label for="confirmPassword" class="form-label">Confirm Password</label>
-          <input type="password" class="form-control" id="confirmPassword" v-model="userData.confirmPassword" required>
-        </div>
-        <div class="text-center mb-3">
-          <button type="submit" class="btn btn-primary custom-width-btn">Change Password</button>
-        </div>
-      </form>
+      </div>
 
       <!-- Danger Zone -->
       <hr>
@@ -38,7 +42,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue';
+import { reactive, ref } from 'vue';
 
 interface UserData {
   email: string;
@@ -51,6 +55,12 @@ const userData = reactive<UserData>({
   newPassword: '',
   confirmPassword: ''
 });
+
+const showChangePassword = ref(false);
+
+function toggleChangePassword() {
+  showChangePassword.value = !showChangePassword.value;
+}
 
 function changePassword() {
   // Logik zum Ändern des Passworts
@@ -66,5 +76,3 @@ function deleteUser() {
   width: 100%;
 }
 </style>
-
-
