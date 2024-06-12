@@ -6,7 +6,7 @@ import Freecurrencyapi from "@everapi/freecurrencyapi-js";
 import eventBus from '@/services/eventBus'; // Import EventBus
 
 const expendituresList = ref<Expenditure[]>([]);
-const currencyapi = new Freecurrencyapi('fca_live_SXUfhiLcLAt87AE3F3ZZZ9i4yHzyQ4kfmKITa6Vy');
+const currencyapi = new Freecurrencyapi(import.meta.env.VITE_API_KEY);
 const journeys = ref<Journey[]>([]);
 const selectedJourneyId = ref<number | null>(Number(localStorage.getItem('selectedJourney')));
 const uuid = localStorage.getItem('UUID') || 'default-uuid';
