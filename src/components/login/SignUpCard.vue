@@ -46,7 +46,7 @@ const signup = async () => {
 </script>
 
 <template>
-  <div class="card shadow m-3">
+  <div class="card shadow m-3 p-3">
     <div class="card-body">
       <div class="d-flex justify-content-center align-items-center">
         <img src="@/assets/logo.png" alt="Bootstrap" style="width: auto; height: auto;">
