@@ -1,7 +1,18 @@
 
 {
   "extends": "@vue/tsconfig/tsconfig.dom.json",
-  "include": ["env.d.ts", "src/**/*", "src/**/*.vue", "Types/freecurrencyapi-js.d.ts", "./types/**/*.ts", "./src/**/*.ts", "./src/router/**/*.ts", "./src/stores/**/*.ts"],
+  "include": ["@/services/*.ts","env.d.ts",
+    "src/**/*",
+    "src/**/*.vue",
+    "Types/freecurrencyapi-js.d.ts",
+    "./types/**/*.ts", "src/**/*.ts",
+    "./src/router/**/*.ts",
+    "./src/stores/**/*.ts",
+    "src/types.ts",
+    "src/**/*.ts",
+    "src/**/*.vue",
+    "src/types/**/*.d.ts",
+  "Types/*.ts"],
   "exclude": ["src/**/__tests__/*"],
   "compilerOptions": {
     "composite": true,

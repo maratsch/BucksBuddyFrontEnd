@@ -1,3 +1,5 @@
+// src/stores/themeStore.ts
+
 // Color Theme Store (Light/Dark)
 import { defineStore } from 'pinia';
 import { ref } from 'vue';

@@ -1,11 +1,13 @@
-// src/api.ts
+// src/services/api.ts
+
 import axios from 'axios';
+import type {Expenditure, Journey, newUser} from '@/types';
 
 const apiClient = axios.create({
     // For local development
-    // baseURL: 'http://localhost:8080/api',
+    baseURL: 'http://localhost:8080/',
     // For Render
-    baseURL: 'https://bucksbuddybackend.onrender.com/api',
+    // baseURL: 'https://bucksbuddybackend.onrender.com/api',
     withCredentials: true,
     headers: {
         'Content-Type': 'application/json'
@@ -30,20 +32,97 @@ apiClient.get(`/`)
         }
     });
 
-export default {
-    getExpenditures() {
-        return apiClient.get('/expenditures');
-    },
-    getExpenditureById(id: number) {
-        return apiClient.get(`/expenditure?id=${id}`);
-    },
-    createExpenditure(expenditure: any) {
-        return apiClient.post('/expenditure', expenditure);
-    },
-    deleteExpenditure(id: number) {
-        return apiClient.delete(`/expenditure?id=${id}`);
-    },
-    updateExpenditure(expenditure: any) {
-        return apiClient.put('/expenditure', expenditure);
+apiClient.interceptors.request.use((config) => {
+    let userUuid = localStorage.getItem('UUID');
+    console.log('UUID from local storage:', userUuid);
+    if (userUuid) {
+        // Entferne das Präfix 'UUID:'
+        if (userUuid.startsWith('UUID: ')) {
+            userUuid = userUuid.replace('UUID: ', '');
+        }
+        config.headers['uuid'] = userUuid;
     }
-}
+    console.log('Request headers:', config.headers);
+    return config;
+});
+
+
+export default {
+    // User API
+    login(email: string, password: string) {
+        return apiClient.post('/users/login', {email, password});
+    },
+    createUser(newUser: newUser) {
+        return apiClient.post('/users', newUser);
+    },
+    // get User Email by UUID
+    deleteUser(uuid: string) {
+        return apiClient.delete(`/users`, {
+            headers: {
+                'uuid': uuid
+            }
+        });
+    },
+    changePassword(uuid: string, newPassword: string) {
+        return apiClient.patch(`/users/password`, {
+            newPassword: newPassword
+        }, {
+            headers: {
+                'uuid': uuid
+            }
+        });
+    },
+
+    // Journey API
+    getAllJourneys(uuid: string) {
+        return apiClient.get('/users/journeys');
+    },
+    getJourneyById(id: number) {
+        return apiClient.get(`/users/journeys/${id}`);
+    },
+    createJourney(uuid: string, journey: Omit<Journey, "id">) {
+        return apiClient.post('/users/journeys', journey);
+    },
+    deleteJourney(id: number) {
+        return apiClient.delete(`/users/journeys/${id}`);
+    },
+    updateJourneyName(id: number, name: string) {
+        return apiClient.patch(`/users/journeys/${id}`, {name});
+    },
+    getHomeCurrency(journeyId: number) {
+        return apiClient.get(`/users/journeys/${journeyId}/homeCurrency`);
+    },
+    getVacCurrency(journeyId: number) {
+        return apiClient.get(`/users/journeys/${journeyId}/vacCurrency`);
+    },
+    getBudget(journeyId: number) {
+        return apiClient.get(`/users/journeys/${journeyId}/budget`);
+    },
+    getStartDate(journeyId: number) {
+        return apiClient.get(`/users/journeys/${journeyId}/startDate`);
+    },
+    getEndDate(journeyId: number) {
+        return apiClient.get(`/users/journeys/${journeyId}/endDate`);
+    },
+
+
+    // Expenditure API
+    getAllExpenditures(journeyId: number) {
+        return apiClient.get(`/users/journeys/${journeyId}/expenditures`);
+    },
+    getExpenditureById(journeyId: number, id: number) {
+        return apiClient.get(`/users/journeys/${journeyId}/expenditures/${id}`);
+    },
+    createExpenditure(journeyId: number, expenditure: Omit<Expenditure, 'id'>) { // Update the type here
+        return apiClient.post(`/users/journeys/${journeyId}/expenditures`, expenditure);
+    },
+    deleteExpenditure(journeyId: number, id: number) {
+        return apiClient.delete(`/users/journeys/${journeyId}/expenditures/${id}`);
+    },
+    updateExpenditure(journeyId: number, id: number, expenditure: Expenditure) {
+        return apiClient.put(`/users/journeys/${journeyId}/expenditures/${id}`, expenditure);
+    },
+
+
+};
+

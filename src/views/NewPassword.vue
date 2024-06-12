@@ -1,15 +1,15 @@
-<!--src/views/NewJourney.vue-->
-
 <script setup lang="ts">
-import CreateNewJourney from "@/components/CreateNewJourney.vue";
+
 </script>
 
 <template>
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-6">
-        <CreateNewJourney/>
+        <h1>Passwort vergessen?<br>
+          Schwache Leistung! <br></h1>
       </div>
     </div>
   </div>
 </template>
+

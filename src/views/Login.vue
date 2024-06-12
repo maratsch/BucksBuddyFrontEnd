@@ -1,15 +1,18 @@
-<!--src/views/NewJourney.vue-->
+<!--src/views/Login.vue-->
 
 <script setup lang="ts">
-import CreateNewJourney from "@/components/CreateNewJourney.vue";
+import LoginCard from "@/components/login/LoginCard.vue";
 </script>
 
 <template>
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-6">
-        <CreateNewJourney/>
+        <LoginCard />
       </div>
     </div>
   </div>
 </template>
+
+
+

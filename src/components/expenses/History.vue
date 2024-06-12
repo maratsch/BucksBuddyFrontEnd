@@ -1,39 +1,43 @@
 <script setup lang="ts">
-import {ref, onMounted, defineExpose} from 'vue';
+import {ref, onMounted, computed} from 'vue';
 import api from '@/services/api';
-import {type Expenditure} from '@/Expenditure';
+import { type Expenditure } from '@/types';
+import eventBus from '@/services/eventBus'; // Import EventBus
 
-// Definiert eine reaktive Referenz für die Ausgabenliste
 const expendituresList = ref<Expenditure[]>([]);
+const journeyId = ref<number | null>(Number(localStorage.getItem('selectedJourney')));
+const vacCurrency = ref<string>('');
+const homeCurrency = ref<string>('');
+const exchangeRate = ref<number | null>(null);
 
-// Ruft die Ausgaben asynchron von der API ab und aktualisiert die Ausgabenliste
-const fetchExpenditures = async () => {
+const fetchExpenditures = async (id: number) => {
   try {
-    const response = await api.getExpenditures();
+    const response = await api.getAllExpenditures(id);
     expendituresList.value = response.data.map((expenditure: Expenditure) => ({
       ...expenditure,
       isEditing: false,
     }));
   } catch (error) {
-    console.error(error);
+    console.error('Error fetching expenditures:', error);
   }
 };
 
+const clearExpenditures = () => {
+  expendituresList.value = [];
+};
 
-// Löscht eine Ausgabe asynchron nach ihrer ID und aktualisiert die Ausgabenliste
 const deleteExpenditure = async (id: number) => {
   try {
-    await api.deleteExpenditure(id);
-    fetchExpenditures();
+    await api.deleteExpenditure(journeyId.value!, id);
+    await fetchExpenditures(journeyId.value!);
   } catch (error) {
     console.error(error);
   }
 };
 
-// Aktiviert den Bearbeitungsmodus für eine Ausgabe und lädt die vollständige Ausgabe aus der API
 const editExpenditure = async (id: number) => {
   try {
-    const response = await api.getExpenditureById(id);
+    const response = await api.getExpenditureById(journeyId.value!, id);
     const expenditure = response.data;
     expenditure.isEditing = true;
     const index = expendituresList.value.findIndex(item => item.id === id);
@@ -45,27 +49,52 @@ const editExpenditure = async (id: number) => {
   }
 };
 
-// Speichert die Änderungen und aktualisiert die Ausgabenliste
+const amountInVacCurrency = (amount: number): string => {
+  return exchangeRate.value !== null ? (amount * exchangeRate.value).toFixed(2) : 'N/A';
+};
+
 const saveExpenditure = async (id: number, updatedExpenditure: Expenditure) => {
   try {
-    await api.updateExpenditure(updatedExpenditure);
-    fetchExpenditures();
+    await api.updateExpenditure(journeyId.value!, id, updatedExpenditure);
+    await fetchExpenditures(journeyId.value!);
   } catch (error) {
     console.error(error);
   }
 };
 
-// Hook, der die Ausgaben abruft, wenn die Komponente gemountet wird
 onMounted(() => {
-  fetchExpenditures();
+  eventBus.on('journeyIdChanged', (newJourneyId: number | null) => {
+    console.log('journeyId changed:', newJourneyId);
+    if (newJourneyId !== null) {
+      journeyId.value = newJourneyId;
+      fetchExpenditures(newJourneyId);
+    } else {
+      clearExpenditures();
+    }
+  });
+
+  eventBus.on('exchangeRateUpdated', (rate: number) => {
+    exchangeRate.value = rate;
+  });
+
+  eventBus.on('vacCurrencyUpdated', (vacCurrencyName: string) => {
+    vacCurrency.value = vacCurrencyName;
+  });
+
+  eventBus.on('homeCurrencyUpdated', (homeCurrencyName: string) => {
+    homeCurrency.value = homeCurrencyName;
+  });
+
+  if (journeyId.value !== null) {
+    console.log('journeyId in History:', journeyId.value);
+    fetchExpenditures(journeyId.value);
+  }
 });
 
-// Methode, die der Instanz der Komponente ausgesetzt wird
 defineExpose({
   fetchExpenditures
 });
 
-// Formatiert ein Datumsobjekt im Format 'DD.MM.YYYY'
 const formatDate = (dateString: Date): string => {
   const date = new Date(dateString);
   const day = String(date.getDate()).padStart(2, '0');
@@ -74,7 +103,6 @@ const formatDate = (dateString: Date): string => {
   return `${day}.${month}.${year}`;
 };
 
-// Formatiert einen Betrag als Dezimalzahl mit zwei Nachkommastellen
 const formatAmount = (amount: number): string => {
   return amount.toFixed(2);
 };
@@ -96,7 +124,14 @@ const formatAmount = (amount: number): string => {
           </div>
 
           <div class="col-3 text-center" v-if="!item.isEditing">
-            {{ formatAmount(item.amount) }} EUR
+            {{ formatAmount(item.amount)  }} {{ homeCurrency }}
+          </div>
+          <div class="col-3" v-else>
+            <input v-model="item.amount" type="number" class="form-control ms-2"/>
+          </div>
+
+          <div class="col-3 text-center" v-if="!item.isEditing">
+            {{ amountInVacCurrency(item.amount) }} {{ vacCurrency }}
           </div>
           <div class="col-3" v-else>
             <input v-model="item.amount" type="number" class="form-control ms-2"/>
@@ -116,14 +151,12 @@ const formatAmount = (amount: number): string => {
                 v-if="!item.isEditing"
                 @click="editExpenditure(item.id)">
             </button>
-
             <button
                 class="btn bi bi-save fs-5"
                 title="save"
                 v-else
                 @click="saveExpenditure(item.id, item)">
             </button>
-
             <button
                 class="btn bi bi-trash fs-5"
                 title="delete"
