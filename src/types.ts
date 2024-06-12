@@ -10,6 +10,12 @@ export interface User {
     isEditing?: boolean;
 }
 
+// Interface for newUser
+export interface newUser {
+    email: string;
+    password: string;
+}
+
 // Interface for Journey
 export interface Journey {
     id: number;

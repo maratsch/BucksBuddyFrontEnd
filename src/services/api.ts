@@ -1,7 +1,7 @@
 // src/services/api.ts
 
 import axios from 'axios';
-import type { Expenditure, Journey, User } from '@/types';
+import type { Expenditure, Journey, newUser } from '@/types';
 
 const apiClient = axios.create({
     // For local development
@@ -52,8 +52,8 @@ export default {
     login(email: string, password: string) {
         return apiClient.post('/users/login', { email, password });
     },
-    createUser(user: User) {
-        return apiClient.post('/users', user);
+    createUser(newUser: newUser) {
+        return apiClient.post('/users', newUser);
     },
 
     // Journey API

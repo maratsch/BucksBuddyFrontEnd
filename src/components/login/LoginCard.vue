@@ -43,7 +43,7 @@ const login = async () => {
                 <input type="password" class="form-control" id="password" v-model="loginData.password" required>
               </div>
               <div class="text-center mb-3">
-                <button type="submit" class="btn btn-primary custom-width">Log in</button>
+                <button type="submit" class="btn btn-primary custom-width-btn">Log in</button>
               </div>
             </form>
             <hr>
@@ -51,14 +51,14 @@ const login = async () => {
               <a href="#/newpassword" class="text-decoration-none">Can't remember password</a>
             </div>
             <div class="text-center mt-3">
-              <a href="#/signup" class="btn btn-secondary custom-width">Sign up</a>
+              <a href="#/signup" class="btn btn-secondary custom-width-btn">Sign up</a>
             </div>
           </div>
         </div>
 </template>
 
 <style scoped>
-.custom-width {
-  width: 33%;
+.custom-width-btn {
+  width: 100%;
 }
 </style>
