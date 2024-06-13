@@ -60,7 +60,11 @@ const fetchExpenditures = async (journeyId: number) => {
   }
 };
 
-const deleteJourney = async (journeyId: number) => {
+const deleteJourney = async (journeyId: number | null) => {
+  if (journeyId === null) {
+    console.error('Invalid journeyId provided');
+    return;
+  }
   try {
     await api.deleteJourney(journeyId);
     console.log('Journey deleted successfully');

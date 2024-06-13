@@ -1,13 +1,13 @@
 import axios from 'axios';
 import { shallowMount, VueWrapper } from '@vue/test-utils';
 import JourneyCard from '@/components/expenses/JourneyCard.vue';
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 
 // Mock Axios mit Vitest
-vi.mock('axios');
-
-// Nutze einen Cast zu vi.Mocked, um korrekt zu typisieren
-const mockedAxios = axios as jest.Mocked<typeof axios>;
+vi.mock('axios', () => ({
+    get: vi.fn(() => Promise.resolve({ data: { id: 1, name: 'Urlaub in Berlin', budget: 1000, currency: 'EUR' }})),
+    delete: vi.fn(() => Promise.resolve({ data: { message: 'Deleted successfully' } }))
+}));
 
 describe('JourneyCard', () => {
     let wrapper: VueWrapper<any>;
@@ -19,9 +19,6 @@ describe('JourneyCard', () => {
             budget: 1000,
             currency: 'EUR'
         };
-
-        // Setze den Mock für axios.get
-        mockedAxios.get.mockResolvedValue({ data: journey });
 
         // Mounte die Komponente
         wrapper = shallowMount(JourneyCard, {
@@ -36,20 +33,15 @@ describe('JourneyCard', () => {
     });
 
     it('can delete a journey', async () => {
-        // Mock die DELETE Anfrage
-        mockedAxios.delete.mockResolvedValue({
-            data: { message: 'Deleted successfully' }
-        });
-
         // Führe deleteJourney Methode aus
         await wrapper.vm.deleteJourney(1);
 
         // Assertions
-        expect(mockedAxios.delete).toHaveBeenCalledWith(expect.any(String));
+        expect(axios.delete).toHaveBeenCalledWith(expect.any(String));
         expect(wrapper.emitted('deleted')).toBeTruthy();
     });
 
     afterEach(() => {
-        vi.clearAllMocks();
+        vi.restoreAllMocks();
     });
 });
