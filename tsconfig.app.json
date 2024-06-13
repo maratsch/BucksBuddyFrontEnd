@@ -13,14 +13,14 @@
     "src/types/**/*.d.ts",
     "Types/*.ts",
     "./src/components/__tests__/*.ts",],
-  "exclude": ["src/**/__tests__/*", "node_modules"],
+  "exclude": ["node_modules"],
   "compilerOptions": {
     "composite": true,
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
-    "types": ["node", "jest"],
+    "types": ["node"],
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["./src/*"]
     }
   }
 }
