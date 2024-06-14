@@ -1,18 +1,16 @@
-import { fileURLToPath, URL } from 'node:url';
-import { defineConfig } from 'vite';
-import vue from '@vitejs/plugin-vue';
-import dotenv from 'dotenv';
+import { fileURLToPath, URL } from 'node:url'
 
-dotenv.config({ path: './keys.env' });
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
 
+// https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [
+    vue(),
+  ],
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url)),
-    },
-  },
-  define: {
-    'process.env': process.env,
-  },
-});
+      '@': fileURLToPath(new URL('./src', import.meta.url))
+    }
+  }
+})
