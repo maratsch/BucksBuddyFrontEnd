@@ -1,10 +1,10 @@
 import { shallowMount, flushPromises } from '@vue/test-utils';
 import History from '../expenses/History.vue';
 import { describe, it, expect, vi } from 'vitest';
-import type {AxiosResponse} from 'axios';
+import type { AxiosResponse } from 'axios';
 import type { Expenditure } from '../../types';
 import api from "../../services/api";
-
+import { AxiosHeaders } from 'axios';
 
 describe('History', () => {
     const twoItemResponse: Expenditure[] = [
@@ -17,11 +17,12 @@ describe('History', () => {
         status: 200,
         statusText: 'OK',
         config: {
-            headers: {},
-        }
+            headers: new AxiosHeaders(),
+        },
+        headers: {},
     });
 
-    vi.mock('@/services/api');
+    vi.mock('../../services/api');
     const mockedApi = vi.mocked(api, true);
 
     it('should render the expenditure list in history', async () => {
