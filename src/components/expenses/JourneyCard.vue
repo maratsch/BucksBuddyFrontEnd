@@ -206,20 +206,21 @@ onMounted(async () => {
         </div>
       </div>
       <hr>
+      <h3>Total Expenses</h3>
       <div class="row">
         <div class="col text-start">
-          <h3>Total Expenses in {{ getCurrencyName(homeCurrency) }}</h3>
+          <h4>{{ getCurrencyName(homeCurrency) }}</h4>
         </div>
         <div class="col text-end">
-          <h3>{{ totalExpenditures }} {{homeCurrency}}</h3>
+          <h4>{{ totalExpenditures }} {{homeCurrency}}</h4>
         </div>
       </div>
       <div class="row">
         <div class="col text-start">
-          <h3>Total Expenses in {{ getCurrencyName(vacCurrency) }}</h3>
+          <h4>{{ getCurrencyName(vacCurrency) }}</h4>
         </div>
         <div class="col text-end">
-          <h3>{{ totalExpensesInVacCurrency }} {{vacCurrency}}</h3>
+          <h4>{{ totalExpensesInVacCurrency }} {{vacCurrency}}</h4>
         </div>
       </div>
       <div class="row">
