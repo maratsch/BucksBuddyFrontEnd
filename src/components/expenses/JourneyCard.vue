@@ -160,7 +160,15 @@ onMounted(async () => {
     selectedJourneyId.value = null;
     eventBus.emit('journeyIdChanged', null); // Emit event for clearing expenditures
   }
+
+  eventBus.on('expenditureAdded', async () => {
+    if (selectedJourneyId.value !== null) {
+      await fetchJourneyDetails(selectedJourneyId.value);
+      await fetchExpenditures(selectedJourneyId.value);
+    }
+  });
 });
+
 </script>
 
 <template>

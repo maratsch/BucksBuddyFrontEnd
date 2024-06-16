@@ -34,16 +34,18 @@ const addExpenditure = async () => {
     };
     try {
       await api.createExpenditure(journeyId.value!, newExpenditure);
-      console.log('journeyId beim erstellen der Exp.', journeyId.value!);
+      console.log('journeyId beim Erstellen der Ausgabe:', journeyId.value!);
       title.value = '';
       amount.value = null;
       setDateToToday();
       emit('refreshExpenditures');
+      eventBus.emit('expenditureAdded', null); // Emit event to notify that an expenditure was added
     } catch (error) {
       console.error(error);
     }
   }
 };
+
 
 // Lifecycle hook that runs when the component is mounted
 onMounted(async () => {
