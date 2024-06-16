@@ -1,3 +1,4 @@
+<!--History-->
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue';
 import api from '@/services/api';

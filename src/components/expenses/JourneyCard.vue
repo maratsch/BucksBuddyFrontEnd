@@ -1,7 +1,8 @@
+<!--JourneyCard-->
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue';
+import {ref, computed, onMounted, watch} from 'vue';
 import api from '@/services/api';
-import type { Expenditure, Journey } from '@/types';
+import type {Expenditure, Journey} from '@/types';
 import Freecurrencyapi from "@everapi/freecurrencyapi-js";
 import eventBus from '@/services/eventBus'; // Import EventBus
 
@@ -60,10 +61,16 @@ const fetchExpenditures = async (journeyId: number) => {
   }
 };
 
-const deleteJourney = async (journeyId: number) => {
+const confirmAndDeleteJourney = async (journeyId: number | null) => {
+  if (journeyId === null) return;
+
+  const confirmDelete = confirm('Are you sure you want to delete this journey?');
+  if (!confirmDelete) return;
+
   try {
     await api.deleteJourney(journeyId);
     console.log('Journey deleted successfully');
+    alert('Journey deleted successfully');
     await fetchJourneys();
     selectedJourneyId.value = null;
     localStorage.removeItem('selectedJourney');
@@ -72,6 +79,7 @@ const deleteJourney = async (journeyId: number) => {
     console.error('Error deleting journey:', error);
   }
 };
+
 
 watch(selectedJourneyId, async (newVal) => {
   console.log('Selected Journey ID changed to:', newVal);
@@ -169,7 +177,7 @@ onMounted(async () => {
           </select>
         </div>
         <div class="col text-end">
-          <button class="btn btn-danger" @click="deleteJourney(selectedJourneyId)">Delete Journey</button>
+          <button class="btn btn-danger" @click="confirmAndDeleteJourney(selectedJourneyId)">Delete Journey</button>
         </div>
       </div>
       <hr>
@@ -194,7 +202,7 @@ onMounted(async () => {
           <h4>Budget</h4>
         </div>
         <div class="col text-end">
-          <h4>{{ budget }} {{homeCurrency}}</h4>
+          <h4>{{ budget }} {{ homeCurrency }}</h4>
         </div>
       </div>
       <div class="row">
@@ -212,7 +220,7 @@ onMounted(async () => {
           <h4>{{ getCurrencyName(homeCurrency) }}</h4>
         </div>
         <div class="col text-end">
-          <h4>{{ totalExpenditures }} {{homeCurrency}}</h4>
+          <h4>{{ totalExpenditures }} {{ homeCurrency }}</h4>
         </div>
       </div>
       <div class="row">
@@ -220,15 +228,15 @@ onMounted(async () => {
           <h4>{{ getCurrencyName(vacCurrency) }}</h4>
         </div>
         <div class="col text-end">
-          <h4>{{ totalExpensesInVacCurrency }} {{vacCurrency}}</h4>
+          <h4>{{ totalExpensesInVacCurrency }} {{ vacCurrency }}</h4>
         </div>
       </div>
       <div class="row">
         <div class="col text-start">
-          <h4>Budget Left in {{getCurrencyName(homeCurrency)}}</h4>
+          <h4>Budget Left in {{ getCurrencyName(homeCurrency) }}</h4>
         </div>
         <div class="col text-end">
-          <h4>{{ budget - totalExpenditures }} {{homeCurrency}}</h4>
+          <h4>{{ budget - totalExpenditures }} {{ homeCurrency }}</h4>
         </div>
       </div>
     </div>
