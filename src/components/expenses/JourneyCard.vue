@@ -167,7 +167,22 @@ onMounted(async () => {
       await fetchExpenditures(selectedJourneyId.value);
     }
   });
+
+  eventBus.on('expenditureDeleted', async () => {
+    if (selectedJourneyId.value !== null) {
+      await fetchJourneyDetails(selectedJourneyId.value);
+      await fetchExpenditures(selectedJourneyId.value);
+    }
+  });
+
+  eventBus.on('expenditureUpdated', async () => {
+    if (selectedJourneyId.value !== null) {
+      await fetchJourneyDetails(selectedJourneyId.value);
+      await fetchExpenditures(selectedJourneyId.value);
+    }
+  });
 });
+
 
 </script>
 
@@ -241,7 +256,7 @@ onMounted(async () => {
       </div>
       <div class="row">
         <div class="col text-start">
-          <h4>Budget Left in {{ getCurrencyName(homeCurrency) }}</h4>
+          <h4>Budget Left</h4>
         </div>
         <div class="col text-end">
           <h4>{{ budget - totalExpenditures }} {{ homeCurrency }}</h4>

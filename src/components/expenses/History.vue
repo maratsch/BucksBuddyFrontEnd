@@ -47,6 +47,7 @@ const deleteExpenditure = async (id: number) => {
     }
     await api.deleteExpenditure(journeyId.value, id);
     await fetchExpenditures();
+    eventBus.emit('expenditureDeleted', journeyId.value);
   } catch (error) {
     console.error(error);
   }
@@ -67,6 +68,7 @@ const saveExpenditure = async (id: number, updatedExpenditure: Expenditure) => {
     }
     await api.updateExpenditure(journeyId.value, id, updatedExpenditure);
     await fetchExpenditures();
+    eventBus.emit('expenditureUpdated', journeyId.value);
   } catch (error) {
     console.error(error);
   }
