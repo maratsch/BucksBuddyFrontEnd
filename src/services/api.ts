@@ -5,9 +5,8 @@ import type {Expenditure, Journey, newUser} from '@/types';
 
 const apiClient = axios.create({
     // For local development
-    baseURL: 'http://localhost:8080/',
-    // For Render
-    // baseURL: 'https://bucksbuddybackend.onrender.com/api',
+    baseURL: 'https://bucksbuddybackend.onrender.com/api',
+    //'http://localhost:8080/',
     withCredentials: true,
     headers: {
         'Content-Type': 'application/json'
