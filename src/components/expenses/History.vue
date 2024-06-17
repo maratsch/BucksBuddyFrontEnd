@@ -1,22 +1,34 @@
+<!--History-->
 <script setup lang="ts">
-import {ref, onMounted, computed} from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import api from '@/services/api';
 import { type Expenditure } from '@/types';
 import eventBus from '@/services/eventBus'; // Import EventBus
 
 const expendituresList = ref<Expenditure[]>([]);
+const sortedExpenditures = ref<Expenditure[]>([]);
 const journeyId = ref<number | null>(Number(localStorage.getItem('selectedJourney')));
 const vacCurrency = ref<string>('');
 const homeCurrency = ref<string>('');
 const exchangeRate = ref<number | null>(null);
 
-const fetchExpenditures = async (id: number) => {
+const sortCriteria = ref<string>('name');
+const sortOrder = ref<string>('asc');
+
+const fetchExpenditures = async () => {
+  if (journeyId.value === null) {
+    console.error('Cannot fetch expenditures: journeyId is null');
+    return;
+  }
+
   try {
-    const response = await api.getAllExpenditures(id);
+    console.log('Fetching expenditures for journeyId:', journeyId.value); // Debug log
+    const response = await api.getAllExpenditures(journeyId.value);
     expendituresList.value = response.data.map((expenditure: Expenditure) => ({
       ...expenditure,
       isEditing: false,
     }));
+    sortExpenditures();
   } catch (error) {
     console.error('Error fetching expenditures:', error);
   }
@@ -24,26 +36,39 @@ const fetchExpenditures = async (id: number) => {
 
 const clearExpenditures = () => {
   expendituresList.value = [];
+  sortedExpenditures.value = [];
 };
 
 const deleteExpenditure = async (id: number) => {
   try {
-    await api.deleteExpenditure(journeyId.value!, id);
-    await fetchExpenditures(journeyId.value!);
+    if (journeyId.value === null) {
+      console.error('Cannot delete expenditure: journeyId is null');
+      return;
+    }
+    await api.deleteExpenditure(journeyId.value, id);
+    await fetchExpenditures();
+    eventBus.emit('expenditureDeleted', journeyId.value);
   } catch (error) {
     console.error(error);
   }
 };
 
-const editExpenditure = async (id: number) => {
+const editExpenditure = (id: number) => {
+  const index = expendituresList.value.findIndex(item => item.id === id);
+  if (index !== -1) {
+    expendituresList.value[index].isEditing = true;
+  }
+};
+
+const saveExpenditure = async (id: number, updatedExpenditure: Expenditure) => {
   try {
-    const response = await api.getExpenditureById(journeyId.value!, id);
-    const expenditure = response.data;
-    expenditure.isEditing = true;
-    const index = expendituresList.value.findIndex(item => item.id === id);
-    if (index !== -1) {
-      expendituresList.value[index] = expenditure;
+    if (journeyId.value === null) {
+      console.error('Cannot save expenditure: journeyId is null');
+      return;
     }
+    await api.updateExpenditure(journeyId.value, id, updatedExpenditure);
+    await fetchExpenditures();
+    eventBus.emit('expenditureUpdated', journeyId.value);
   } catch (error) {
     console.error(error);
   }
@@ -53,21 +78,29 @@ const amountInVacCurrency = (amount: number): string => {
   return exchangeRate.value !== null ? (amount * exchangeRate.value).toFixed(2) : 'N/A';
 };
 
-const saveExpenditure = async (id: number, updatedExpenditure: Expenditure) => {
-  try {
-    await api.updateExpenditure(journeyId.value!, id, updatedExpenditure);
-    await fetchExpenditures(journeyId.value!);
-  } catch (error) {
-    console.error(error);
-  }
+const sortExpenditures = () => {
+  sortedExpenditures.value = [...expendituresList.value].sort((a, b) => {
+    let comparison = 0;
+    if (sortCriteria.value === 'amount') {
+      comparison = a.amount - b.amount;
+    } else if (sortCriteria.value === 'date') {
+      comparison = new Date(a.date).getTime() - new Date(b.date).getTime();
+    } else {
+      comparison = a.name.localeCompare(b.name);
+    }
+
+    return sortOrder.value === 'asc' ? comparison : -comparison;
+  });
 };
+
+watch([expendituresList, sortCriteria, sortOrder], sortExpenditures);
 
 onMounted(() => {
   eventBus.on('journeyIdChanged', (newJourneyId: number | null) => {
-    console.log('journeyId changed:', newJourneyId);
+    console.log('journeyId changed in History:', newJourneyId);
     if (newJourneyId !== null) {
       journeyId.value = newJourneyId;
-      fetchExpenditures(newJourneyId);
+      fetchExpenditures();
     } else {
       clearExpenditures();
     }
@@ -86,8 +119,8 @@ onMounted(() => {
   });
 
   if (journeyId.value !== null) {
-    console.log('journeyId in History:', journeyId.value);
-    fetchExpenditures(journeyId.value);
+    console.log('Initial journeyId in History:', journeyId.value); // Debug log
+    fetchExpenditures();
   }
 });
 
@@ -106,16 +139,34 @@ const formatDate = (dateString: Date): string => {
 const formatAmount = (amount: number): string => {
   return amount.toFixed(2);
 };
-
 </script>
 
 <template>
   <div class="card shadow mb-3">
     <div class="card-body">
       <h3 class="card-title">History</h3>
-      <div class="historycard shadow-sm mb-2" v-for="item in expendituresList" :key="item.id">
-        <div class="historycard-body d-flex align-items-center p-1 ms-2">
 
+      <!-- Sort Controls -->
+      <div class="row mb-2">
+        <div class="col">
+          <label for="sortCriteria" class="form-label">Sort By</label>
+          <select id="sortCriteria" v-model="sortCriteria" class="form-select">
+            <option value="name">Name</option>
+            <option value="amount">Amount</option>
+            <option value="date">Date</option>
+          </select>
+        </div>
+        <div class="col">
+          <label for="sortOrder" class="form-label">Order</label>
+          <select id="sortOrder" v-model="sortOrder" class="form-select">
+            <option value="asc">Ascending</option>
+            <option value="desc">Descending</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="historycard shadow-sm mb-2" v-for="item in sortedExpenditures" :key="item.id">
+        <div class="historycard-body d-flex align-items-center p-1 ms-2">
           <div class="col-3 fw-bold" v-if="!item.isEditing">
             {{ item.name }}
           </div>
@@ -123,24 +174,24 @@ const formatAmount = (amount: number): string => {
             <input v-model="item.name" class="form-control"/>
           </div>
 
-          <div class="col-3 text-center" v-if="!item.isEditing">
-            {{ formatAmount(item.amount)  }} {{ homeCurrency }}
+          <div class="col-2 text-center" v-if="!item.isEditing">
+            {{ formatAmount(item.amount) }} {{ homeCurrency }}
           </div>
-          <div class="col-3" v-else>
+          <div class="col-2" v-else>
             <input v-model="item.amount" type="number" class="form-control ms-2"/>
           </div>
 
-          <div class="col-3 text-center" v-if="!item.isEditing">
+          <div class="col-2 text-center" v-if="!item.isEditing">
             {{ amountInVacCurrency(item.amount) }} {{ vacCurrency }}
           </div>
-          <div class="col-3" v-else>
+          <div class="col-2" v-else>
             <input v-model="item.amount" type="number" class="form-control ms-2"/>
           </div>
 
-          <div class="col-3 text-center" v-if="!item.isEditing">
+          <div class="col-2 text-center" v-if="!item.isEditing">
             {{ formatDate(item.date) }}
           </div>
-          <div class="col-3" v-else>
+          <div class="col-2" v-else>
             <input v-model="item.date" type="date" class="form-control ms-3"/>
           </div>
 

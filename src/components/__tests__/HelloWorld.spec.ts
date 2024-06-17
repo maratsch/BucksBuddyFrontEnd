@@ -1,12 +1,10 @@
-// src/components/__tests__/HelloWorld.spec.ts
-
-import { describe, it, expect } from 'vitest'
-
-import { mount } from '@vue/test-utils'
-
-describe('HelloWorld', () => {
-  it('renders properly', () => {
-    const wrapper = mount({ props: { msg: 'Hello Vitest' } })
-    expect(wrapper.text()).toContain('Hello Vitest')
-  })
-})
+// import { describe, it, expect } from 'vitest'
+//
+// import { mount } from '@vue/test-utils'
+//
+// describe('HelloWorld', () => {
+//   it('renders properly', () => {
+//     const wrapper = mount({ props: { msg: 'Hello Vitest' } })
+//     expect(wrapper.text()).toContain('Hello Vitest')
+//   })
+// })

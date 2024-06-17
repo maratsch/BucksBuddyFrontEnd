@@ -1,12 +1,13 @@
+<!--JourneyCard-->
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue';
+import {ref, computed, onMounted, watch} from 'vue';
 import api from '@/services/api';
-import type { Expenditure, Journey } from '@/types';
+import type {Expenditure, Journey} from '@/types';
 import Freecurrencyapi from "@everapi/freecurrencyapi-js";
 import eventBus from '@/services/eventBus'; // Import EventBus
 
 const expendituresList = ref<Expenditure[]>([]);
-const currencyapi = new Freecurrencyapi('fca_live_SXUfhiLcLAt87AE3F3ZZZ9i4yHzyQ4kfmKITa6Vy');
+const currencyapi = new Freecurrencyapi(import.meta.env.VITE_API_KEY);
 const journeys = ref<Journey[]>([]);
 const selectedJourneyId = ref<number | null>(Number(localStorage.getItem('selectedJourney')));
 const uuid = localStorage.getItem('UUID') || 'default-uuid';
@@ -60,6 +61,26 @@ const fetchExpenditures = async (journeyId: number) => {
   }
 };
 
+const confirmAndDeleteJourney = async (journeyId: number | null) => {
+  if (journeyId === null) return;
+
+  const confirmDelete = confirm('Are you sure you want to delete this journey?');
+  if (!confirmDelete) return;
+
+  try {
+    await api.deleteJourney(journeyId);
+    console.log('Journey deleted successfully');
+    alert('Journey deleted successfully');
+    await fetchJourneys();
+    selectedJourneyId.value = null;
+    localStorage.removeItem('selectedJourney');
+    eventBus.emit('journeyIdChanged', null); // Emit event for clearing expenditures
+  } catch (error) {
+    console.error('Error deleting journey:', error);
+  }
+};
+
+
 watch(selectedJourneyId, async (newVal) => {
   console.log('Selected Journey ID changed to:', newVal);
   if (newVal !== null) {
@@ -86,7 +107,7 @@ const fetchJourneyDetails = async (journeyId: number) => {
     }).then((response: any) => response.data[vacCurrency.value]);
     eventBus.emit('exchangeRateUpdated', exchangeRate.value); // Emit exchange rate
     eventBus.emit('vacCurrencyUpdated', vacCurrency.value); // Emit vacation currency
-    eventBus.emit('homeCurrencyUpdated', homeCurrency.value); // Emit budget
+    eventBus.emit('homeCurrencyUpdated', homeCurrency.value); // Emit home currency
   } catch (error) {
     console.error('Error fetching journey details:', error);
   }
@@ -121,8 +142,9 @@ const getCurrencyName = (code: string) => {
 
 const formatExchangeRate = (rate: number | null) => {
   return rate !== null ? rate.toFixed(2) : 'N/A';
+};
 
-};const totalExpensesInVacCurrency = computed(() => {
+const totalExpensesInVacCurrency = computed(() => {
   return exchangeRate.value !== null ? (totalExpenditures.value * exchangeRate.value).toFixed(2) : 'N/A';
 });
 
@@ -138,7 +160,30 @@ onMounted(async () => {
     selectedJourneyId.value = null;
     eventBus.emit('journeyIdChanged', null); // Emit event for clearing expenditures
   }
+
+  eventBus.on('expenditureAdded', async () => {
+    if (selectedJourneyId.value !== null) {
+      await fetchJourneyDetails(selectedJourneyId.value);
+      await fetchExpenditures(selectedJourneyId.value);
+    }
+  });
+
+  eventBus.on('expenditureDeleted', async () => {
+    if (selectedJourneyId.value !== null) {
+      await fetchJourneyDetails(selectedJourneyId.value);
+      await fetchExpenditures(selectedJourneyId.value);
+    }
+  });
+
+  eventBus.on('expenditureUpdated', async () => {
+    if (selectedJourneyId.value !== null) {
+      await fetchJourneyDetails(selectedJourneyId.value);
+      await fetchExpenditures(selectedJourneyId.value);
+    }
+  });
 });
+
+
 </script>
 
 <template>
@@ -153,6 +198,9 @@ onMounted(async () => {
             <option disabled value="">Please select one</option>
             <option v-for="journey in journeys" :key="journey.id" :value="journey.id">{{ journey.name }}</option>
           </select>
+        </div>
+        <div class="col text-end">
+          <button class="btn btn-danger" @click="confirmAndDeleteJourney(selectedJourneyId)">Delete Journey</button>
         </div>
       </div>
       <hr>
@@ -177,7 +225,7 @@ onMounted(async () => {
           <h4>Budget</h4>
         </div>
         <div class="col text-end">
-          <h4>{{ budget }} {{homeCurrency}}</h4>
+          <h4>{{ budget }} {{ homeCurrency }}</h4>
         </div>
       </div>
       <div class="row">
@@ -189,28 +237,29 @@ onMounted(async () => {
         </div>
       </div>
       <hr>
+      <h3>Total Expenses</h3>
       <div class="row">
         <div class="col text-start">
-          <h3>Total Expenses in {{ getCurrencyName(homeCurrency) }}</h3>
+          <h4>{{ getCurrencyName(homeCurrency) }}</h4>
         </div>
         <div class="col text-end">
-          <h3>{{ totalExpenditures }} {{homeCurrency}}</h3>
+          <h4>{{ totalExpenditures }} {{ homeCurrency }}</h4>
         </div>
       </div>
       <div class="row">
         <div class="col text-start">
-          <h3>Total Expenses in {{ getCurrencyName(vacCurrency) }}</h3>
+          <h4>{{ getCurrencyName(vacCurrency) }}</h4>
         </div>
         <div class="col text-end">
-          <h3>{{ totalExpensesInVacCurrency }} {{vacCurrency}}</h3>
+          <h4>{{ totalExpensesInVacCurrency }} {{ vacCurrency }}</h4>
         </div>
       </div>
       <div class="row">
         <div class="col text-start">
-          <h4>Budget Left in {{getCurrencyName(homeCurrency)}}</h4>
+          <h4>Budget Left</h4>
         </div>
         <div class="col text-end">
-          <h4>{{ budget - totalExpenditures }} {{homeCurrency}}</h4>
+          <h4>{{ budget - totalExpenditures }} {{ homeCurrency }}</h4>
         </div>
       </div>
     </div>
