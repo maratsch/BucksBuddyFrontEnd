@@ -74,8 +74,8 @@ const saveExpenditure = async (id: number, updatedExpenditure: Expenditure) => {
   }
 };
 
-const amountInVacCurrency = (amount: number): string => {
-  return exchangeRate.value !== null ? (amount * exchangeRate.value).toFixed(2) : 'N/A';
+const amountInHomeCurrency = (amount: number): string => {
+  return exchangeRate.value !== null ? (amount / exchangeRate.value).toFixed(2) : 'N/A';
 };
 
 const sortExpenditures = () => {
@@ -182,7 +182,7 @@ const formatAmount = (amount: number): string => {
           </div>
 
           <div class="col-2 text-center" v-if="!item.isEditing">
-            {{ amountInVacCurrency(item.amount) }} {{ homeCurrency }}
+            {{ amountInHomeCurrency(item.amount) }} {{ homeCurrency }}
           </div>
           <div class="col-2" v-else>
             <input v-model="item.amount" type="number" class="form-control ms-2"/>
