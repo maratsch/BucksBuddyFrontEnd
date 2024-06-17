@@ -144,8 +144,12 @@ const formatExchangeRate = (rate: number | null) => {
   return rate !== null ? rate.toFixed(2) : 'N/A';
 };
 
-const totalExpensesInVacCurrency = computed(() => {
-  return exchangeRate.value !== null ? (totalExpenditures.value * exchangeRate.value).toFixed(2) : 'N/A';
+const totalExpensesInHomeCurrency = computed(() => {
+  if (typeof exchangeRate.value === 'number' && typeof totalExpenditures.value === 'number') {
+    return parseFloat((totalExpenditures.value / exchangeRate.value).toFixed(2));
+  } else {
+    return 0; // Return 0 or another appropriate numeric fallback value instead of 'N/A'
+  }
 });
 
 onMounted(async () => {
@@ -240,26 +244,27 @@ onMounted(async () => {
       <h3>Total Expenses</h3>
       <div class="row">
         <div class="col text-start">
-          <h4>{{ getCurrencyName(homeCurrency) }}</h4>
+          <h4>{{ getCurrencyName(vacCurrency) }}</h4>
         </div>
         <div class="col text-end">
-          <h4>{{ totalExpenditures }} {{ homeCurrency }}</h4>
+          <h4>{{ totalExpenditures }} {{ vacCurrency }}</h4>
         </div>
       </div>
       <div class="row">
         <div class="col text-start">
-          <h4>{{ getCurrencyName(vacCurrency) }}</h4>
+          <h4>{{ getCurrencyName(homeCurrency) }}</h4>
         </div>
         <div class="col text-end">
-          <h4>{{ totalExpensesInVacCurrency }} {{ vacCurrency }}</h4>
+          <h4>{{ totalExpensesInHomeCurrency }} {{ homeCurrency }}</h4>
         </div>
       </div>
+
       <div class="row">
         <div class="col text-start">
           <h4>Budget Left</h4>
         </div>
         <div class="col text-end">
-          <h4>{{ budget - totalExpenditures }} {{ homeCurrency }}</h4>
+          <h4>{{ budget - totalExpensesInHomeCurrency }} {{ homeCurrency }}</h4>
         </div>
       </div>
     </div>

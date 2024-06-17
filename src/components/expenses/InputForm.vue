@@ -33,6 +33,7 @@ const addExpenditure = async () => {
       isEditing: false
     };
     try {
+      console.log('')
       await api.createExpenditure(journeyId.value!, newExpenditure);
       console.log('journeyId beim Erstellen der Ausgabe:', journeyId.value!);
       title.value = '';
