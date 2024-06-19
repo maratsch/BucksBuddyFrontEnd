@@ -22,7 +22,7 @@ const fetchExpenditures = async () => {
   }
 
   try {
-    console.log('Fetching expenditures for journeyId:', journeyId.value); // Debug log
+    //console.log('Fetching expenditures for journeyId:', journeyId.value); // Debug log
     const response = await api.getAllExpenditures(journeyId.value);
     expendituresList.value = response.data.map((expenditure: Expenditure) => ({
       ...expenditure,
@@ -97,7 +97,7 @@ watch([expendituresList, sortCriteria, sortOrder], sortExpenditures);
 
 onMounted(() => {
   eventBus.on('journeyIdChanged', (newJourneyId: number | null) => {
-    console.log('journeyId changed in History:', newJourneyId);
+    //console.log('journeyId changed in History:', newJourneyId);
     if (newJourneyId !== null) {
       journeyId.value = newJourneyId;
       fetchExpenditures();
@@ -119,7 +119,7 @@ onMounted(() => {
   });
 
   if (journeyId.value !== null) {
-    console.log('Initial journeyId in History:', journeyId.value); // Debug log
+    //console.log('Initial journeyId in History:', journeyId.value);
     fetchExpenditures();
   }
 });

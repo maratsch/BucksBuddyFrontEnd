@@ -17,7 +17,7 @@ const dateError = ref('');
 const uuid = localStorage.getItem('UUID');
 const router = useRouter();
 
-// Erstellen Sie eine Funktion, um die Journey zu erstellen
+
 const addJourney = async () => {
   // Aktualisieren Sie die Journey-Daten
   const newJourney: Omit<Journey, 'id'> = {
@@ -33,23 +33,20 @@ const addJourney = async () => {
     if (uuid === null) {
       throw new Error('UUID is null');
     }
-    // Rufen Sie die API-Funktion auf und übergeben Sie die Journey-Daten
     const response = await api.createJourney(uuid, newJourney);
-    // Verarbeiten Sie die Antwort
-    console.log(response.data);
+    //console.log(response.data);
     router.push('/main');
     alert('New journey created successfully');
   } catch (error) {
-    // Behandeln Sie Fehler
     console.error(error);
   }
 };
 
 
 const calculateDuration = () => {
-  console.log('calculateDuration called');
-  console.log('startDate:', startDate.value);
-  console.log('endDate:', endDate.value);
+  //console.log('calculateDuration called');
+  //console.log('startDate:', startDate.value);
+  //console.log('endDate:', endDate.value);
 
   if (startDate.value && endDate.value) {
     const start = new Date(startDate.value);

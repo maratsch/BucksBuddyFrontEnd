@@ -12,13 +12,13 @@ const loginData = reactive({
 const login = async () => {
   try {
     const response = await api.login(loginData.email, loginData.password);
-    console.log('Login response data:', response.data);
-    console.log('Login successful:', response.data);
+    //console.log('Login response data:', response.data);
+    //console.log('Login successful:', response.data);
 
     // Speichere die UUID im Local Storage
     localStorage.setItem('UUID', response.data);
     localStorage.setItem('email', loginData.email);
-    console.log('UUID from local storage after login:', localStorage.getItem('UUID'));
+    //console.log('UUID from local storage after login:', localStorage.getItem('UUID'));
     router.push('/main');
     alert('Login successful!')
   } catch (error) {

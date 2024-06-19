@@ -69,12 +69,12 @@ const confirmAndDeleteJourney = async (journeyId: number | null) => {
 
   try {
     await api.deleteJourney(journeyId);
-    console.log('Journey deleted successfully');
+    //console.log('Journey deleted successfully');
     alert('Journey deleted successfully');
     await fetchJourneys();
     selectedJourneyId.value = null;
     localStorage.removeItem('selectedJourney');
-    eventBus.emit('journeyIdChanged', null); // Emit event for clearing expenditures
+    eventBus.emit('journeyIdChanged', null);
   } catch (error) {
     console.error('Error deleting journey:', error);
   }
@@ -82,15 +82,15 @@ const confirmAndDeleteJourney = async (journeyId: number | null) => {
 
 
 watch(selectedJourneyId, async (newVal) => {
-  console.log('Selected Journey ID changed to:', newVal);
+  //console.log('Selected Journey ID changed to:', newVal);
   if (newVal !== null) {
     localStorage.setItem('selectedJourney', newVal.toString());
     await fetchJourneyDetails(newVal);
     await fetchExpenditures(newVal);
-    eventBus.emit('journeyIdChanged', newVal); // Emit event
+    eventBus.emit('journeyIdChanged', newVal);
   } else {
     localStorage.removeItem('selectedJourney');
-    eventBus.emit('journeyIdChanged', null); // Emit event for clearing expenditures
+    eventBus.emit('journeyIdChanged', null);
   }
 });
 
@@ -105,9 +105,9 @@ const fetchJourneyDetails = async (journeyId: number) => {
       base_currency: homeCurrency.value,
       currencies: vacCurrency.value
     }).then((response: any) => response.data[vacCurrency.value]);
-    eventBus.emit('exchangeRateUpdated', exchangeRate.value); // Emit exchange rate
-    eventBus.emit('vacCurrencyUpdated', vacCurrency.value); // Emit vacation currency
-    eventBus.emit('homeCurrencyUpdated', homeCurrency.value); // Emit home currency
+    eventBus.emit('exchangeRateUpdated', exchangeRate.value);
+    eventBus.emit('vacCurrencyUpdated', vacCurrency.value);
+    eventBus.emit('homeCurrencyUpdated', homeCurrency.value);
   } catch (error) {
     console.error('Error fetching journey details:', error);
   }
@@ -119,11 +119,11 @@ const fetchJourneys = async () => {
       console.error('UUID is missing');
       return;
     }
-    console.log('Fetching journeys for UUID:', uuid);
+    //console.log('Fetching journeys for UUID:', uuid);
     const response = await api.getAllJourneys(uuid);
     if (response.data && Array.isArray(response.data)) {
       journeys.value = response.data;
-      console.log("Journeys set to:", journeys.value);
+      //console.log("Journeys set to:", journeys.value);
     } else {
       console.error('Unexpected API response:', response);
     }
@@ -148,7 +148,7 @@ const totalExpensesInHomeCurrency = computed(() => {
   if (typeof exchangeRate.value === 'number' && typeof totalExpenditures.value === 'number') {
     return parseFloat((totalExpenditures.value / exchangeRate.value).toFixed(2));
   } else {
-    return 0; // Return 0 or another appropriate numeric fallback value instead of 'N/A'
+    return 0;
   }
 });
 
@@ -162,7 +162,7 @@ onMounted(async () => {
   } else {
     localStorage.removeItem('selectedJourney');
     selectedJourneyId.value = null;
-    eventBus.emit('journeyIdChanged', null); // Emit event for clearing expenditures
+    eventBus.emit('journeyIdChanged', null);
   }
 
   eventBus.on('expenditureAdded', async () => {

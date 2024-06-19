@@ -1,3 +1,73 @@
+<script setup lang="ts">
+import { reactive, ref } from 'vue';
+import api from "@/services/api";
+
+interface UserData {
+  email: string;
+  newPassword: string;
+  confirmPassword: string;
+}
+
+const userData = reactive<UserData>({
+  email: localStorage.getItem('email') || '',
+  newPassword: '',
+  confirmPassword: ''
+});
+
+const showChangePassword = ref(false);
+
+function toggleChangePassword() {
+  showChangePassword.value = !showChangePassword.value;
+}
+
+const submitNewPassword = async () => {
+  const uuid = localStorage.getItem('UUID');
+  if (uuid) {
+    if (userData.newPassword !== userData.confirmPassword) {
+      console.error('Passwords do not match');
+      return;
+    }
+
+    try {
+      const payload = { newPassword: userData.newPassword };
+      const response = await api.changePassword(uuid, payload);
+      //console.log('Password changed successfully:', response.data);
+      alert('Password changed successfully, please log in again!');
+      location.href = '/login';
+    } catch (error) {
+      console.error('Error changing password:');
+    }
+  } else {
+    console.error('UUID not found in localStorage');
+  }
+}
+
+function confirmDeleteUser() {
+  if (confirm("Are you sure you want to delete your account? " +
+      "This action cannot be undone.")) {
+    deleteUser();
+  }
+}
+
+const deleteUser = async () => {
+  const uuid = localStorage.getItem('UUID');
+  if (uuid) {
+    try {
+      const response = await api.deleteUser(uuid);
+      //console.log('User deleted successfully:', response.data);
+      alert('User deleted successfully');
+      localStorage.clear();
+      location.href = '/login';
+    } catch (error) {
+      console.error('Error deleting user:', error);
+    }
+  } else {
+    console.error('UUID not found in localStorage');
+  }
+}
+</script>
+
+
 <template>
   <div class="card shadow m-3 p-3">
     <div class="card-body">
@@ -42,74 +112,6 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { reactive, ref } from 'vue';
-import api from "@/services/api";
-
-interface UserData {
-  email: string;
-  newPassword: string;
-  confirmPassword: string;
-}
-
-const userData = reactive<UserData>({
-  email: localStorage.getItem('email') || '',  // Hier den Benutzer aus dem Local Storage laden
-  newPassword: '',
-  confirmPassword: ''
-});
-
-const showChangePassword = ref(false);
-
-function toggleChangePassword() {
-  showChangePassword.value = !showChangePassword.value;
-}
-
-const submitNewPassword = async () => {
-  const uuid = localStorage.getItem('UUID');
-  if (uuid) {
-    if (userData.newPassword !== userData.confirmPassword) {
-      console.error('Passwords do not match');
-      return;
-    }
-
-    try {
-      const payload = { newPassword: userData.newPassword };
-      const response = await api.changePassword(uuid, payload);
-      console.log('Password changed successfully:', response.data);
-      alert('Password changed successfully, please log in again!');
-      location.href = '/login';
-    } catch (error) {
-      console.error('Error changing password:');
-    }
-  } else {
-    console.error('UUID not found in localStorage');
-  }
-}
-
-function confirmDeleteUser() {
-  if (confirm("Are you sure you want to delete your account? " +
-      "This action cannot be undone.")) {
-    deleteUser();
-  }
-}
-
-const deleteUser = async () => {
-  const uuid = localStorage.getItem('UUID');
-  if (uuid) {
-    try {
-      const response = await api.deleteUser(uuid);
-      console.log('User deleted successfully:', response.data);
-      alert('User deleted successfully');
-      localStorage.clear();
-      location.href = '/login';
-    } catch (error) {
-      console.error('Error deleting user:', error);
-    }
-  } else {
-    console.error('UUID not found in localStorage');
-  }
-}
-</script>
 
 <style>
 .custom-width-btn {
