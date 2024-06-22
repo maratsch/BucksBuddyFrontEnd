@@ -193,20 +193,17 @@ onMounted(async () => {
 <template>
   <div class="card shadow mb-3">
     <div class="card-body">
-      <div class="row">
-        <div class="col text-start">
-          <h3>Journey</h3>
-        </div>
-        <div class="col text-end">
-          <select class="form-select" v-model="selectedJourneyId">
+      <div class="d-flex justify-content-between align-items-center">
+        <h3>Journey</h3>
+        <div class="d-flex align-items-center">
+          <select class="form-select me-2" v-model="selectedJourneyId">
             <option disabled value="">Please select one</option>
             <option v-for="journey in journeys" :key="journey.id" :value="journey.id">{{ journey.name }}</option>
           </select>
-        </div>
-        <div class="col text-end">
-          <button class="btn btn-danger" @click="confirmAndDeleteJourney(selectedJourneyId)">Delete Journey</button>
+          <button class="btn bi bi-trash fs-5" @click="confirmAndDeleteJourney(selectedJourneyId)"></button>
         </div>
       </div>
+
       <hr>
       <div class="row">
         <div class="col text-start">

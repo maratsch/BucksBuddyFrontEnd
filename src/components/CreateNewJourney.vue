@@ -164,22 +164,8 @@ watch([startDate, endDate], calculateDuration);
               </div>
             </div>
             <div class="mb-3">
-              <label for="budget" class="form-label">Budget (optional)</label>
+              <label for="budget" class="form-label">Budget</label>
               <input type="number" class="form-control" id="budget" v-model.number="budget">
-            </div>
-            <hr>
-            <div class="mb-3">
-              <label for="startDate" class="form-label">Start Date</label>
-              <input type="date" class="form-control" id="startDate" v-model="startDate"  required>
-            </div>
-            <div class="mb-3">
-              <label for="endDate" class="form-label">End Date</label>
-              <input type="date" class="form-control" id="endDate" v-model="endDate"  required>
-              <div v-if="dateError" class="text-danger">{{ dateError }}</div>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Travel Duration</label>
-              <input type="text" class="form-control" :value="travelDuration" disabled>
             </div>
             <div class="mb-3">
               <button type="submit" class="btn btn-primary">Submit</button>
