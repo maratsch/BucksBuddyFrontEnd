@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue';
+import {ref, computed, onMounted, watch} from 'vue';
 import api from '@/services/api';
-import type { Expenditure, Journey } from '@/types';
+import type {Expenditure, Journey} from '@/types';
 import Freecurrencyapi from "@everapi/freecurrencyapi-js";
 import eventBus from '@/services/eventBus'; // Import EventBus
 
@@ -14,6 +14,8 @@ const homeCurrency = ref<string>('');
 const vacCurrency = ref<string>('');
 const budget = ref<number>(0);
 const exchangeRate = ref<number | null>(null);
+const startDate = ref<Date | null>(null);
+const endDate = ref<Date | null>(null);
 
 const currencyNames: Record<string, string> = {
   EUR: 'Euro',
@@ -60,33 +62,33 @@ const fetchExpenditures = async (journeyId: number) => {
   }
 };
 
-const deleteJourney = async (journeyId: number | null) => {
-  if (journeyId === null) {
-    console.error('Invalid journeyId provided');
-    return;
-  }
+const confirmAndDeleteJourney = async (journeyId: number | null) => {
+  if (journeyId === null) return;
+
+  const confirmDelete = confirm('Are you sure you want to delete this journey?');
+  if (!confirmDelete) return;
+
   try {
     await api.deleteJourney(journeyId);
-    console.log('Journey deleted successfully');
+    alert('Journey deleted successfully');
     await fetchJourneys();
     selectedJourneyId.value = null;
     localStorage.removeItem('selectedJourney');
-    eventBus.emit('journeyIdChanged', null); // Emit event for clearing expenditures
+    eventBus.emit('journeyIdChanged', null);
   } catch (error) {
     console.error('Error deleting journey:', error);
   }
 };
 
 watch(selectedJourneyId, async (newVal) => {
-  console.log('Selected Journey ID changed to:', newVal);
   if (newVal !== null) {
     localStorage.setItem('selectedJourney', newVal.toString());
     await fetchJourneyDetails(newVal);
     await fetchExpenditures(newVal);
-    eventBus.emit('journeyIdChanged', newVal); // Emit event
+    eventBus.emit('journeyIdChanged', newVal);
   } else {
     localStorage.removeItem('selectedJourney');
-    eventBus.emit('journeyIdChanged', null); // Emit event for clearing expenditures
+    eventBus.emit('journeyIdChanged', null);
   }
 });
 
@@ -97,13 +99,15 @@ const fetchJourneyDetails = async (journeyId: number) => {
     homeCurrency.value = await api.getHomeCurrency(journeyId).then(response => response.data);
     vacCurrency.value = await api.getVacCurrency(journeyId).then(response => response.data);
     budget.value = await api.getBudget(journeyId).then(response => response.data);
+    startDate.value = new Date(journey.startDate);
+    endDate.value = new Date(journey.endDate);
     exchangeRate.value = await currencyapi.latest({
       base_currency: homeCurrency.value,
       currencies: vacCurrency.value
     }).then((response: any) => response.data[vacCurrency.value]);
-    eventBus.emit('exchangeRateUpdated', exchangeRate.value); // Emit exchange rate
-    eventBus.emit('vacCurrencyUpdated', vacCurrency.value); // Emit vacation currency
-    eventBus.emit('homeCurrencyUpdated', homeCurrency.value); // Emit home currency
+    eventBus.emit('exchangeRateUpdated', exchangeRate.value);
+    eventBus.emit('vacCurrencyUpdated', vacCurrency.value);
+    eventBus.emit('homeCurrencyUpdated', homeCurrency.value);
   } catch (error) {
     console.error('Error fetching journey details:', error);
   }
@@ -115,11 +119,9 @@ const fetchJourneys = async () => {
       console.error('UUID is missing');
       return;
     }
-    console.log('Fetching journeys for UUID:', uuid);
     const response = await api.getAllJourneys(uuid);
     if (response.data && Array.isArray(response.data)) {
       journeys.value = response.data;
-      console.log("Journeys set to:", journeys.value);
     } else {
       console.error('Unexpected API response:', response);
     }
@@ -133,15 +135,65 @@ const totalExpenditures = computed(() => {
 });
 
 const getCurrencyName = (code: string) => {
-  return currencyNames[code] || code;
+  return code;
 };
 
 const formatExchangeRate = (rate: number | null) => {
   return rate !== null ? rate.toFixed(2) : 'N/A';
 };
 
-const totalExpensesInVacCurrency = computed(() => {
-  return exchangeRate.value !== null ? (totalExpenditures.value * exchangeRate.value).toFixed(2) : 'N/A';
+const totalExpensesInHomeCurrency = computed(() => {
+  if (typeof exchangeRate.value === 'number' && typeof totalExpenditures.value === 'number') {
+    return parseFloat((totalExpenditures.value / exchangeRate.value).toFixed(2));
+  } else {
+    return 0;
+  }
+});
+
+const budgetInVacationCurrency = computed(() => {
+  if (typeof exchangeRate.value === 'number' && typeof budget.value === 'number') {
+    return parseFloat((budget.value * exchangeRate.value).toFixed(2));
+  } else {
+    return 0;
+  }
+});
+
+const budgetLeftInVacationCurrency = computed(() => {
+  if (typeof exchangeRate.value === 'number' && typeof totalExpenditures.value === 'number') {
+    const budgetInVacCurr = parseFloat((budget.value * exchangeRate.value).toFixed(2));
+    return parseFloat((budgetInVacCurr - totalExpenditures.value).toFixed(2));
+  } else {
+    return 0;
+  }
+});
+
+const budgetLeftInHomeCurrency = computed(() => {
+  if (typeof budget.value === 'number' && typeof totalExpensesInHomeCurrency.value === 'number') {
+    return parseFloat((budget.value - totalExpensesInHomeCurrency.value).toFixed(2));
+  } else {
+    return 0;
+  }
+});
+
+const travelDurationInDays = computed(() => {
+  if (startDate.value && endDate.value) {
+    const start = new Date(startDate.value).getTime();
+    const end = new Date(endDate.value).getTime();
+    const diff = end - start;
+    return diff > 0 ? diff / (1000 * 3600 * 24) : 0;
+  }
+  return 0;
+});
+
+const averageExpenditurePerDayInVacationCurrency = computed(() => {
+  const days = travelDurationInDays.value;
+  return days > 0 ? (totalExpenditures.value / days).toFixed(2) : 'N/A';
+});
+
+const averageExpenditurePerDayInHomeCurrency = computed(() => {
+  const days = travelDurationInDays.value;
+  const totalExpenditureInHomeCurrency = totalExpensesInHomeCurrency.value;
+  return days > 0 ? (totalExpenditureInHomeCurrency / days).toFixed(2) : 'N/A';
 });
 
 onMounted(async () => {
@@ -154,28 +206,46 @@ onMounted(async () => {
   } else {
     localStorage.removeItem('selectedJourney');
     selectedJourneyId.value = null;
-    eventBus.emit('journeyIdChanged', null); // Emit event for clearing expenditures
+    eventBus.emit('journeyIdChanged', null);
   }
+
+  eventBus.on('expenditureAdded', async () => {
+    if (selectedJourneyId.value !== null) {
+      await fetchJourneyDetails(selectedJourneyId.value);
+      await fetchExpenditures(selectedJourneyId.value);
+    }
+  });
+
+  eventBus.on('expenditureDeleted', async () => {
+    if (selectedJourneyId.value !== null) {
+      await fetchJourneyDetails(selectedJourneyId.value);
+      await fetchExpenditures(selectedJourneyId.value);
+    }
+  });
+
+  eventBus.on('expenditureUpdated', async () => {
+    if (selectedJourneyId.value !== null) {
+      await fetchJourneyDetails(selectedJourneyId.value);
+      await fetchExpenditures(selectedJourneyId.value);
+    }
+  });
 });
 </script>
 
 <template>
   <div class="card shadow mb-3">
     <div class="card-body">
-      <div class="row">
-        <div class="col text-start">
-          <h3>Journey</h3>
-        </div>
-        <div class="col text-end">
-          <select class="form-select" v-model="selectedJourneyId">
+      <div class="d-flex justify-content-between align-items-center">
+        <h3>Journey</h3>
+        <div class="d-flex align-items-center">
+          <select class="form-select me-2" v-model="selectedJourneyId">
             <option disabled value="">Please select one</option>
             <option v-for="journey in journeys" :key="journey.id" :value="journey.id">{{ journey.name }}</option>
           </select>
-        </div>
-        <div class="col text-end">
-          <button class="btn btn-danger" @click="deleteJourney(selectedJourneyId)">Delete Journey</button>
+          <button class="btn bi bi-trash fs-5" @click="confirmAndDeleteJourney(selectedJourneyId)"></button>
         </div>
       </div>
+
       <hr>
       <div class="row">
         <div class="col text-start">
@@ -198,7 +268,8 @@ onMounted(async () => {
           <h4>Budget</h4>
         </div>
         <div class="col text-end">
-          <h4>{{ budget }} {{homeCurrency}}</h4>
+          <h4>{{ budget }} {{ getCurrencyName(homeCurrency) }} ({{ budgetInVacationCurrency }}
+            {{ getCurrencyName(vacCurrency) }})</h4>
         </div>
       </div>
       <div class="row">
@@ -206,32 +277,52 @@ onMounted(async () => {
           <h4>Exchange Rate</h4>
         </div>
         <div class="col text-end">
-          <h4>{{ exchangeRate }}</h4>
+          <h4>{{ formatExchangeRate(exchangeRate) }}</h4>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col text-start">
+          <h4>Travel Duration</h4>
+        </div>
+        <div class="col text-end">
+          <h4>{{ (travelDurationInDays) }} Days</h4>
         </div>
       </div>
       <hr>
+      <h3>Total Expenses</h3>
       <div class="row">
         <div class="col text-start">
-          <h3>Total Expenses in {{ getCurrencyName(homeCurrency) }}</h3>
+          <h4>{{ getCurrencyName(homeCurrency) }}</h4>
         </div>
         <div class="col text-end">
-          <h3>{{ totalExpenditures }} {{homeCurrency}}</h3>
+          <h4>{{ totalExpensesInHomeCurrency }} {{ getCurrencyName(homeCurrency) }}</h4>
         </div>
       </div>
       <div class="row">
         <div class="col text-start">
-          <h3>Total Expenses in {{ getCurrencyName(vacCurrency) }}</h3>
+          <h4>{{ getCurrencyName(vacCurrency) }}</h4>
         </div>
         <div class="col text-end">
-          <h3>{{ totalExpensesInVacCurrency }} {{vacCurrency}}</h3>
+          <h4>{{ totalExpenditures }} {{ getCurrencyName(vacCurrency) }}</h4>
         </div>
       </div>
       <div class="row">
         <div class="col text-start">
-          <h4>Budget Left in {{getCurrencyName(homeCurrency)}}</h4>
+          <h4>Budget Left</h4>
         </div>
         <div class="col text-end">
-          <h4>{{ budget - totalExpenditures }} {{homeCurrency}}</h4>
+          <h4>{{ budgetLeftInHomeCurrency }} {{ getCurrencyName(homeCurrency) }} ({{ budgetLeftInVacationCurrency }}
+            {{ getCurrencyName(vacCurrency) }})</h4>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col text-start">
+          <h4>Average Expenditures Per Day</h4>
+        </div>
+        <div class="col text-end">
+          <h4>{{ averageExpenditurePerDayInHomeCurrency }} {{ getCurrencyName(homeCurrency) }}
+            ({{ averageExpenditurePerDayInVacationCurrency }} {{ getCurrencyName(vacCurrency) }})</h4>
         </div>
       </div>
     </div>

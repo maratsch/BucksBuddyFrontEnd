@@ -1,17 +1,15 @@
-import { defineConfig } from 'vitest/config';
-import vue from '@vitejs/plugin-vue';
-import dotenv from 'dotenv';
+import { fileURLToPath } from 'node:url'
+import { mergeConfig, defineConfig, configDefaults } from 'vitest/config'
+import viteConfig from './vite.config'
 
-dotenv.config({ path: './keys.env' });
-
-export default defineConfig({
-    plugins: [vue()],
-    define: {
-        'process.env': process.env,
-    },
-    test: {
-        globals: true,
-        environment: 'jsdom',
-        setupFiles: './setupTests.ts',
-    },
-});
+export default mergeConfig(
+    viteConfig,
+    defineConfig({
+        test: {
+            environment: 'jsdom',
+            exclude: [...configDefaults.exclude, 'e2e/**'],
+            include: ['**/__tests__/*.ts'],
+            root: fileURLToPath(new URL('./', import.meta.url))
+        }
+    })
+)

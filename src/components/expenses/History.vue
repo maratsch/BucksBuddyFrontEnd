@@ -1,3 +1,4 @@
+<!--History-->
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue';
 import api from '@/services/api';
@@ -21,7 +22,7 @@ const fetchExpenditures = async () => {
   }
 
   try {
-    console.log('Fetching expenditures for journeyId:', journeyId.value); // Debug log
+    //console.log('Fetching expenditures for journeyId:', journeyId.value); // Debug log
     const response = await api.getAllExpenditures(journeyId.value);
     expendituresList.value = response.data.map((expenditure: Expenditure) => ({
       ...expenditure,
@@ -46,6 +47,7 @@ const deleteExpenditure = async (id: number) => {
     }
     await api.deleteExpenditure(journeyId.value, id);
     await fetchExpenditures();
+    eventBus.emit('expenditureDeleted', journeyId.value);
   } catch (error) {
     console.error(error);
   }
@@ -66,13 +68,14 @@ const saveExpenditure = async (id: number, updatedExpenditure: Expenditure) => {
     }
     await api.updateExpenditure(journeyId.value, id, updatedExpenditure);
     await fetchExpenditures();
+    eventBus.emit('expenditureUpdated', journeyId.value);
   } catch (error) {
     console.error(error);
   }
 };
 
-const amountInVacCurrency = (amount: number): string => {
-  return exchangeRate.value !== null ? (amount * exchangeRate.value).toFixed(2) : 'N/A';
+const amountInHomeCurrency = (amount: number): string => {
+  return exchangeRate.value !== null ? (amount / exchangeRate.value).toFixed(2) : 'N/A';
 };
 
 const sortExpenditures = () => {
@@ -94,7 +97,7 @@ watch([expendituresList, sortCriteria, sortOrder], sortExpenditures);
 
 onMounted(() => {
   eventBus.on('journeyIdChanged', (newJourneyId: number | null) => {
-    console.log('journeyId changed in History:', newJourneyId);
+    //console.log('journeyId changed in History:', newJourneyId);
     if (newJourneyId !== null) {
       journeyId.value = newJourneyId;
       fetchExpenditures();
@@ -116,7 +119,7 @@ onMounted(() => {
   });
 
   if (journeyId.value !== null) {
-    console.log('Initial journeyId in History:', journeyId.value); // Debug log
+    //console.log('Initial journeyId in History:', journeyId.value);
     fetchExpenditures();
   }
 });
@@ -162,7 +165,7 @@ const formatAmount = (amount: number): string => {
         </div>
       </div>
 
-      <div class="historycard shadow-sm mb-2" v-for="item in sortedExpenditures" :key="item.id">
+      <div class="historycard mb-2" v-for="item in sortedExpenditures" :key="item.id">
         <div class="historycard-body d-flex align-items-center p-1 ms-2">
           <div class="col-3 fw-bold" v-if="!item.isEditing">
             {{ item.name }}
@@ -171,21 +174,18 @@ const formatAmount = (amount: number): string => {
             <input v-model="item.name" class="form-control"/>
           </div>
 
-          <div class="col-3 text-center" v-if="!item.isEditing">
-            {{ formatAmount(item.amount) }} {{ homeCurrency }}
+          <div class="col-2 text-center" v-if="!item.isEditing">
+            {{ formatAmount(item.amount) }} {{ vacCurrency }}
           </div>
           <div class="col-3" v-else>
             <input v-model="item.amount" type="number" class="form-control ms-2"/>
           </div>
 
-          <div class="col-3 text-center" v-if="!item.isEditing">
-            {{ amountInVacCurrency(item.amount) }} {{ vacCurrency }}
-          </div>
-          <div class="col-3" v-else>
-            <input v-model="item.amount" type="number" class="form-control ms-2"/>
+          <div class="col-2 text-center" v-if="!item.isEditing">
+            {{ amountInHomeCurrency(item.amount) }} {{ homeCurrency }}
           </div>
 
-          <div class="col-3 text-center" v-if="!item.isEditing">
+          <div class="col-2 text-center" v-if="!item.isEditing">
             {{ formatDate(item.date) }}
           </div>
           <div class="col-3" v-else>

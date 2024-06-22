@@ -1,5 +1,11 @@
-/** @type {import('ts-jest').JestConfigWithTsJest} */
-export default {
-    preset: 'ts-jest',
-    testEnvironment: 'node',
-};
+module.exports = {
+    preset:'@vue/cli-plugin-unit-jest',
+    transform: {
+        '^.+\\.vue$': 'vue-jest'
+    },
+    automock: false,
+    resetMocks: false,
+    setupFiles: [
+        './setupJest.ts'
+    ]
+}

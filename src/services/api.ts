@@ -4,10 +4,8 @@ import axios from 'axios';
 import type {Expenditure, Journey, newUser} from '@/types';
 
 const apiClient = axios.create({
-    // For local development
-    baseURL: 'http://localhost:8080/',
-    // For Render
-    // baseURL: 'https://bucksbuddybackend.onrender.com/api',
+    baseURL: 'https://bucksbuddybackend.onrender.com/',
+    // 'http://localhost:8080/',
     withCredentials: true,
     headers: {
         'Content-Type': 'application/json'
@@ -16,25 +14,21 @@ const apiClient = axios.create({
 
 apiClient.get(`/`)
     .then(response => {
-        // Erfolgreiche Antwort vom Backend erhalten
-        console.log(response.data);
+        //console.log(response.data);
     })
     .catch(error => {
         if (error.response) {
-            // Antwort vom Backend erhalten, aber mit einem Fehlerstatuscode
             console.error('Backend responded with an error:', error.response.data);
         } else if (error.request) {
-            // Keine Antwort vom Backend erhalten
             console.error('Unable to connect to the backend:', error.request);
         } else {
-            // Ein anderer Fehler ist aufgetreten
             console.error('An error occurred:', error.message);
         }
     });
 
 apiClient.interceptors.request.use((config) => {
     let userUuid = localStorage.getItem('UUID');
-    console.log('UUID from local storage:', userUuid);
+    //console.log('UUID from local storage:', userUuid);
     if (userUuid) {
         // Entferne das Präfix 'UUID:'
         if (userUuid.startsWith('UUID: ')) {
@@ -42,7 +36,7 @@ apiClient.interceptors.request.use((config) => {
         }
         config.headers['uuid'] = userUuid;
     }
-    console.log('Request headers:', config.headers);
+    //console.log('Request headers:', config.headers);
     return config;
 });
 

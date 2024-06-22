@@ -1,18 +1,19 @@
+<!--InputForm-->
 <script setup lang="ts">
 import { ref, defineEmits, onMounted } from 'vue';
 import api from '@/services/api';
 import { type Expenditure, type Journey } from '@/types';
-import eventBus from '@/services/eventBus'; // Import EventBus
+import eventBus from '@/services/eventBus';
 
 const title = ref('');
 const amount = ref<number | null>(null);
 const date = ref<string>('');
 const journeyId = ref<number | null>(Number(localStorage.getItem('selectedJourney')));
 const emit = defineEmits(['refreshExpenditures']);
-const exchangeRate = ref<number | null>(null); // Define exchangeRate ref
+const exchangeRate = ref<number | null>(null);
 const vacCurrency = ref<string>('');
 
-// Function to set the date to today's date
+
 const setDateToToday = () => {
   const now = new Date();
   const day = String(now.getDate()).padStart(2, '0');
@@ -21,7 +22,7 @@ const setDateToToday = () => {
   date.value = `${year}-${month}-${day}`;
 };
 
-// Function to add an expenditure
+
 const addExpenditure = async () => {
   if (title.value && amount.value !== null && date.value) {
     const newExpenditure: Omit<Expenditure, 'id'> = {
@@ -33,22 +34,24 @@ const addExpenditure = async () => {
     };
     try {
       await api.createExpenditure(journeyId.value!, newExpenditure);
-      console.log('journeyId beim erstellen der Exp.', journeyId.value!);
+      //console.log('journeyId beim Erstellen der Ausgabe:', journeyId.value!);
       title.value = '';
       amount.value = null;
       setDateToToday();
       emit('refreshExpenditures');
+      eventBus.emit('expenditureAdded', null);
     } catch (error) {
       console.error(error);
     }
   }
 };
 
-// Lifecycle hook that runs when the component is mounted
+
+
 onMounted(async () => {
   try {
     eventBus.on('journeyIdChanged', (newJourneyId: number | null) => {
-      console.log('journeyId changed in InputForm:', newJourneyId);
+      //console.log('journeyId changed in InputForm:', newJourneyId);
       if (newJourneyId !== null) {
         journeyId.value = newJourneyId;
       }
@@ -63,7 +66,7 @@ onMounted(async () => {
   eventBus.on('vacCurrencyUpdated', (vacCurrencyName: string) => {
     vacCurrency.value = vacCurrencyName;
   });
-  console.log('journeyId in InputForm:', journeyId.value);
+  //console.log('journeyId in InputForm:', journeyId.value);
   setDateToToday();
 });
 </script>
