@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue';
+import {ref, computed, onMounted, watch} from 'vue';
 import api from '@/services/api';
-import type { Expenditure, Journey } from '@/types';
+import type {Expenditure, Journey} from '@/types';
 import Freecurrencyapi from "@everapi/freecurrencyapi-js";
 import eventBus from '@/services/eventBus'; // Import EventBus
 
@@ -14,6 +14,8 @@ const homeCurrency = ref<string>('');
 const vacCurrency = ref<string>('');
 const budget = ref<number>(0);
 const exchangeRate = ref<number | null>(null);
+const startDate = ref<Date | null>(null);
+const endDate = ref<Date | null>(null);
 
 const currencyNames: Record<string, string> = {
   EUR: 'Euro',
@@ -97,6 +99,8 @@ const fetchJourneyDetails = async (journeyId: number) => {
     homeCurrency.value = await api.getHomeCurrency(journeyId).then(response => response.data);
     vacCurrency.value = await api.getVacCurrency(journeyId).then(response => response.data);
     budget.value = await api.getBudget(journeyId).then(response => response.data);
+    startDate.value = new Date(journey.startDate);
+    endDate.value = new Date(journey.endDate);
     exchangeRate.value = await currencyapi.latest({
       base_currency: homeCurrency.value,
       currencies: vacCurrency.value
@@ -135,7 +139,7 @@ const getCurrencyName = (code: string) => {
 };
 
 const formatExchangeRate = (rate: number | null) => {
-  return rate !== null ? rate.toFixed(10) : 'N/A';
+  return rate !== null ? rate.toFixed(2) : 'N/A';
 };
 
 const totalExpensesInHomeCurrency = computed(() => {
@@ -169,6 +173,27 @@ const budgetLeftInHomeCurrency = computed(() => {
   } else {
     return 0;
   }
+});
+
+const travelDurationInDays = computed(() => {
+  if (startDate.value && endDate.value) {
+    const start = new Date(startDate.value).getTime();
+    const end = new Date(endDate.value).getTime();
+    const diff = end - start;
+    return diff > 0 ? diff / (1000 * 3600 * 24) : 0;
+  }
+  return 0;
+});
+
+const averageExpenditurePerDayInVacationCurrency = computed(() => {
+  const days = travelDurationInDays.value;
+  return days > 0 ? (totalExpenditures.value / days).toFixed(2) : 'N/A';
+});
+
+const averageExpenditurePerDayInHomeCurrency = computed(() => {
+  const days = travelDurationInDays.value;
+  const totalExpenditureInHomeCurrency = totalExpensesInHomeCurrency.value;
+  return days > 0 ? (totalExpenditureInHomeCurrency / days).toFixed(2) : 'N/A';
 });
 
 onMounted(async () => {
@@ -243,7 +268,8 @@ onMounted(async () => {
           <h4>Budget</h4>
         </div>
         <div class="col text-end">
-          <h4>{{ budget }} {{ getCurrencyName(homeCurrency) }} ({{ budgetInVacationCurrency }} {{ getCurrencyName(vacCurrency) }})</h4>
+          <h4>{{ budget }} {{ getCurrencyName(homeCurrency) }} ({{ budgetInVacationCurrency }}
+            {{ getCurrencyName(vacCurrency) }})</h4>
         </div>
       </div>
       <div class="row">
@@ -254,16 +280,16 @@ onMounted(async () => {
           <h4>{{ formatExchangeRate(exchangeRate) }}</h4>
         </div>
       </div>
-      <hr>
-      <h3>Total Expenses</h3>
       <div class="row">
         <div class="col text-start">
-          <h4>{{ getCurrencyName(vacCurrency) }}</h4>
+          <h4>Travel Duration</h4>
         </div>
         <div class="col text-end">
-          <h4>{{ totalExpenditures }} {{ getCurrencyName(vacCurrency) }}</h4>
+          <h4>{{ (travelDurationInDays) }} Days</h4>
         </div>
       </div>
+      <hr>
+      <h3>Total Expenses</h3>
       <div class="row">
         <div class="col text-start">
           <h4>{{ getCurrencyName(homeCurrency) }}</h4>
@@ -274,13 +300,29 @@ onMounted(async () => {
       </div>
       <div class="row">
         <div class="col text-start">
+          <h4>{{ getCurrencyName(vacCurrency) }}</h4>
+        </div>
+        <div class="col text-end">
+          <h4>{{ totalExpenditures }} {{ getCurrencyName(vacCurrency) }}</h4>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col text-start">
           <h4>Budget Left</h4>
         </div>
         <div class="col text-end">
-          <h4>{{ budgetLeftInHomeCurrency }} {{ getCurrencyName(homeCurrency) }} ({{ budgetLeftInVacationCurrency }} {{ getCurrencyName(vacCurrency) }})</h4>
+          <h4>{{ budgetLeftInHomeCurrency }} {{ getCurrencyName(homeCurrency) }} ({{ budgetLeftInVacationCurrency }}
+            {{ getCurrencyName(vacCurrency) }})</h4>
         </div>
-        <div>
-          <h4></h4>
+      </div>
+
+      <div class="row">
+        <div class="col text-start">
+          <h4>Average Expenditures Per Day</h4>
+        </div>
+        <div class="col text-end">
+          <h4>{{ averageExpenditurePerDayInHomeCurrency }} {{ getCurrencyName(homeCurrency) }}
+            ({{ averageExpenditurePerDayInVacationCurrency }} {{ getCurrencyName(vacCurrency) }})</h4>
         </div>
       </div>
     </div>
