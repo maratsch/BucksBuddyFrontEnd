@@ -3,7 +3,7 @@
 import { ref, onMounted, watch } from 'vue';
 import api from '@/services/api';
 import { type Expenditure } from '@/types';
-import eventBus from '@/services/eventBus'; // Import EventBus
+import eventBus from '@/services/eventBus';
 
 const expendituresList = ref<Expenditure[]>([]);
 const sortedExpenditures = ref<Expenditure[]>([]);
