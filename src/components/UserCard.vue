@@ -71,6 +71,7 @@ const deleteUser = async () => {
 <template>
   <div class="card shadow m-3 p-3">
     <div class="card-body">
+      <h3 class="text-center mb-4">User Settings</h3>
       <!-- User Email Display -->
       <div class="mb-3">
         <label for="userEmail" class="form-label">Email</label>

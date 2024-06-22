@@ -71,11 +71,10 @@ watch([startDate, endDate], calculateDuration);
 
 </script>
 <template>
-  <div class="card shadow m-3">
+  <div class="card shadow m-3 p-3">
     <div class="card-body">
       <div class="row justify-content-center">
-        <div class="col-md-9">
-          <h2 class="text-center mb-4">Create New Journey</h2>
+          <h3 class="text-center mb-4">Create New Journey</h3>
           <form @submit.prevent="addJourney">
             <div class="mb-3">
               <label for="name" class="form-label">Name</label>
@@ -174,5 +173,4 @@ watch([startDate, endDate], calculateDuration);
         </div>
       </div>
     </div>
-  </div>
 </template>
