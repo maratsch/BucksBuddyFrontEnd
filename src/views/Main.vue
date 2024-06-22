@@ -18,11 +18,11 @@ const handleRefreshExpenditures = () => {
 <template>
   <div class="container">
     <div class="row">
-      <div class="col-lg-6 col-md-12">
+      <div class="col-lg-6 col-md-9 col-sm-12">
         <total-expenditures />
         <input-form @refreshExpenditures="handleRefreshExpenditures" />
       </div>
-      <div class="col-lg-6 col-md-12">
+      <div class="col-lg-6 col-md-9 col-sm-12">
         <history ref="historyComponent" />
       </div>
     </div>
