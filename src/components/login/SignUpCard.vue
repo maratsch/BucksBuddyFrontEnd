@@ -19,9 +19,16 @@ const successMessage = ref<string | null>(null);
 const errorMessage = ref<string | null>(null);
 const router = useRouter();
 
+const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 const signup = async () => {
   successMessage.value = null;
   errorMessage.value = null;
+
+  if (!emailPattern.test(signupData.value.email)) {
+    errorMessage.value = 'Invalid email format';
+    return;
+  }
 
   if (signupData.value.password !== signupData.value.confirmPassword) {
     errorMessage.value = 'Passwords do not match';
@@ -39,8 +46,14 @@ const signup = async () => {
     setTimeout(() => {
       router.push('/login');
     }, 2000);
-  } catch (error) {
-    errorMessage.value = 'E-Mail is already registered';
+  } catch (error: any) {
+    if (error.response && error.response.status === 400) {
+      errorMessage.value = 'Invalid input: ' + JSON.stringify(error.response.data);
+    } else if (error.response && error.response.status === 409) {
+      errorMessage.value = 'E-Mail is already registered';
+    } else {
+      errorMessage.value = 'An error occurred';
+    }
   }
 };
 </script>

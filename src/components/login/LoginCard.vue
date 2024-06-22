@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {reactive} from 'vue';
+import {reactive, ref} from 'vue';
 import {useRouter} from 'vue-router';
 import api from '@/services/api';
 
@@ -9,21 +9,24 @@ const loginData = reactive({
   password: ''
 });
 
+const errorMessage = ref<string | null>(null);
+const successMessage = ref<string | null>(null);
+
 const login = async () => {
+  errorMessage.value = null;
+  successMessage.value = null;
+
   try {
     const response = await api.login(loginData.email, loginData.password);
-    //console.log('Login response data:', response.data);
-    //console.log('Login successful:', response.data);
-
     // Speichere die UUID im Local Storage
     localStorage.setItem('UUID', response.data);
     localStorage.setItem('email', loginData.email);
-    //console.log('UUID from local storage after login:', localStorage.getItem('UUID'));
-    router.push('/main');
-    alert('Login successful!')
+    successMessage.value = 'Login successful!';
+    setTimeout(async () => {
+      await router.push('/main');
+    }, 1000);
   } catch (error) {
-    console.error('Login failed:', error);
-    alert('Login failed. Please check your credentials and try again.');
+    errorMessage.value = 'Login failed. Please check your credentials and try again.';
   }
 };
 </script>
@@ -54,6 +57,8 @@ const login = async () => {
       <div class="text-center mt-3">
         <a href="#/signup" class="btn btn-secondary custom-width-btn">Sign up</a>
       </div>
+      <div v-if="successMessage" class="alert alert-success mt-3">{{ successMessage }}</div>
+      <div v-if="errorMessage" class="alert alert-danger mt-3">{{ errorMessage }}</div>
     </div>
   </div>
 </template>
