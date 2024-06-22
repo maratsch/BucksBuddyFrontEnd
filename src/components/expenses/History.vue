@@ -177,21 +177,18 @@ const formatAmount = (amount: number): string => {
           <div class="col-2 text-center" v-if="!item.isEditing">
             {{ formatAmount(item.amount) }} {{ vacCurrency }}
           </div>
-          <div class="col-2" v-else>
+          <div class="col-3" v-else>
             <input v-model="item.amount" type="number" class="form-control ms-2"/>
           </div>
 
           <div class="col-2 text-center" v-if="!item.isEditing">
             {{ amountInHomeCurrency(item.amount) }} {{ homeCurrency }}
           </div>
-          <div class="col-2" v-else>
-            <input v-model="item.amount" type="number" class="form-control ms-2"/>
-          </div>
 
           <div class="col-2 text-center" v-if="!item.isEditing">
             {{ formatDate(item.date) }}
           </div>
-          <div class="col-2" v-else>
+          <div class="col-3" v-else>
             <input v-model="item.date" type="date" class="form-control ms-3"/>
           </div>
 
