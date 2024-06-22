@@ -1,10 +1,8 @@
-<!--src/components/CreateNewJourney.vue-->
-
 <script setup lang="ts">
-import {ref, watch} from 'vue';
+import { ref, watch } from 'vue';
 import api from "@/services/api";
-import type {Expenditure, Journey, User} from "@/types";
-import {useRouter} from "vue-router";
+import type { Journey } from "@/types";
+import { useRouter } from "vue-router";
 
 const name = ref('');
 const homeCurr = ref('');
@@ -12,42 +10,43 @@ const vacCurr = ref('');
 const budget = ref(0);
 const startDate = ref('');
 const endDate = ref('');
-const travelDuration = ref('')
+const travelDuration = ref('');
 const dateError = ref('');
 const uuid = localStorage.getItem('UUID');
 const router = useRouter();
 
+const successMessage = ref<string | null>(null);
+const errorMessage = ref<string | null>(null);
 
 const addJourney = async () => {
+  successMessage.value = null;
+  errorMessage.value = null;
+
   // Aktualisieren Sie die Journey-Daten
   const newJourney: Omit<Journey, 'id'> = {
-      name: name.value,
-      homeCurr: homeCurr.value,
-      vacCurr: vacCurr.value,
-      budget: budget.value,
-      startDate: new Date(startDate.value),
-      endDate: new Date(endDate.value),
-      travelDuration: travelDuration.value,
+    name: name.value,
+    homeCurr: homeCurr.value,
+    vacCurr: vacCurr.value,
+    budget: budget.value,
+    startDate: new Date(startDate.value),
+    endDate: new Date(endDate.value),
+    travelDuration: travelDuration.value,
   };
   try {
     if (uuid === null) {
       throw new Error('UUID is null');
     }
     const response = await api.createJourney(uuid, newJourney);
-    //console.log(response.data);
-    router.push('/main');
-    alert('New journey created successfully');
+    successMessage.value = 'New journey created successfully!';
+    setTimeout(async () => {
+      await router.push('/main');
+    }, 1000);
   } catch (error) {
-    console.error(error);
+    errorMessage.value = 'Failed to create new journey. Please try again.';
   }
 };
 
-
 const calculateDuration = () => {
-  //console.log('calculateDuration called');
-  //console.log('startDate:', startDate.value);
-  //console.log('endDate:', endDate.value);
-
   if (startDate.value && endDate.value) {
     const start = new Date(startDate.value);
     const end = new Date(endDate.value);
@@ -59,7 +58,7 @@ const calculateDuration = () => {
       dateError.value = '';
     } else {
       travelDuration.value = '';
-      dateError.value = 'Startdatum muss vor dem Enddatum liegen.';
+      dateError.value = 'Start date must be before the end date.';
     }
   } else {
     travelDuration.value = '';
@@ -68,8 +67,8 @@ const calculateDuration = () => {
 };
 
 watch([startDate, endDate], calculateDuration);
-
 </script>
+
 <template>
   <div class="card shadow m-3 p-3">
     <div class="card-body">
@@ -163,14 +162,31 @@ watch([startDate, endDate], calculateDuration);
               </div>
             </div>
             <div class="mb-3">
-              <label for="budget" class="form-label">Budget</label>
+              <label for="budget" class="form-label">Budget (optional)</label>
               <input type="number" class="form-control" id="budget" v-model.number="budget">
+            </div>
+            <hr>
+            <div class="mb-3">
+              <label for="startDate" class="form-label">Start Date</label>
+              <input type="date" class="form-control" id="startDate" v-model="startDate"  required>
+            </div>
+            <div class="mb-3">
+              <label for="endDate" class="form-label">End Date</label>
+              <input type="date" class="form-control" id="endDate" v-model="endDate"  required>
+              <div v-if="dateError" class="text-danger">{{ dateError }}</div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Travel Duration</label>
+              <input type="text" class="form-control" :value="travelDuration" disabled>
             </div>
             <div class="mb-3">
               <button type="submit" class="btn btn-primary">Submit</button>
             </div>
           </form>
+          <div v-if="successMessage" class="alert alert-success mt-3">{{ successMessage }}</div>
+          <div v-if="errorMessage" class="alert alert-danger mt-3">{{ errorMessage }}</div>
         </div>
       </div>
     </div>
 </template>
+

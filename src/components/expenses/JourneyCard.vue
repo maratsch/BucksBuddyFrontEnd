@@ -1,8 +1,7 @@
-<!--JourneyCard-->
 <script setup lang="ts">
-import {ref, computed, onMounted, watch} from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import api from '@/services/api';
-import type {Expenditure, Journey} from '@/types';
+import type { Expenditure, Journey } from '@/types';
 import Freecurrencyapi from "@everapi/freecurrencyapi-js";
 import eventBus from '@/services/eventBus'; // Import EventBus
 
@@ -69,7 +68,6 @@ const confirmAndDeleteJourney = async (journeyId: number | null) => {
 
   try {
     await api.deleteJourney(journeyId);
-    //console.log('Journey deleted successfully');
     alert('Journey deleted successfully');
     await fetchJourneys();
     selectedJourneyId.value = null;
@@ -80,9 +78,7 @@ const confirmAndDeleteJourney = async (journeyId: number | null) => {
   }
 };
 
-
 watch(selectedJourneyId, async (newVal) => {
-  //console.log('Selected Journey ID changed to:', newVal);
   if (newVal !== null) {
     localStorage.setItem('selectedJourney', newVal.toString());
     await fetchJourneyDetails(newVal);
@@ -119,11 +115,9 @@ const fetchJourneys = async () => {
       console.error('UUID is missing');
       return;
     }
-    //console.log('Fetching journeys for UUID:', uuid);
     const response = await api.getAllJourneys(uuid);
     if (response.data && Array.isArray(response.data)) {
       journeys.value = response.data;
-      //console.log("Journeys set to:", journeys.value);
     } else {
       console.error('Unexpected API response:', response);
     }
@@ -137,16 +131,41 @@ const totalExpenditures = computed(() => {
 });
 
 const getCurrencyName = (code: string) => {
-  return currencyNames[code] || code;
+  return code;
 };
 
 const formatExchangeRate = (rate: number | null) => {
-  return rate !== null ? rate.toFixed(2) : 'N/A';
+  return rate !== null ? rate.toFixed(10) : 'N/A';
 };
 
 const totalExpensesInHomeCurrency = computed(() => {
   if (typeof exchangeRate.value === 'number' && typeof totalExpenditures.value === 'number') {
     return parseFloat((totalExpenditures.value / exchangeRate.value).toFixed(2));
+  } else {
+    return 0;
+  }
+});
+
+const budgetInVacationCurrency = computed(() => {
+  if (typeof exchangeRate.value === 'number' && typeof budget.value === 'number') {
+    return parseFloat((budget.value * exchangeRate.value).toFixed(2));
+  } else {
+    return 0;
+  }
+});
+
+const budgetLeftInVacationCurrency = computed(() => {
+  if (typeof exchangeRate.value === 'number' && typeof totalExpenditures.value === 'number') {
+    const budgetInVacCurr = parseFloat((budget.value * exchangeRate.value).toFixed(2));
+    return parseFloat((budgetInVacCurr - totalExpenditures.value).toFixed(2));
+  } else {
+    return 0;
+  }
+});
+
+const budgetLeftInHomeCurrency = computed(() => {
+  if (typeof budget.value === 'number' && typeof totalExpensesInHomeCurrency.value === 'number') {
+    return parseFloat((budget.value - totalExpensesInHomeCurrency.value).toFixed(2));
   } else {
     return 0;
   }
@@ -186,8 +205,6 @@ onMounted(async () => {
     }
   });
 });
-
-
 </script>
 
 <template>
@@ -226,7 +243,7 @@ onMounted(async () => {
           <h4>Budget</h4>
         </div>
         <div class="col text-end">
-          <h4>{{ budget }} {{ homeCurrency }}</h4>
+          <h4>{{ budget }} {{ getCurrencyName(homeCurrency) }} ({{ budgetInVacationCurrency }} {{ getCurrencyName(vacCurrency) }})</h4>
         </div>
       </div>
       <div class="row">
@@ -234,7 +251,7 @@ onMounted(async () => {
           <h4>Exchange Rate</h4>
         </div>
         <div class="col text-end">
-          <h4>{{ exchangeRate }}</h4>
+          <h4>{{ formatExchangeRate(exchangeRate) }}</h4>
         </div>
       </div>
       <hr>
@@ -244,7 +261,7 @@ onMounted(async () => {
           <h4>{{ getCurrencyName(vacCurrency) }}</h4>
         </div>
         <div class="col text-end">
-          <h4>{{ totalExpenditures }} {{ vacCurrency }}</h4>
+          <h4>{{ totalExpenditures }} {{ getCurrencyName(vacCurrency) }}</h4>
         </div>
       </div>
       <div class="row">
@@ -252,16 +269,18 @@ onMounted(async () => {
           <h4>{{ getCurrencyName(homeCurrency) }}</h4>
         </div>
         <div class="col text-end">
-          <h4>{{ totalExpensesInHomeCurrency }} {{ homeCurrency }}</h4>
+          <h4>{{ totalExpensesInHomeCurrency }} {{ getCurrencyName(homeCurrency) }}</h4>
         </div>
       </div>
-
       <div class="row">
         <div class="col text-start">
           <h4>Budget Left</h4>
         </div>
         <div class="col text-end">
-          <h4>{{ budget - totalExpensesInHomeCurrency }} {{ homeCurrency }}</h4>
+          <h4>{{ budgetLeftInHomeCurrency }} {{ getCurrencyName(homeCurrency) }} ({{ budgetLeftInVacationCurrency }} {{ getCurrencyName(vacCurrency) }})</h4>
+        </div>
+        <div>
+          <h4></h4>
         </div>
       </div>
     </div>
