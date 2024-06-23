@@ -93,6 +93,8 @@ const sortExpenditures = () => {
   });
 };
 
+
+
 watch([expendituresList, sortCriteria, sortOrder], sortExpenditures);
 
 onMounted(() => {
@@ -100,6 +102,7 @@ onMounted(() => {
     //console.log('journeyId changed in History:', newJourneyId);
     if (newJourneyId !== null) {
       journeyId.value = newJourneyId;
+      clearExpenditures();
       fetchExpenditures();
     } else {
       clearExpenditures();

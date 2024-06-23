@@ -83,6 +83,9 @@ const confirmAndDeleteJourney = async (journeyId: number | null) => {
 watch(selectedJourneyId, async (newVal) => {
   if (newVal !== null) {
     localStorage.setItem('selectedJourney', newVal.toString());
+    console.log('selectedJourneyIdnewVal:', newVal);
+    console.log('selectedJourneyId:', localStorage.getItem('selectedJourney'));
+    expendituresList.value = [];
     await fetchJourneyDetails(newVal);
     await fetchExpenditures(newVal);
     eventBus.emit('journeyIdChanged', newVal);
