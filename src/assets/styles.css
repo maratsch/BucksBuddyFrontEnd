@@ -22,18 +22,18 @@ html, body {
 body {
     display: flex;
     flex-direction: column;
-    background-size: cover; /* Stellt sicher, dass das Hintergrundbild den gesamten Bereich abdeckt */
-    background-repeat: no-repeat; /* Verhindert das Wiederholen des Hintergrundbildes */
-    background-attachment: fixed; /* Hält den Hintergrund an einer festen Position */
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
 }
 
 .main-content {
-    flex: 1; /* Dies sorgt dafür, dass der Hauptinhalt den verbleibenden Platz einnimmt */
+    flex: 1;
 }
 
 .card {
     background-color: var(--bs-tertiary-bg);
-    border: none; /* Entfernt den Rahmen */
+    border: none;
 }
 
 h2 {

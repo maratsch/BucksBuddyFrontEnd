@@ -1,11 +1,10 @@
 // src/stores/themeStore.ts
 
-// Color Theme Store (Light/Dark)
-import { defineStore } from 'pinia';
-import { ref } from 'vue';
+import {defineStore} from 'pinia';
+import {ref} from 'vue';
 
 export const useThemeStore = defineStore('theme', () => {
-    const theme = ref('dark'); // Default is dark
+    const theme = ref('dark');
 
     const applyTheme = (newTheme: string) => {
         theme.value = newTheme;
@@ -18,5 +17,5 @@ export const useThemeStore = defineStore('theme', () => {
         applyTheme(savedTheme);
     };
 
-    return { theme, applyTheme, loadTheme };
+    return {theme, applyTheme, loadTheme};
 });

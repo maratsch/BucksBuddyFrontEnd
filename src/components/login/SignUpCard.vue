@@ -1,6 +1,7 @@
+<!--SignUpCard-->
 <script setup lang="ts">
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import {ref} from 'vue';
+import {useRouter} from 'vue-router';
 import api from '@/services/api';
 
 interface SignupData {
@@ -75,7 +76,8 @@ const signup = async () => {
         </div>
         <div class="mb-3">
           <label for="confirmPassword" class="form-label">Confirm Password</label>
-          <input type="password" class="form-control" id="confirmPassword" v-model="signupData.confirmPassword" required>
+          <input type="password" class="form-control" id="confirmPassword" v-model="signupData.confirmPassword"
+                 required>
         </div>
         <div class="text-center mb-3">
           <button type="submit" class="btn btn-primary custom-width-btn">Sign up</button>

@@ -1,8 +1,8 @@
 <!--InputForm-->
 <script setup lang="ts">
-import { ref, defineEmits, onMounted } from 'vue';
+import {defineEmits, onMounted, ref} from 'vue';
 import api from '@/services/api';
-import { type Expenditure, type Journey } from '@/types';
+import {type Expenditure} from '@/types';
 import eventBus from '@/services/eventBus';
 
 const title = ref('');
@@ -13,7 +13,6 @@ const emit = defineEmits(['refreshExpenditures']);
 const exchangeRate = ref<number | null>(null);
 const vacCurrency = ref<string>('');
 
-
 const setDateToToday = () => {
   const now = new Date();
   const day = String(now.getDate()).padStart(2, '0');
@@ -21,7 +20,6 @@ const setDateToToday = () => {
   const year = now.getFullYear();
   date.value = `${year}-${month}-${day}`;
 };
-
 
 const addExpenditure = async () => {
   if (title.value && amount.value !== null && date.value) {
@@ -34,7 +32,6 @@ const addExpenditure = async () => {
     };
     try {
       await api.createExpenditure(journeyId.value!, newExpenditure);
-      //console.log('journeyId beim Erstellen der Ausgabe:', journeyId.value!);
       title.value = '';
       amount.value = null;
       setDateToToday();
@@ -46,12 +43,9 @@ const addExpenditure = async () => {
   }
 };
 
-
-
 onMounted(async () => {
   try {
     eventBus.on('journeyIdChanged', (newJourneyId: number | null) => {
-      //console.log('journeyId changed in InputForm:', newJourneyId);
       if (newJourneyId !== null) {
         journeyId.value = newJourneyId;
       }
@@ -59,14 +53,12 @@ onMounted(async () => {
   } catch (error) {
     console.error('Error fetching journey details:', error);
   }
-    // Listen for exchangeRate updates
   eventBus.on('exchangeRateUpdated', (rate: number | null) => {
     exchangeRate.value = rate;
   });
   eventBus.on('vacCurrencyUpdated', (vacCurrencyName: string) => {
     vacCurrency.value = vacCurrencyName;
   });
-  //console.log('journeyId in InputForm:', journeyId.value);
   setDateToToday();
 });
 </script>
@@ -82,11 +74,11 @@ onMounted(async () => {
           <input type="text" class="form-control" id="titleInput" v-model="title" @keyup.enter="addExpenditure">
         </div>
       </div>
-
       <div class="row mb-2">
         <div class="col">
-          <label for="amountInput" class="form-label">Amount in {{vacCurrency.valueOf()}}</label>
-          <input type="number" class="form-control" id="amountInput" v-model.number="amount" @keyup.enter="addExpenditure">
+          <label for="amountInput" class="form-label">Amount in {{ vacCurrency.valueOf() }}</label>
+          <input type="number" class="form-control" id="amountInput" v-model.number="amount"
+                 @keyup.enter="addExpenditure">
         </div>
         <div class="col">
           <label for="exchangeRateDisplay" class="form-label">Exchange Rate: </label>
@@ -98,7 +90,6 @@ onMounted(async () => {
           <input type="date" class="form-control" id="dateInput" v-model="date" @keyup.enter="addExpenditure">
         </div>
       </div>
-
       <div class="row mb-2">
         <div class="col">
           <button type="button" class="btn btn-primary" @click="addExpenditure">Submit</button>

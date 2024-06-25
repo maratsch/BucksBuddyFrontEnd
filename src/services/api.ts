@@ -4,8 +4,8 @@ import axios from 'axios';
 import type {Expenditure, Journey, newUser} from '@/types';
 
 const apiClient = axios.create({
-    baseURL: 'https://bucksbuddybackend.onrender.com/',
-    // 'http://localhost:8080/',
+    baseURL: //'https://bucksbuddybackend.onrender.com/',
+        'http://localhost:8080/',
     withCredentials: true,
     headers: {
         'Content-Type': 'application/json'
@@ -14,7 +14,6 @@ const apiClient = axios.create({
 
 apiClient.get(`/`)
     .then(response => {
-        //console.log(response.data);
     })
     .catch(error => {
         if (error.response) {
@@ -28,15 +27,12 @@ apiClient.get(`/`)
 
 apiClient.interceptors.request.use((config) => {
     let userUuid = localStorage.getItem('UUID');
-    //console.log('UUID from local storage:', userUuid);
     if (userUuid) {
-        // Entferne das Präfix 'UUID:'
         if (userUuid.startsWith('UUID: ')) {
             userUuid = userUuid.replace('UUID: ', '');
         }
         config.headers['uuid'] = userUuid;
     }
-    //console.log('Request headers:', config.headers);
     return config;
 });
 
@@ -54,9 +50,10 @@ export default {
     },
     changePassword(uuid: string, payload: { newPassword: string }) {
         return apiClient.patch('/users/password', payload, {
-            headers: { uuid }
+            headers: {uuid}
         });
     },
+
     // Journey API
     getAllJourneys(uuid: string) {
         return apiClient.get('/users/journeys');
@@ -70,9 +67,6 @@ export default {
     deleteJourney(id: number) {
         return apiClient.delete(`/users/journeys/${id}`);
     },
-    updateJourneyName(id: number, name: string) {
-        return apiClient.patch(`/users/journeys/${id}`, {name});
-    },
     getHomeCurrency(journeyId: number) {
         return apiClient.get(`/users/journeys/${journeyId}/homeCurrency`);
     },
@@ -82,22 +76,12 @@ export default {
     getBudget(journeyId: number) {
         return apiClient.get(`/users/journeys/${journeyId}/budget`);
     },
-    getStartDate(journeyId: number) {
-        return apiClient.get(`/users/journeys/${journeyId}/startDate`);
-    },
-    getEndDate(journeyId: number) {
-        return apiClient.get(`/users/journeys/${journeyId}/endDate`);
-    },
-
 
     // Expenditure API
     getAllExpenditures(journeyId: number) {
         return apiClient.get(`/users/journeys/${journeyId}/expenditures`);
     },
-    getExpenditureById(journeyId: number, id: number) {
-        return apiClient.get(`/users/journeys/${journeyId}/expenditures/${id}`);
-    },
-    createExpenditure(journeyId: number, expenditure: Omit<Expenditure, 'id'>) { // Update the type here
+    createExpenditure(journeyId: number, expenditure: Omit<Expenditure, 'id'>) {
         return apiClient.post(`/users/journeys/${journeyId}/expenditures`, expenditure);
     },
     deleteExpenditure(journeyId: number, id: number) {
@@ -106,7 +90,5 @@ export default {
     updateExpenditure(journeyId: number, id: number, expenditure: Expenditure) {
         return apiClient.put(`/users/journeys/${journeyId}/expenditures/${id}`, expenditure);
     },
-
-
 };
 

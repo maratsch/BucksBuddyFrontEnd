@@ -1,7 +1,7 @@
 <!--src/views/Main.vue-->
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import {ref} from 'vue';
 import TotalExpenditures from "@/components/expenses/JourneyCard.vue";
 import History from "@/components/expenses/History.vue";
 import InputForm from "@/components/expenses/InputForm.vue";
@@ -19,11 +19,11 @@ const handleRefreshExpenditures = () => {
   <div class="container">
     <div class="row">
       <div class="col-lg-6 col-md-9 col-sm-12">
-        <total-expenditures />
-        <input-form @refreshExpenditures="handleRefreshExpenditures" />
+        <total-expenditures/>
+        <input-form @refreshExpenditures="handleRefreshExpenditures"/>
       </div>
       <div class="col-lg-6 col-md-9 col-sm-12">
-        <history ref="historyComponent" />
+        <history ref="historyComponent"/>
       </div>
     </div>
   </div>

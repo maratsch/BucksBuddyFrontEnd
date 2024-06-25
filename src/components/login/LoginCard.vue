@@ -1,3 +1,4 @@
+<!--LoginCard-->
 <script setup lang="ts">
 import {reactive, ref} from 'vue';
 import {useRouter} from 'vue-router';
@@ -18,7 +19,6 @@ const login = async () => {
 
   try {
     const response = await api.login(loginData.email, loginData.password);
-    // Speichere die UUID im Local Storage
     localStorage.setItem('UUID', response.data);
     localStorage.setItem('email', loginData.email);
     successMessage.value = 'Login successful!';
@@ -51,9 +51,6 @@ const login = async () => {
         </div>
       </form>
       <hr>
-      <div class="text-center">
-        <a href="#/newpassword" class="text-decoration-none">Can't remember password</a>
-      </div>
       <div class="text-center mt-3">
         <a href="#/signup" class="btn btn-secondary custom-width-btn">Sign up</a>
       </div>

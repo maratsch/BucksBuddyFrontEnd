@@ -1,5 +1,4 @@
-<!-- src/components/NavBar.vue -->
-
+<!--NavBar.vue -->
 <script setup lang="ts">
 import {useThemeStore} from '@/stores/themeStore';
 import {useRouter} from "vue-router";

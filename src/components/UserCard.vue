@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, ref } from 'vue';
+import {reactive, ref} from 'vue';
 import api from "@/services/api";
 
 interface UserData {
@@ -43,7 +43,7 @@ const submitNewPassword = async () => {
     }
 
     try {
-      const payload = { newPassword: userData.newPassword };
+      const payload = {newPassword: userData.newPassword};
       await api.changePassword(uuid, payload);
       passwordSuccessMessage.value = 'Password changed successfully, please log in again!';
       setTimeout(() => {
@@ -89,13 +89,10 @@ const deleteUser = async () => {
   <div class="card shadow m-3 p-3">
     <div class="card-body">
       <h3 class="text-center mb-4">User Settings</h3>
-      <!-- User Email Display -->
       <div class="mb-3">
         <label for="userEmail" class="form-label">Email</label>
         <input type="email" class="form-control" id="userEmail" v-model="userData.email" disabled>
       </div>
-
-      <!-- Change Password Toggle -->
       <div>
         <button class="btn btn-secondary mb-3 custom-width-btn" @click="toggleChangePassword">
           {{ showChangePassword ? 'Hide' : 'Change Password' }}
@@ -108,7 +105,8 @@ const deleteUser = async () => {
             </div>
             <div class="mb-3">
               <label for="confirmPassword" class="form-label">Confirm Password</label>
-              <input type="password" class="form-control" id="confirmPassword" v-model="userData.confirmPassword" required>
+              <input type="password" class="form-control" id="confirmPassword" v-model="userData.confirmPassword"
+                     required>
             </div>
             <div class="text-center mb-3">
               <button type="submit" class="btn btn-primary custom-width-btn">Change Password</button>
@@ -118,8 +116,6 @@ const deleteUser = async () => {
           <div v-if="passwordSuccessMessage" class="alert alert-success mt-3">{{ passwordSuccessMessage }}</div>
         </div>
       </div>
-
-      <!-- Danger Zone -->
       <hr>
       <div class="text-center text-danger">
         <h5>Danger Zone</h5>

@@ -1,9 +1,10 @@
+<!--JourneyCard-->
 <script setup lang="ts">
-import {ref, computed, onMounted, watch} from 'vue';
+import {computed, onMounted, ref, watch} from 'vue';
 import api from '@/services/api';
 import type {Expenditure, Journey} from '@/types';
 import Freecurrencyapi from "@everapi/freecurrencyapi-js";
-import eventBus from '@/services/eventBus'; // Import EventBus
+import eventBus from '@/services/eventBus';
 
 const expendituresList = ref<Expenditure[]>([]);
 const currencyapi = new Freecurrencyapi(import.meta.env.VITE_API_KEY);
@@ -248,7 +249,6 @@ onMounted(async () => {
           <button class="btn bi bi-trash fs-5" @click="confirmAndDeleteJourney(selectedJourneyId)"></button>
         </div>
       </div>
-
       <hr>
       <div class="row">
         <div class="col text-start">
@@ -318,7 +318,6 @@ onMounted(async () => {
             {{ getCurrencyName(vacCurrency) }})</h4>
         </div>
       </div>
-
       <div class="row">
         <div class="col text-start">
           <h4>Average Expenditures Per Day</h4>

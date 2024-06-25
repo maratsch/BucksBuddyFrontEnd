@@ -1,8 +1,8 @@
 <!--History-->
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue';
+import {ref, onMounted, watch} from 'vue';
 import api from '@/services/api';
-import { type Expenditure } from '@/types';
+import {type Expenditure} from '@/types';
 import eventBus from '@/services/eventBus';
 
 const expendituresList = ref<Expenditure[]>([]);
@@ -22,7 +22,6 @@ const fetchExpenditures = async () => {
   }
 
   try {
-    //console.log('Fetching expenditures for journeyId:', journeyId.value); // Debug log
     const response = await api.getAllExpenditures(journeyId.value);
     expendituresList.value = response.data.map((expenditure: Expenditure) => ({
       ...expenditure,
@@ -93,13 +92,10 @@ const sortExpenditures = () => {
   });
 };
 
-
-
 watch([expendituresList, sortCriteria, sortOrder], sortExpenditures);
 
 onMounted(() => {
   eventBus.on('journeyIdChanged', (newJourneyId: number | null) => {
-    //console.log('journeyId changed in History:', newJourneyId);
     if (newJourneyId !== null) {
       journeyId.value = newJourneyId;
       clearExpenditures();
@@ -122,7 +118,6 @@ onMounted(() => {
   });
 
   if (journeyId.value !== null) {
-    //console.log('Initial journeyId in History:', journeyId.value);
     fetchExpenditures();
   }
 });
