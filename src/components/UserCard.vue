@@ -74,7 +74,7 @@ const deleteUser = async () => {
       deleteSuccessMessage.value = 'User deleted successfully';
       localStorage.clear();
       setTimeout(() => {
-        location.href = '/login';
+        location.href = '/#/login';
       }, 2000);
     } catch (error) {
       deleteErrorMessage.value = 'Error deleting user. Please try again.';
