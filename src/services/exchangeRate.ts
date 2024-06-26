@@ -1,7 +1,7 @@
 // src/services/exchangeRate.ts
 import Freecurrencyapi from '@everapi/freecurrencyapi-js';
 
-const currencyapi = new Freecurrencyapi('fca_live_SXUfhiLcLAt87AE3F3ZZZ9i4yHzyQ4kfmKITa6Vy'); //TODO: API-Key hiden
+const currencyapi = new Freecurrencyapi(import.meta.env.VITE_API_KEY);
 const baseCurrency = 'EUR';
 const targetCurrency = 'USD';
 
