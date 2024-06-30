@@ -47,7 +47,7 @@ const submitNewPassword = async () => {
       await api.changePassword(uuid, payload);
       passwordSuccessMessage.value = 'Password changed successfully, please log in again!';
       setTimeout(() => {
-        location.href = '/login';
+        location.href = '/#/login';
       }, 2000);
     } catch (error: any) {
       passwordErrorMessage.value = 'Error changing password. Please try again.';
