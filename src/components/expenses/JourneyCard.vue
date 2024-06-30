@@ -110,8 +110,6 @@ const fetchJourneyDetails = async (journeyId: number) => {
       currencies: vacCurrency.value
     }).then((response: any) => response.data[vacCurrency.value]);
     eventBus.emit('exchangeRateUpdated', exchangeRate.value);
-    eventBus.emit('vacCurrencyUpdated', vacCurrency.value);
-    eventBus.emit('homeCurrencyUpdated', homeCurrency.value);
   } catch (error) {
     console.error('Error fetching journey details:', error);
   }
