@@ -28,6 +28,10 @@ const fetchExpenditures = async () => {
       isEditing: false,
     }));
     sortExpenditures();
+    const homeCurrencyResponse = await api.getHomeCurrency(journeyId.value)
+    homeCurrency.value = homeCurrencyResponse.data;
+    const vacCurrencyResponse = await api.getVacCurrency(journeyId.value)
+    vacCurrency.value = vacCurrencyResponse.data;
   } catch (error) {
     console.error('Error fetching expenditures:', error);
   }
@@ -36,6 +40,8 @@ const fetchExpenditures = async () => {
 const clearExpenditures = () => {
   expendituresList.value = [];
   sortedExpenditures.value = [];
+  vacCurrency.value = '';
+  homeCurrency.value = '';
 };
 
 const deleteExpenditure = async (id: number) => {
